@@ -40,11 +40,11 @@ RigidTransform2D RigidTransform2D::transformBy(const RigidTransform2D &other) {
     return RigidTransform2D(newTranslation, newRotation);
 }
 
-Translation2D& RigidTransform2D::getTranslation() {
+Translation2D RigidTransform2D::getTranslation() {
     return m_translation;
 }
 
-Rotation2D& RigidTransform2D::getRotation() {
+Rotation2D RigidTransform2D::getRotation() {
     return m_rotation;
 }
 

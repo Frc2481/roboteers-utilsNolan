@@ -52,6 +52,14 @@ Rotation2D& Rotation2D::operator-=(const Rotation2D &rhs) {
     return *this;
 }
 
+const Rotation2D Rotation2D::operator+(const Rotation2D &other) {
+    return (*this).rotateBy(other);
+}
+
+const Rotation2D Rotation2D::operator-(const Rotation2D &other) {
+    return (*this).rotateBy(other.inverse());
+}
+
 double Rotation2D::getCos() const {
     return m_cos;
 }
@@ -112,12 +120,4 @@ void Rotation2D::normalize() {
         m_sin = 0;
         m_cos = 1;
     }
-}
-
-const Rotation2D Rotation2D::operator+(const Rotation2D &other) {
-    return (*this).rotateBy(other);
-}
-
-const Rotation2D Rotation2D::operator-(const Rotation2D &other) {
-    return (*this).rotateBy(other.inverse());
 }

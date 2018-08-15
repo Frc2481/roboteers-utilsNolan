@@ -40,6 +40,14 @@ Translation2D& Translation2D::operator-=(const Translation2D &rhs) {
     return *this;
 }
 
+const Translation2D Translation2D::operator+(const Translation2D &other) {
+    return (*this).translateBy(other);
+}
+
+const Translation2D Translation2D::operator-(const Translation2D &other) {
+    return (*this).translateBy(other.inverse());
+}
+
 double Translation2D::getX() const
 {
 	return m_x;
@@ -91,12 +99,4 @@ Translation2D Translation2D::rotateBy(const Rotation2D &rotation) const
 Translation2D Translation2D::scaleBy(const double &scalar) const
 {
 	return Translation2D(m_x * scalar, m_y * scalar);
-}
-
-const Translation2D Translation2D::operator+(const Translation2D &other) {
-    return (*this).translateBy(other);
-}
-
-const Translation2D Translation2D::operator-(const Translation2D &other) {
-    return (*this).translateBy(other.inverse());
 }

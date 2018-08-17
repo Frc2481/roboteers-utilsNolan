@@ -8,9 +8,9 @@ set(SOURCES src/main.cpp
             src/RigidTransform2D.cpp
             src/Interpolate.cpp
             src/PathGenerator.cpp
+			src/PIDVAController.cpp
     )
 
-include_directories(include
-                    )
+include_directories(include)
 
 add_executable(frcMain ${SOURCES})

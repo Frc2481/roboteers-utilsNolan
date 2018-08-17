@@ -10,15 +10,15 @@ public:
 		const double &kp,
 		const double &ki,
 		const double &kd,
-		const double &ka,
-		const double &kv);
+		const double &kv,
+		const double &ka);
 	~PIDVAController();
 	
 	double getKp();
 	double getKi();
 	double getKd();
-	double getKa();
 	double getKv();
+	double getKa();
 	double getRangeMin();
 	double getRangeMax();
 	bool getIsContinous();
@@ -30,16 +30,17 @@ public:
 	void setKp(const double &kp);
 	void setKi(const double &ki);
 	void setKd(const double &kd);
-	void setKa(const double &ka);
 	void setKv(const double &kv);
-	void setRangeMin(const double &rangeMin);
-	void setRangeMax(const double &rangeMax);
+	void setKa(const double &ka);
 	
 	//////////////////////////////////////////////////////////////////////
     // @brief set to true if reference wraps around from rangeMax to
 	//        rangeMin such as angle range of +/-180 deg
     //////////////////////////////////////////////////////////////////////
-	void setIsContinous(const bool &isContinous);
+	void setIsContinous(
+		const bool &isContinous,
+		const double &rangeMin,
+		const double &rangeMax);
 	
 	//////////////////////////////////////////////////////////////////////
     // @brief integral term only takes effect when measurement is within
@@ -62,12 +63,12 @@ public:
 	//        properly.
     //////////////////////////////////////////////////////////////////////
 	void update(
-		const double &refP,
+		double &refP,
 		const double &refV,
 		const double &refA,
 		const double &measP,
 		const double &time,
-		double cntrl);
+		double &cntrl);
 	
 	//////////////////////////////////////////////////////////////////////
     // @brief is measurement on target with reference.  isOnTarget is set
@@ -80,14 +81,14 @@ public:
 	//////////////////////////////////////////////////////////////////////
     // @brief reset error terms of controller
     //////////////////////////////////////////////////////////////////////
-	void reset();
+	void reset(const double &time);
 	
 private:
 	double m_kp;
 	double m_ki;
 	double m_kd;
-	double m_ka;
 	double m_kv;
+	double m_ka;
 	double m_rangeMin;
 	double m_rangeMax;
 	bool m_isContinous;
@@ -97,6 +98,8 @@ private:
 	double m_targetZoneDebounce;
 	double m_timeOld;
 	double m_errorOld;
+	double m_iErrorOld;
 	bool m_isOnTarget;
-	unsigned m_isOnTargetCnt;
+	double m_isOnTargetStartTime;
+	bool m_onTargetFirstTime;
 };

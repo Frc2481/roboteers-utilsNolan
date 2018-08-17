@@ -73,11 +73,11 @@ double Translation2D::norm() const
 	return sqrt(m_x * m_x + m_y * m_y);
 }
 
-double Translation2D::dot(Translation2D &other) {
+double Translation2D::dot(const Translation2D &other) {
     return m_x * other.getX() + m_y * other.getY();
 }
 
-double Translation2D::cross(Translation2D &other) {
+double Translation2D::cross(const Translation2D &other) {
     return m_x * other.getY() - m_y * other.getX();
 }
 

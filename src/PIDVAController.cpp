@@ -124,6 +124,12 @@ void PIDVAController::setIsContinous(
     const double &rangeMin,
     const double &rangeMax) {
     
+    if(!isContinous) {
+        m_rangeMin = 0;
+        m_rangeMax = 0;
+        return;
+    }
+
     if(rangeMin > rangeMax) {
         return;
     }

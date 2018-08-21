@@ -23,6 +23,7 @@ public:
     double getTan() const;
     double getRadians() const;
     double getDegrees() const;
+    
     void setRadians(const double &angle);
     void setDegrees(const double &angle);
 

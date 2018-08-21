@@ -51,51 +51,51 @@ PIDVAController::PIDVAController(
 PIDVAController::~PIDVAController() {
 }
 
-double PIDVAController::getKp() {
+double PIDVAController::getKp() const {
     return m_kp;
 }
 
-double PIDVAController::getKi() {
+double PIDVAController::getKi() const {
     return m_ki;
 }
 
-double PIDVAController::getKd() {
+double PIDVAController::getKd() const {
     return m_kd;
 }
 
-double PIDVAController::getKv() {
+double PIDVAController::getKv() const {
     return m_kv;
 }
 
-double PIDVAController::getKa() {
+double PIDVAController::getKa() const {
     return m_ka;
 }
 
-double PIDVAController::getRangeMin() {
+double PIDVAController::getRangeMin() const {
     return m_rangeMin;
 }
 
-double PIDVAController::getRangeMax() {
+double PIDVAController::getRangeMax() const {
     return m_rangeMax;
 }
 
-bool PIDVAController::getIsContinous() {
+bool PIDVAController::getIsContinous() const {
     return m_isContinous;
 }
 
-double PIDVAController::getIZone() {
+double PIDVAController::getIZone() const {
     return m_iZone;
 }
 
-double PIDVAController::getIErrorLim() {
+double PIDVAController::getIErrorLim() const {
     return m_iErrorLim;
 }
 
-double PIDVAController::getTargetZone() {
+double PIDVAController::getTargetZone() const {
     return m_targetZone;
 }
 
-double PIDVAController::getTargetZoneDebounce() {
+double PIDVAController::getTargetZoneDebounce() const {
     return m_targetZoneDebounce;
 }
 

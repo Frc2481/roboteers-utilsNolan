@@ -12,14 +12,7 @@ template <typename T> int sign(T val) {
 
 class PathGenerator {
 public:
-    //////////////////////////////////////////////////////////////////////
-    // constructor
-    //////////////////////////////////////////////////////////////////////
     PathGenerator();
-
-    //////////////////////////////////////////////////////////////////////
-    // destructor
-    //////////////////////////////////////////////////////////////////////
     ~PathGenerator();
 
     struct waypoint {
@@ -62,27 +55,27 @@ public:
     std::vector<finalPathPoint> getFinalPath();
 
     //////////////////////////////////////////////////////////////////////
-    // generate path from waypoints for tank drive robot to follow
+    // @brief generate path from waypoints for tank drive robot to follow
     //////////////////////////////////////////////////////////////////////
     void generatePath();
     
     //////////////////////////////////////////////////////////////////////
-    // write output path to csv file
+    // @brief write output path to csv file
     //////////////////////////////////////////////////////////////////////
     void writePathToCSV();
     
     //////////////////////////////////////////////////////////////////////
-    // write temp path to csv file
+    // @brief write temp path to csv file
     //////////////////////////////////////////////////////////////////////
     void writeTempPathToCSV();
     
     //////////////////////////////////////////////////////////////////////
-    // write combo path to csv file
+    // @brief write combo path to csv file
     //////////////////////////////////////////////////////////////////////
     void writeComboPathToCSV();
     
     //////////////////////////////////////////////////////////////////////
-    // read waypoints from csv file
+    // @brief read waypoints from csv file
     //////////////////////////////////////////////////////////////////////
     void readWaypointsFromCSV();
 
@@ -96,22 +89,20 @@ private:
     double m_wheelTrack;    // width between left and right wheels (in)
     double m_maxSpeed;  // max speed of robot (in/s)
     double m_maxAccel;  // max acceleration of robot (in/s^2)
-    double m_maxDeccel; // max brake acceleration of robot (in/s^2)
+    double m_maxDeccel; // max decceleration of robot (in/s^2)
     double m_maxCentripAccel;   // max centripetal acceleration of robot (in/s^2)
     double m_totalPathDist; // total path distance (in)
     std::string m_waypointsFilename;    // waypoints input CSV filename
     std::string m_pathFilename; // path output CSV filename
     
     //////////////////////////////////////////////////////////////////////
-    // integrate path forward in time to calculate speed at given distance
-    // along path
-    // integratedPath       output path
-    // isBackward           is backward path direction
+    // @brief integrate path forward in time to calculate speed and acceleration
+    // at given distance along path
     //////////////////////////////////////////////////////////////////////
     void integratePath(std::vector<pathGenPoint> &integratedPath, bool isBackward);
     
     //////////////////////////////////////////////////////////////////////
-    // acos() with safe bounds around +/-1 for floats
+    // @brief acos() with safe bounds around +/-1 for floats
     //////////////////////////////////////////////////////////////////////
     double safeACos(double val);
 };

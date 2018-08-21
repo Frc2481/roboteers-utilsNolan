@@ -94,6 +94,7 @@ void PathGenerator::generatePath() {
 
     // clear old path
     m_tempPath.clear();
+    m_comboPath.clear();
     m_finalPath.clear();
 
     // add start point to path

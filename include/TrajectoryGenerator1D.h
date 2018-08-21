@@ -4,6 +4,8 @@
 #pragma once
 #include <vector>
 
+#define INTEGRATE_PATH_DIST_STEP 0.01 // (in)
+
 template <typename T> int sign(T val) {
     return (T(0) < val) - (val < T(0));
 }
@@ -66,5 +68,5 @@ private:
     // @brief integrate path forward in time to calculate speed and acceleration
     // at given distance along path
     //////////////////////////////////////////////////////////////////////
-    void TrajectoryGenerator1D::integratePath(std::vector<finalPathPoint> &integratedPath
-}
+    void integratePath(std::vector<finalPathPoint> &integratedPath, bool isBackward);
+};

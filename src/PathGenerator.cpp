@@ -74,7 +74,6 @@ void PathGenerator::setMaxCentripAccel(const double &maxCentripAccel) {
     }
 }
 
-
 void PathGenerator::setWaypointsFilename(const std::string &waypointsFilename) {
     m_waypointsFilename = waypointsFilename;
 }
@@ -267,7 +266,7 @@ void PathGenerator::generatePath() {
             m_comboPath[i].time = m_comboPath[i - 1].time;
         }
 
-        // store combo path time and dist in separate vectors
+        // store combo path time, dist, vel in separate vectors
         comboPathTime.push_back(m_comboPath[i].time);
         comboPathDist.push_back(m_comboPath[i].dist);
         comboPathVel.push_back(m_comboPath[i].vel);

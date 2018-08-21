@@ -8,8 +8,9 @@ set(SOURCES src/main.cpp
             src/RigidTransform2D.cpp
             src/Interpolate.cpp
             src/PathGenerator.cpp
-			src/PIDVAController.cpp
-    )
+            src/PIDVAController.cpp
+            src/TrajectoryGenerator1D.cpp
+)
 
 include_directories(include)
 

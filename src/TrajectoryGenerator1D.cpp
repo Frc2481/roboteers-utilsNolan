@@ -1,5 +1,8 @@
 #include "TrajectoryGenerator1D.h"
 #include <math.h>
+#include <limits>
+#include <algorithm>
+#include "Interpolate.h"
 
 TrajectoryGenerator1D::TrajectoryGenerator1D()
     : m_waypoints(),
@@ -22,6 +25,12 @@ void TrajectoryGenerator1D::setWaypoints(std::vector<waypoint> &waypoints) {
     m_waypoints.clear();
     for(std::vector<waypoint>::iterator it = waypoints.begin(); it != waypoints.end(); ++it) {
         it->speed = abs(it->speed);
+
+        // check wraparound
+        if(m_isContinous && ((it->pos > m_rangeMax) || (it->pos < m_rangeMin))) {
+            it->pos = m_rangeMin + abs(fmod(it->pos, m_rangeMax - m_rangeMin));
+        }
+
         m_waypoints.push_back(*it);
     }
 }
@@ -73,9 +82,6 @@ std::vector<TrajectoryGenerator1D::finalPathPoint> TrajectoryGenerator1D::getFin
 }
 
 void TrajectoryGenerator1D::generatePath() {
-    // @TODO: add path generation logic
-    // @TODO: don't forget isContinous
-
     finalPathPoint tempPathGenPoint;
 
     // clear old path
@@ -83,60 +89,150 @@ void TrajectoryGenerator1D::generatePath() {
     m_comboPath.clear();
     m_finalPath.clear();
 
+    // calculate direction of travel
+    double difference = m_waypoints[1].pos - m_waypoints[0].pos;
+    if(m_isContinous && (fabs(difference) > (m_rangeMax - m_rangeMin) / 2)) {
+        if(difference > 0) {
+            difference = difference - (m_rangeMax - m_rangeMin);
+        }
+        else {
+            difference = difference + (m_rangeMax - m_rangeMin);
+        }
+    }
+    int directionSign = sign(difference);
+
     // calculate distance traveled along path
-    // std::vector<double> tempPathDist;
-    // std::vector<double> tempPathPos;
+    std::vector<double> tempPathDist;
+    std::vector<double> tempPathPos;
     m_totalPathDist = 0;
     tempPathGenPoint.pos = m_waypoints.front().pos;
     tempPathGenPoint.dist = m_totalPathDist;
-    tempPathGenPoint.vel = sign(m_waypoints[1].pos - m_waypoints[0].pos) * m_waypoints.front().speed;
+    tempPathGenPoint.vel = directionSign * m_waypoints.front().speed;
     m_tempPath.push_back(tempPathGenPoint);
+    tempPathDist.push_back(m_tempPath.front().dist);
+    tempPathPos.push_back(m_tempPath.front().pos);
     for(unsigned i = 1; i < m_waypoints.size(); ++i) {
-        tempPathGenPoint.pos = m_waypoints[i].pos;
-        tempPathGenPoint.dist = fabs(m_waypoints[i].pos - m_waypoints[i - 1].pos);
-        tempPathGenPoint.vel = sign(m_waypoints[i].pos - m_waypoints[i - 1].pos) * m_waypoints[i].speed;
+        // unwrap position to make continous
+        double difference = m_waypoints[i].pos - m_waypoints[i - 1].pos;
+        if(m_isContinous && (fabs(difference) > (m_rangeMax - m_rangeMin) / 2)) {
+            if(difference > 0) {
+                difference = difference - (m_rangeMax - m_rangeMin);
+            }
+            else {
+                difference = difference + (m_rangeMax - m_rangeMin);
+            }
+        }
+        tempPathGenPoint.pos = m_waypoints[i - 1].pos + difference;
+        tempPathGenPoint.dist = fabs(difference);
+        tempPathGenPoint.vel = directionSign * m_waypoints[i].speed;
         m_tempPath.push_back(tempPathGenPoint);
+
+        // store temp path dist, pos in separate vectors
+        tempPathDist.push_back(m_tempPath[i].dist);
+        tempPathPos.push_back(m_tempPath[i].pos);
     }
     
     // integrate path forward
+    std::vector<finalPathPoint> fwdPath;
+    integratePath(fwdPath, false);
 
     // integrate path backward
+    std::vector<finalPathPoint> bwdPath;
+    integratePath(bwdPath, true);
 
     // combine forward and backward paths with min speed
+    for(unsigned i = 0; i < fwdPath.size(); ++i) {
+        tempPathGenPoint.dist = fwdPath[i].dist;
+        tempPathGenPoint.vel = std::min(fwdPath[i].vel, bwdPath[i].vel);
+        m_comboPath.push_back(tempPathGenPoint);
+    }
 
     // calculate path with respect to time
+    std::vector<double> comboPathTime;
+    std::vector<double> comboPathDist;
+    std::vector<double> comboPathVel;
+    m_comboPath.front().time = 0;
+    comboPathTime.push_back(m_comboPath.front().time);
+    comboPathDist.push_back(m_comboPath.front().dist);
+    comboPathVel.push_back(m_comboPath.front().vel);
+    for(unsigned i = 1; i < m_comboPath.size(); ++i) {
+        // check divide by zero
+        if((m_comboPath[i].vel + m_comboPath[i - 1].vel) != 0) {
+            m_comboPath[i].time = m_comboPath[i - 1].time
+                + 2 * (m_comboPath[i].dist - m_comboPath[i - 1].dist) / abs(m_comboPath[i].vel + m_comboPath[i - 1].vel);
+        }
+        else {
+            m_comboPath[i].time = m_comboPath[i - 1].time;
+        }
 
+        // store combo path time, dist, vel in separate vectors
+        comboPathTime.push_back(m_comboPath[i].time);
+        comboPathDist.push_back(m_comboPath[i].dist);
+        comboPathVel.push_back(m_comboPath[i].vel);
+    }
+    
     // add first point to final path
     tempPathGenPoint.time = 0;
     tempPathGenPoint.dist = 0;
     tempPathGenPoint.vel = m_comboPath.front().vel;
     tempPathGenPoint.accel = 0;
+    tempPathGenPoint.pos = m_tempPath.front().pos;
     m_finalPath.push_back(tempPathGenPoint);
 
     // calculate final path
+    while(tempPathGenPoint.time <= (m_comboPath.back().time - (1 / (double)m_sampleRate))) {
+        tempPathGenPoint.time += 1 / (double)m_sampleRate;
+        tempPathGenPoint.dist = interpolate::interp(comboPathTime, comboPathDist, tempPathGenPoint.time, false);
+        tempPathGenPoint.vel = interpolate::interp(comboPathTime, comboPathVel, tempPathGenPoint.time, false);
+        tempPathGenPoint.accel = (tempPathGenPoint.vel - m_finalPath.back().vel) * m_sampleRate;
+        
+        tempPathGenPoint.pos = interpolate::interp(tempPathDist, tempPathPos, tempPathGenPoint.dist, false);
+        // check wraparound
+        if(m_isContinous && ((tempPathGenPoint.pos > m_rangeMax) || (tempPathGenPoint.pos < m_rangeMin))) {
+            tempPathGenPoint.pos = m_rangeMin + abs(fmod(tempPathGenPoint.pos, m_rangeMax - m_rangeMin));
+        }
+
+        m_finalPath.push_back(tempPathGenPoint);
+    }
 
     // add final point to final path
+    tempPathGenPoint.time = m_comboPath.back().time;
+    tempPathGenPoint.dist = m_comboPath.back().dist;
+    tempPathGenPoint.vel = m_comboPath.back().vel;
+    tempPathGenPoint.accel = 0;
+    tempPathGenPoint.pos = m_tempPath.back().pos;
+    m_finalPath.push_back(tempPathGenPoint);
 }
 
-void TrajectoryGenerator1D::integratePath(std::vector<finalPathPoint> &integratedPath {
+void TrajectoryGenerator1D::integratePath(std::vector<finalPathPoint> &integratedPath, bool isBackward) {
     finalPathPoint tempPathGenPoint;
 
     // clear path
     integratedPath.clear();
 
     // add start point to path
-    tempPathGenPoint.dist = 0;
-    tempPathGenPoint.vel = m_tempPath.front().vel;
+    if(!isBackward) {
+        tempPathGenPoint.dist = 0;
+        tempPathGenPoint.vel = m_tempPath.front().vel;
+    }
+    else {
+        tempPathGenPoint.dist = m_totalPathDist;
+        tempPathGenPoint.vel = m_tempPath.back().vel;
+    }
     integratedPath.push_back(tempPathGenPoint);
 
     // integrate path
     double accelSpeed;
     double pathSpeed;
     bool isNewTempPoint = false;
+    unsigned i;
     
-    unsigned i = 1;
-
-    // @TODO: continue working here
+    if(!isBackward) {
+        i = 1;
+    }
+    else {
+        i = m_tempPath.size() - 2;
+    }
     
     while(((integratedPath.back().dist < m_totalPathDist) && !isBackward)
           || ((integratedPath.back().dist > 0) && isBackward)) {
@@ -184,39 +280,8 @@ void TrajectoryGenerator1D::integratePath(std::vector<finalPathPoint> &integrate
             pathSpeed = std::numeric_limits<double>::infinity();
         }
 
-        // hold and limit lateral slip speed through turn and limit individual wheel speed
-        if((1 < i) && (i < (m_tempPath.size() - 2))) {
-            if(!isBackward) {
-                // check if in turn
-                if((m_tempPath[i - 1].radCurve == m_tempPath[i].radCurve)
-                    && (m_tempPath[i].radCurve != std::numeric_limits<double>::infinity())
-                    && (m_tempPath[i - 1].radCurve != std::numeric_limits<double>::infinity())) {
-                    latSlipSpeed = sqrt(m_maxCentripAccel * m_tempPath[i].radCurve);
-                    limitWheelSpeed = m_maxSpeed / (1 + (1 / m_tempPath[i].radCurve) * (m_wheelTrack / 2));
-                }
-            }
-            else {
-                // check if in turn
-                if((m_tempPath[i + 1].radCurve == m_tempPath[i].radCurve)
-                    && (m_tempPath[i].radCurve != std::numeric_limits<double>::infinity())
-                    && (m_tempPath[i + 1].radCurve != std::numeric_limits<double>::infinity())) {
-                    latSlipSpeed = sqrt(m_maxCentripAccel * m_tempPath[i].radCurve);
-                    limitWheelSpeed = m_maxSpeed / (1 + (1 / m_tempPath[i].radCurve) * (m_wheelTrack / 2));
-                }
-            }
-        }
-        else {
-            latSlipSpeed = std::numeric_limits<double>::infinity();
-            limitWheelSpeed = std::numeric_limits<double>::infinity();
-        }
-
         // use minimum speed from all constraints
-        double speed = std::min(std::min(std::min(std::min(accelSpeed, pathSpeed), latSlipSpeed), limitWheelSpeed), m_maxSpeed);
-
-        // reverse path direction if needed
-        if(m_isReverse) {
-            speed = -speed;
-        }
+        double speed = std::min(accelSpeed, pathSpeed);
 
         // add speed to point and add to path
         tempPathGenPoint.vel = speed;

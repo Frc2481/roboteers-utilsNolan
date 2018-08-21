@@ -102,4 +102,4 @@ private:
 	bool m_isOnTarget;				// flag indicating is on target
 	double m_isOnTargetStartTime;	// timestamp when first on target (s) 
 	bool m_onTargetFirstTime;		// flag indicating if on target for first time
-}
+};

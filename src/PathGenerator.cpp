@@ -86,7 +86,6 @@ std::vector<PathGenerator::finalPathPoint> PathGenerator::getFinalPath() {
     return m_finalPath;
 }
 
-// @TODO: error handling for not enough waypoints
 void PathGenerator::generatePath() {
     pathGenPoint tempPathGenPoint;
     finalPathPoint tempFinalPathPoint;
@@ -333,7 +332,7 @@ void PathGenerator::writePathToCSV() {
         myFile << m_finalPath[i].dist << ",";
         myFile << m_finalPath[i].vel << ",";
         myFile << m_finalPath[i].accel << ",";
-        myFile << m_finalPath[i].yawRate << ",";
+        myFile << m_finalPath[i].yawRate;
         myFile << "\n";
     }
 
@@ -352,7 +351,7 @@ void PathGenerator::writeTempPathToCSV() {
         myFile << m_tempPath[i].yPos << ",";
         myFile << m_tempPath[i].vel << ",";
         myFile << m_tempPath[i].radCurve << ",";
-        myFile << m_tempPath[i].dist << ",";
+        myFile << m_tempPath[i].dist;
         myFile << "\n";
     }
 
@@ -374,7 +373,7 @@ void PathGenerator::writeComboPathToCSV() {
         myFile << m_comboPath[i].dist << ",";
         myFile << m_comboPath[i].vel << ",";
         myFile << m_comboPath[i].accel << ",";
-        myFile << m_comboPath[i].yawRate << ",";
+        myFile << m_comboPath[i].yawRate;
         myFile << "\n";
     }
 
@@ -394,37 +393,37 @@ void PathGenerator::readWaypointsFromCSV() {
     // read config
     unsigned sampleRate;
     getline(myFile, header, ',');
-    myFile >> sampleRate >> delim;
+    myFile >> sampleRate;
     setSampleRate(sampleRate);
         
     bool isReverse;
     getline(myFile, header, ',');
-    myFile >> isReverse >> delim;
+    myFile >> isReverse;
     setIsReverse(isReverse);
     
     double wheelTrack;
     getline(myFile, header, ',');
-    myFile >> wheelTrack >> delim;
+    myFile >> wheelTrack;
     setWheelTrack(wheelTrack);
         
     double maxSpeed;
     getline(myFile, header, ',');
-    myFile >> maxSpeed >> delim;
+    myFile >> maxSpeed;
     setMaxSpeed(maxSpeed);
     
     double maxAccel;
     getline(myFile, header, ',');
-    myFile >> maxAccel >> delim;
+    myFile >> maxAccel;
     setMaxAccel(maxAccel);
     
     double maxDeccel;
     getline(myFile, header, ',');
-    myFile >> maxDeccel >> delim;
+    myFile >> maxDeccel;
     setMaxDeccel(maxDeccel);
     
     double maxCentripAccel;
     getline(myFile, header, ',');
-    myFile >> maxCentripAccel >> delim;
+    myFile >> maxCentripAccel;
     setMaxCentripAccel(maxCentripAccel);
     
     // read data
@@ -432,8 +431,10 @@ void PathGenerator::readWaypointsFromCSV() {
     getline(myFile, header); // skip blank line
     getline(myFile, header); // skip headers
     
-    while(!myFile.eof()) {
-        myFile >> tempWaypoint.xPos >> delim >> tempWaypoint.yPos >> delim >> tempWaypoint.speed >> delim >> tempWaypoint.maxDistThresh >> delim;
+    while(myFile >> tempWaypoint.xPos >> delim
+                >> tempWaypoint.yPos >> delim
+                >> tempWaypoint.speed >> delim
+                >> tempWaypoint.maxDistThresh) {
         waypoints.push_back(tempWaypoint);
     }
     

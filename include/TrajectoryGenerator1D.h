@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 #pragma once
 #include <vector>
+#include <string>
 
 #define INTEGRATE_PATH_DIST_STEP 0.01 // (in)
 
@@ -33,6 +34,8 @@ public:
     void setMaxSpeed(const double &maxSpeed);
     void setMaxAccel(const double &maxAccel);
     void setMaxDeccel(const double &maxDeccel);
+    void setWaypointsFilename(const std::string &waypointsFilename);
+    void setPathFilename(const std::string &pathFilename);
 
     //////////////////////////////////////////////////////////////////////
     // @brief set to true if reference wraps around from rangeMax to
@@ -50,6 +53,26 @@ public:
     //////////////////////////////////////////////////////////////////////
     void generatePath();
 
+    //////////////////////////////////////////////////////////////////////
+    // @brief write output path to csv file
+    //////////////////////////////////////////////////////////////////////
+    void writePathToCSV();
+
+    //////////////////////////////////////////////////////////////////////
+    // @brief write temp path to csv file
+    //////////////////////////////////////////////////////////////////////
+    void writeTempPathToCSV();
+    
+    //////////////////////////////////////////////////////////////////////
+    // @brief write combo path to csv file
+    //////////////////////////////////////////////////////////////////////
+    void writeComboPathToCSV();
+    
+    //////////////////////////////////////////////////////////////////////
+    // @brief read waypoints from csv file
+    //////////////////////////////////////////////////////////////////////
+    void readWaypointsFromCSV();
+
 private:
     std::vector<waypoint> m_waypoints;  // desired waypoints to travel through
     std::vector<finalPathPoint> m_tempPath; // trajectory generator temporary path
@@ -63,6 +86,8 @@ private:
 	double m_rangeMax;  // max range (units)
 	bool m_isContinous; // flag indicating wraparound
     double m_totalPathDist; // total path distance (units)
+    std::string m_waypointsFilename;    // waypoints input CSV filename
+    std::string m_pathFilename; // path output CSV filename
 
     //////////////////////////////////////////////////////////////////////
     // @brief integrate path forward in time to calculate speed and acceleration

@@ -1,0 +1,12 @@
+sampleRate(Hz),10
+isReverse,0
+wheelTrack(in),20
+maxSpeed(in/s),100
+maxAccel(in/s^2),100
+maxDeccel(in/s^2),-100
+maxCentripAccel(in/s^2),20
+,
+xPos(in),yPos(in),speed(in/s),maxDistThresh(in)
+0,0,0,1000
+0,10,1000,1000
+10,10,0,1000

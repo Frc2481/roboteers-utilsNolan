@@ -3,6 +3,9 @@
 #include <limits>
 #include <algorithm>
 #include "Interpolate.h"
+#include <iostream>
+#include <fstream>
+#include <stdio.h>
 
 TrajectoryGenerator1D::TrajectoryGenerator1D()
     : m_waypoints(),
@@ -15,7 +18,9 @@ TrajectoryGenerator1D::TrajectoryGenerator1D()
     m_maxDeccel(-1),
     m_rangeMin(0),
 	m_rangeMax(0),
-	m_isContinous(false) {
+	m_isContinous(false),
+    m_waypointsFilename("tempWaypoints.csv"),
+    m_pathFilename("tempFinalPath.csv") {
 }
 
 TrajectoryGenerator1D::~TrajectoryGenerator1D() {
@@ -100,6 +105,11 @@ void TrajectoryGenerator1D::generatePath() {
         }
     }
     int directionSign = sign(difference);
+    // printf("difference = %.1f\n", difference);
+    // printf("m_waypoints[0].pos = %.1f\n", m_waypoints[0].pos);
+    // printf("m_waypoints[1].pos = %.1f\n", m_waypoints[1].pos);
+    // printf("directionSign = %d\n", directionSign);
+    // printf("m_isContinous = %d\n", m_isContinous);
 
     // calculate distance traveled along path
     std::vector<double> tempPathDist;
@@ -123,7 +133,8 @@ void TrajectoryGenerator1D::generatePath() {
             }
         }
         tempPathGenPoint.pos = m_waypoints[i - 1].pos + difference;
-        tempPathGenPoint.dist = fabs(difference);
+        m_totalPathDist += fabs(difference);
+        tempPathGenPoint.dist = m_totalPathDist;
         tempPathGenPoint.vel = directionSign * m_waypoints[i].speed;
         m_tempPath.push_back(tempPathGenPoint);
 
@@ -202,6 +213,124 @@ void TrajectoryGenerator1D::generatePath() {
     tempPathGenPoint.accel = 0;
     tempPathGenPoint.pos = m_tempPath.back().pos;
     m_finalPath.push_back(tempPathGenPoint);
+}
+
+void TrajectoryGenerator1D::writePathToCSV() {
+    std::remove(m_pathFilename.c_str());
+    
+    std::ofstream myFile;
+    myFile.open(m_pathFilename);
+    myFile << "time (s), pos (units), dist (units), vel (units/s), accel (units/s^2)\n";
+    
+    for(unsigned i = 0; i < m_finalPath.size(); ++i) {
+        myFile << m_finalPath[i].time << ",";
+        myFile << m_finalPath[i].pos << ",";
+        myFile << m_finalPath[i].dist << ",";
+        myFile << m_finalPath[i].vel << ",";
+        myFile << m_finalPath[i].accel;
+        myFile << "\n";
+    }
+
+    myFile.close();
+}
+
+void TrajectoryGenerator1D::writeTempPathToCSV() {
+    std::remove("tempPath.csv");
+    
+    std::ofstream myFile;
+    myFile.open("tempPath.csv");
+    myFile << "time (s), pos (units), dist (units), vel (units/s), accel (units/s^2)\n";
+    
+    for(unsigned i = 0; i < m_tempPath.size(); ++i) {
+        myFile << m_tempPath[i].time << ",";
+        myFile << m_tempPath[i].pos << ",";
+        myFile << m_tempPath[i].dist << ",";
+        myFile << m_tempPath[i].vel << ",";
+        myFile << m_tempPath[i].accel;
+        myFile << "\n";
+    }
+
+    myFile.close();
+}
+
+void TrajectoryGenerator1D::writeComboPathToCSV() {
+    std::remove("tempComboPath.csv");
+    
+    std::ofstream myFile;
+    myFile.open("tempComboPath.csv");
+    myFile << "time (s), pos (units), dist (units), vel (units/s), accel (units/s^2)\n";
+    
+    for(unsigned i = 0; i < m_comboPath.size(); ++i) {
+        myFile << m_comboPath[i].time << ",";
+        myFile << m_comboPath[i].pos << ",";
+        myFile << m_comboPath[i].dist << ",";
+        myFile << m_comboPath[i].vel << ",";
+        myFile << m_comboPath[i].accel;
+        myFile << "\n";
+    }
+
+    myFile.close();
+}
+
+void TrajectoryGenerator1D::readWaypointsFromCSV() {
+    std::vector<waypoint> waypoints;
+    waypoint tempWaypoint;
+    std::string header;
+    char delim;
+    
+    // open file
+    std::ifstream myFile;
+    myFile.open(m_waypointsFilename, std::ifstream::in);
+
+    // read config
+    unsigned sampleRate;
+    getline(myFile, header, ',');
+    myFile >> sampleRate;
+    setSampleRate(sampleRate);
+    
+    double maxSpeed;
+    getline(myFile, header, ',');
+    myFile >> maxSpeed;
+    setMaxSpeed(maxSpeed);
+    
+    double maxAccel;
+    getline(myFile, header, ',');
+    myFile >> maxAccel;
+    setMaxAccel(maxAccel);
+    
+    double maxDeccel;
+    getline(myFile, header, ',');
+    myFile >> maxDeccel;
+    setMaxDeccel(maxDeccel);
+
+    bool isContinous;
+    getline(myFile, header, ',');
+    myFile >> isContinous;
+
+    double minRange;
+    getline(myFile, header, ',');
+    myFile >> minRange;
+
+    double maxRange;
+    getline(myFile, header, ',');
+    myFile >> maxRange;
+    setIsContinous(isContinous, minRange, maxRange);
+    
+    // read data
+    getline(myFile, header); // skip \n
+    getline(myFile, header); // skip blank line
+    getline(myFile, header); // skip headers
+    
+    while(myFile >> tempWaypoint.pos >> delim
+                >> tempWaypoint.speed) {
+        waypoints.push_back(tempWaypoint);
+    }
+    
+    // close file
+    myFile.close();
+    
+    // set waypoints
+    setWaypoints(waypoints);
 }
 
 void TrajectoryGenerator1D::integratePath(std::vector<finalPathPoint> &integratedPath, bool isBackward) {

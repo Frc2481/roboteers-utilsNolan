@@ -178,7 +178,7 @@ void PIDVAController::update(
     double error = refP - measP;
     
     // check wraparound
-    if(m_isContinous && (fabs(error) > (m_rangeMax - m_rangeMin) / 2)) {
+    if(m_isContinous && (fabs(error) > (m_rangeMax - m_rangeMin) / 2.0)) {
         if(error > 0) {
             error = error - (m_rangeMax - m_rangeMin);
         }

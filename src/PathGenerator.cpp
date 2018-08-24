@@ -138,23 +138,23 @@ void PathGenerator::generatePath() {
         }
         else {
             // calculate arc between points
-            double arcRad = maxDistThresh * sin(theta / 2) / (1 - sin(theta / 2));
+            double arcRad = maxDistThresh * sin(theta / 2.0) / (1 - sin(theta / 2.0));
             if(arcRad < MIN_ARC_RAD) { // remove velocity spike at discontinuity
                 arcRad = MIN_ARC_RAD;
             }
-            double arcHeight = arcRad * (1 - cos((M_PI - theta) / 2));
-            double arcChordLen = 2 * arcRad * sin((M_PI - theta) / 2);
-            double straightDist = sqrt(pow((maxDistThresh + arcHeight), 2) + pow((arcChordLen / 2), 2));
+            double arcHeight = arcRad * (1 - cos((M_PI - theta) / 2.0));
+            double arcChordLen = 2 * arcRad * sin((M_PI - theta) / 2.0);
+            double straightDist = sqrt(pow((maxDistThresh + arcHeight), 2) + pow((arcChordLen / 2.0), 2));
                 // distance between p2 and point where path transitions from straight to rounded corner
 
             // limit arc radius if too large for distance between points
-            double limitDist = std::min(v21.norm(), v23.norm()) / 2;
+            double limitDist = std::min(v21.norm(), v23.norm()) / 2.0;
             if(straightDist > limitDist) {
                 straightDist = limitDist;
-                arcChordLen = 2 * straightDist * sin(theta / 2);
-                arcRad = arcChordLen * sin(theta / 2) / sin(M_PI - theta);
-                arcHeight = arcRad * (1 - cos((M_PI - theta) / 2));
-                maxDistThresh = straightDist * cos(theta / 2) - arcHeight;
+                arcChordLen = 2 * straightDist * sin(theta / 2.0);
+                arcRad = arcChordLen * sin(theta / 2.0) / sin(M_PI - theta);
+                arcHeight = arcRad * (1 - cos((M_PI - theta) / 2.0));
+                maxDistThresh = straightDist * cos(theta / 2.0) - arcHeight;
             }
 
             // calculate points on arc that are tangent to v21 and v23
@@ -169,7 +169,7 @@ void PathGenerator::generatePath() {
 
             // generate points along arc
             double phiStep = (M_PI - theta) / NUM_PHI_STEPS;
-            double phi = sign(v21.cross(v23)) * (M_PI - theta) / 2;
+            double phi = sign(v21.cross(v23)) * (M_PI - theta) / 2.0;
             for(unsigned j = 1; j <= NUM_PHI_STEPS; j++) {
                 Translation2D p7 = p6 - v26.rotateBy(Rotation2D::fromRadians(phi)).scaleBy(arcRad / v26.norm());
                 tempPathGenPoint.xPos = p7.getX();
@@ -184,7 +184,7 @@ void PathGenerator::generatePath() {
                 }
 
                 // check if waypoint
-                if(j == ceil(NUM_PHI_STEPS / 2)) {
+                if(j == ceil(NUM_PHI_STEPS / 2.0)) {
                     tempPathGenPoint.vel = speed;
                 }
                 else {
@@ -292,7 +292,7 @@ void PathGenerator::generatePath() {
         tempFinalPathPoint.yPos = interpolate::interp(tempPathDist, tempPathYPos, tempFinalPathPoint.dist, false);
         double dx = tempFinalPathPoint.xPos - m_finalPath.back().xPos;
         double dy = tempFinalPathPoint.yPos - m_finalPath.back().yPos;
-        tempFinalPathPoint.yaw = atan2(dy, dx) * 180 / M_PI;
+        tempFinalPathPoint.yaw = atan2(dy, dx) * 180.0 / M_PI;
 
         // add yaw to first point in final path
         if(m_finalPath.size() == 1) {
@@ -312,7 +312,7 @@ void PathGenerator::generatePath() {
     tempFinalPathPoint.yPos = m_tempPath.back().yPos;
     double dx = tempFinalPathPoint.xPos - m_finalPath.back().xPos;
     double dy = tempFinalPathPoint.yPos - m_finalPath.back().yPos;
-    tempFinalPathPoint.yaw = atan2(dy, dx) * 180 / M_PI;
+    tempFinalPathPoint.yaw = atan2(dy, dx) * 180.0 / M_PI;
     tempFinalPathPoint.yawRate = 0;
     m_finalPath.push_back(tempFinalPathPoint);
 }
@@ -531,7 +531,7 @@ void PathGenerator::integratePath(std::vector<pathGenPoint> &integratedPath, boo
                     && (m_tempPath[i].radCurve != std::numeric_limits<double>::infinity())
                     && (m_tempPath[i - 1].radCurve != std::numeric_limits<double>::infinity())) {
                     latSlipSpeed = sqrt(m_maxCentripAccel * m_tempPath[i].radCurve);
-                    limitWheelSpeed = m_maxSpeed / (1 + (1 / m_tempPath[i].radCurve) * (m_wheelTrack / 2));
+                    limitWheelSpeed = m_maxSpeed / (1 + (1 / m_tempPath[i].radCurve) * (m_wheelTrack / 2.0));
                 }
             }
             else {
@@ -540,7 +540,7 @@ void PathGenerator::integratePath(std::vector<pathGenPoint> &integratedPath, boo
                     && (m_tempPath[i].radCurve != std::numeric_limits<double>::infinity())
                     && (m_tempPath[i + 1].radCurve != std::numeric_limits<double>::infinity())) {
                     latSlipSpeed = sqrt(m_maxCentripAccel * m_tempPath[i].radCurve);
-                    limitWheelSpeed = m_maxSpeed / (1 + (1 / m_tempPath[i].radCurve) * (m_wheelTrack / 2));
+                    limitWheelSpeed = m_maxSpeed / (1 + (1 / m_tempPath[i].radCurve) * (m_wheelTrack / 2.0));
                 }
             }
         }

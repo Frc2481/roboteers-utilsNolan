@@ -1,10 +1,10 @@
-#include "PathGenerator.h"
+#include "TrajectoryGenerator1D.h"
 #include <iostream>
 
 int main() {
-    PathGenerator pathGenerator;
-    std::vector<PathGenerator::waypoint> waypoints;
-    PathGenerator::waypoint tempWaypoint;
+    TrajectoryGenerator1D pathGenerator;
+    std::vector<TrajectoryGenerator1D::waypoint> waypoints;
+    TrajectoryGenerator1D::waypoint tempWaypoint;
     
     pathGenerator.readWaypointsFromCSV();
     pathGenerator.generatePath();

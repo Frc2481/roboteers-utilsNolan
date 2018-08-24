@@ -170,7 +170,8 @@ void PIDVAController::update(
 
     // check reference wraparound
     if(m_isContinous && ((refP > m_rangeMax) || (refP < m_rangeMin))) {
-        refP = m_rangeMin + abs(fmod(refP, m_rangeMax - m_rangeMin));
+        refP = m_rangeMin - 
+            (m_rangeMax - m_rangeMin) * cos(refP / (m_rangeMax - m_rangeMin) * 2 * M_PI);
     }
 
     // calculate error

@@ -39,15 +39,13 @@ Rotation2D& Rotation2D::operator=(const Rotation2D &rhs) {
 }
 
 Rotation2D& Rotation2D::operator+=(const Rotation2D &rhs) {
-    this->m_cos = this->rotateBy(rhs).m_cos;
-    this->m_sin = this->rotateBy(rhs).m_sin;
+    *this = *this + rhs;
 
     return *this;
 }
 
 Rotation2D& Rotation2D::operator-=(const Rotation2D &rhs) {
-    this->m_cos = this->rotateBy(rhs.inverse()).m_cos;
-    this->m_sin = this->rotateBy(rhs.inverse()).m_sin;
+    *this = *this - rhs;
 
     return *this;
 }

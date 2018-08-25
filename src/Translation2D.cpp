@@ -27,15 +27,13 @@ Translation2D& Translation2D::operator=(const Translation2D &rhs) {
 }
 
 Translation2D& Translation2D::operator+=(const Translation2D &rhs) {
-    this->m_x = this->translateBy(rhs).m_x;
-    this->m_y = this->translateBy(rhs).m_y;
+    *this = *this + rhs;
 
 	return *this;
 }
 
 Translation2D& Translation2D::operator-=(const Translation2D &rhs) {
-    this->m_x = this->translateBy(rhs.inverse()).m_x;
-    this->m_y = this->translateBy(rhs.inverse()).m_y;
+    *this = *this - rhs;
 
     return *this;
 }

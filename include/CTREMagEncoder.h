@@ -34,5 +34,4 @@ private:
     std::string m_name;
 };
 
-
 #endif // CTRE_MAG_ENCODER_H

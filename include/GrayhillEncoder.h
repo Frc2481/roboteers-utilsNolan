@@ -9,7 +9,7 @@
 class GrayhillEncoder {
 public:
     GrayhillEncoder(TalonSRX* talon, const std::string &name);
-    GrayhillEncoder();
+    ~GrayhillEncoder();
 
     void update();
     void zero();

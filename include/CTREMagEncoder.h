@@ -9,7 +9,7 @@
 class CTREMagEncoder {
 public:
     CTREMagEncoder(TalonSRX* talon, const std::string &name);
-    CTREMagEncoder();
+    ~CTREMagEncoder();
 
     void update();
     void zero();

@@ -13,7 +13,6 @@ GrayhillEncoder::GrayhillEncoder(TalonSRX* talon, const std::string &name),
 }
 
 GrayhillEncoder::~GrayhillEncoder() {
-
 }
 
 void GrayhillEncoder::update() {

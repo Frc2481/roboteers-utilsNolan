@@ -1,14 +1,18 @@
 #include "MotorVelocityController.h"
 
 MotorVelocityController::MotorVelocityController(
-		const uint32_t &driveMotorID,
-        const double &kp,
-		const double &ki,
-		const double &kd,
-		const double &kv,
-		const double &ka,
-        const double &iZone,
-        const double &iErrorLim) {
+    const uint32_t &driveMotorID,
+    const double &kp,
+    const double &ki,
+    const double &kd,
+    const double &kv,
+    const double &ka,
+    const double &iZone,
+    const double &iErrorLim)
+    
+    : m_kv(kv),
+    m_ka(ka) {
+
     m_driveMotor = new TalonSRX(driveMotorID);
     m_driveMotor->SelectProfileSlot(0, 0);
 	m_driveMotor->Set(ControlMode::Velocity, 0);
@@ -27,11 +31,9 @@ MotorVelocityController::MotorVelocityController(
 	m_driveMotor->ConfigPeakOutputReverse(-1.0, 0.0);
 	m_driveMotor->SetSensorPhase(true);
 	m_driveMotor->SetInverted(false);
-    m_kv = kv;
-    m_ka = ka;
 }
 
-~MotorVelocityController::MotorVelocityController() {
+MotorVelocityController::~MotorVelocityController() {
 }
 
 void MotorVelocityController::update(const double &refV, const double &refA) {

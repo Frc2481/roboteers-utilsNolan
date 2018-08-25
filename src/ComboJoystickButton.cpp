@@ -4,11 +4,9 @@ ComboJoystickButton::ComboJoystickButton(Button *primaryButton, Button *secondar
 	: m_pPrimaryButton(primaryButton);
 	m_pSecondaryButton(secondaryButton);
 	m_secondaryPressed(secondaryPressed) {
-	
 }
 
-~ComboJoystickButton() {
-	
+ComboJoystickButton::~ComboJoystickButton() {
 }
 
 bool ComboJoystickButton::Get()

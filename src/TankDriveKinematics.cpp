@@ -1,13 +1,11 @@
 #include "TankDriveKinematics.h"
 #include <math.h>
 
-TankDriveKinematics::TankDriveKinematics()
-    : m_wheelTrack(24) {
-    
+TankDriveKinematics::TankDriveKinematics(const double &wheelTrack)
+    : m_wheelTrack(wheelTrack) {
 }
 
 TankDriveKinematics::~TankDriveKinematics() {
-
 }
 
 void TankDriveKinematics::setWheelTrack(const double &wheelTrack) {

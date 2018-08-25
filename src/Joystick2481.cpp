@@ -2,12 +2,10 @@
 #include <math.h>
 
 Joystick2481::Joystick2481(int port)
-	: Joystick(port) {
-	
+	: Joystick(port) {	
 }
 
 Joystick2481::~Joystick2481() {
-
 }
 
 float Joystick2481::GetRawAxis(int axis) {

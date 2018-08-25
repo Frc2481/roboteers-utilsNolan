@@ -9,7 +9,7 @@
 
 class TankDriveKinematics {
 public:
-    TankDriveKinematics();
+    TankDriveKinematics(const double &wheelTrack);
     ~TankDriveKinematics();
 
     void setWheelTrack(const double &wheelTrack);

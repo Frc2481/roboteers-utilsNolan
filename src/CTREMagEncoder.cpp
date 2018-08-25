@@ -21,7 +21,6 @@ CTREMagEncoder::CTREMagEncoder(TalonSRX* talon, const std::string &name),
 }
 
 CTREMagEncoder::~CTREMagEncoder() {
-
 }
 
 void CTREMagEncoder::update() {

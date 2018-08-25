@@ -34,8 +34,8 @@ RigidTransform2D& RigidTransform2D::operator=(const RigidTransform2D &rhs) {
 }
 
 RigidTransform2D RigidTransform2D::transformBy(const RigidTransform2D &other) const {
-    Translation2D newTranslation = m_translation.translateBy(other.m_translation.rotateBy(m_rotation));
-    Rotation2D newRotation = m_rotation.rotateBy(other.m_rotation);
+    Rotation2D newRotation = m_rotation.rotateBy(other.getRotation());
+    Translation2D newTranslation = m_translation.translateBy(other.getTranslation().rotateBy(newRotation));
 
     return RigidTransform2D(newTranslation, newRotation);
 }

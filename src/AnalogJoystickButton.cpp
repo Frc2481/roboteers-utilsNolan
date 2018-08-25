@@ -4,11 +4,9 @@ AnalogJoystickButton::AnalogJoystickButton(GenericHID *joystick, uint32_t axisNu
 	: m_threshold(threshold),
 	m_pJoystick(joystick),
 	m_axisNumber(axisNumber) {
-	
 }
 
-~AnalogJoystickButton() {
-	
+AnalogJoystickButton::~AnalogJoystickButton() {
 }
 
 bool AnalogJoystickButton::Get()

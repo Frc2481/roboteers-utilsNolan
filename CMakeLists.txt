@@ -11,6 +11,7 @@ set(SOURCES src/main.cpp
             src/PIDVAController.cpp
             src/TrajectoryGenerator1D.cpp
             src/TankDriveKinematics.cpp
+            src/Pose.cpp
 )
 
 include_directories(include)

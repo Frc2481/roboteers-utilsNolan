@@ -8,28 +8,37 @@
 #include <fstream>
 #include <stdio.h>
 
-PathGenerator::PathGenerator()
-    : m_waypoints(),
-    m_tempPath(),
+PathGenerator::PathGenerator(
+    std::vector<waypoint_t> &waypoints,
+    const double &sampleRate,
+    const double &wheelTrack,
+    const double &maxSpeed,
+    const double &maxAccel,
+    const double &maxDeccel,
+    const double &maxCentripAccel)
+
+    : m_tempPath(),
     m_comboPath(),
     m_finalPath(),
-    m_sampleRate(50),
+    m_sampleRate(sampleRate),
     m_isReverse(false),
-    m_wheelTrack(20),
-    m_maxSpeed(100),
-    m_maxAccel(150),
-    m_maxDeccel(-150),
-    m_maxCentripAccel(386.2 * 0.2),  // 386.2 in/s^2 = 1 G, friction coefficient = 0.2
+    m_wheelTrack(wheelTrack),
+    m_maxSpeed(maxSpeed),
+    m_maxAccel(maxAccel),
+    m_maxDeccel(maxDeccel),
+    m_maxCentripAccel(maxCentripAccel),
     m_waypointsFilename("tempWaypoints.csv"),
     m_pathFilename("tempFinalPath.csv") {
+    
+    setWaypoints(waypoints);
 }
 
 PathGenerator::~PathGenerator() {
 }
 
-void PathGenerator::setWaypoints(std::vector<waypoint> &waypoints) {
+void PathGenerator::setWaypoints(std::vector<waypoint_t> &waypoints) {
     m_waypoints.clear();
-    for(std::vector<waypoint>::iterator it = waypoints.begin(); it != waypoints.end(); ++it) {
+    for(std::vector<waypoint_t>::iterator it = waypoints.begin(); it != waypoints.end(); ++it) {
         it->speed = abs(it->speed);
         it->maxDistThresh = abs(it->maxDistThresh);
         m_waypoints.push_back(*it);
@@ -82,13 +91,13 @@ void PathGenerator::setPathFilename(const std::string &pathFilename) {
     m_pathFilename = pathFilename;
 }
 
-std::vector<PathGenerator::finalPathPoint> PathGenerator::getFinalPath() {
+std::vector<PathGenerator::finalPathPoint_t> PathGenerator::getFinalPath() {
     return m_finalPath;
 }
 
 void PathGenerator::generatePath() {
-    pathGenPoint tempPathGenPoint;
-    finalPathPoint tempFinalPathPoint;
+    pathGenPoint_t tempPathGenPoint;
+    finalPathPoint_t tempFinalPathPoint;
 
     // clear old path
     m_tempPath.clear();
@@ -227,11 +236,11 @@ void PathGenerator::generatePath() {
     }
     
     // integrate path forward
-    std::vector<pathGenPoint> fwdPath;
+    std::vector<pathGenPoint_t> fwdPath;
     integratePath(fwdPath, false);
 
     // integrate path backward
-    std::vector<pathGenPoint> bwdPath;
+    std::vector<pathGenPoint_t> bwdPath;
     integratePath(bwdPath, true);
     
     // combine forward and backward paths with min speed
@@ -381,8 +390,8 @@ void PathGenerator::writeComboPathToCSV() {
 }
 
 void PathGenerator::readWaypointsFromCSV() {
-    std::vector<waypoint> waypoints;
-    waypoint tempWaypoint;
+    std::vector<waypoint_t> waypoints;
+    waypoint_t tempWaypoint;
     std::string header;
     char delim;
     
@@ -445,8 +454,8 @@ void PathGenerator::readWaypointsFromCSV() {
     setWaypoints(waypoints);
 }
 
-void PathGenerator::integratePath(std::vector<pathGenPoint> &integratedPath, bool isBackward) {
-    pathGenPoint tempPathGenPoint;
+void PathGenerator::integratePath(std::vector<pathGenPoint_t> &integratedPath, bool isBackward) {
+    pathGenPoint_t tempPathGenPoint;
 
     // clear path
     integratedPath.clear();

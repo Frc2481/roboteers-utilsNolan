@@ -15,15 +15,12 @@ template <typename T> int sign(T val) {
 
 class TrajectoryGenerator1D {
 public:
-    TrajectoryGenerator1D();
-	~TrajectoryGenerator1D();
-
-    struct waypoint {
+    struct waypoint_t {
         double pos;
         double speed;
     };
 
-    struct finalPathPoint {
+    struct finalPathPoint_t {
         double time;    // timestamp (s)
         double pos;    // position (units)
         double dist;    // distance traveled along path (units)
@@ -31,7 +28,16 @@ public:
         double accel;   // acceleration (units/s)
     };
 
-    void setWaypoints(std::vector<waypoint> &waypoints);
+    TrajectoryGenerator1D(
+        std::vector<waypoint_t> &waypoints,
+        const double &sampleRate,
+        const double &maxSpeed,
+        const double &maxAccel,
+        const double &maxDeccel);
+
+	~TrajectoryGenerator1D();
+
+    void setWaypoints(std::vector<waypoint_t> &waypoints);
     void setSampleRate(const unsigned &sampleRate);
     void setMaxSpeed(const double &maxSpeed);
     void setMaxAccel(const double &maxAccel);
@@ -48,7 +54,7 @@ public:
 		const double &rangeMin,
 		const double &rangeMax);
 
-    std::vector<finalPathPoint> getFinalPath();
+    std::vector<finalPathPoint_t> getFinalPath();
 
     //////////////////////////////////////////////////////////////////////
     // @brief generate path from waypoints
@@ -76,10 +82,10 @@ public:
     void readWaypointsFromCSV();
 
 private:
-    std::vector<waypoint> m_waypoints;  // desired waypoints to travel through
-    std::vector<finalPathPoint> m_tempPath; // trajectory generator temporary path
-    std::vector<finalPathPoint> m_comboPath; // trajectory generator temporary path
-    std::vector<finalPathPoint> m_finalPath; // generated path to follow
+    std::vector<waypoint_t> m_waypoints;  // desired waypoints to travel through
+    std::vector<finalPathPoint_t> m_tempPath; // trajectory generator temporary path
+    std::vector<finalPathPoint_t> m_comboPath; // trajectory generator temporary path
+    std::vector<finalPathPoint_t> m_finalPath; // generated path to follow
     unsigned m_sampleRate;  // sample rate of generated path points (Hz)
     double m_maxSpeed;  // max speed (units/s)
     double m_maxAccel;  // max acceleration (units/s)
@@ -95,7 +101,7 @@ private:
     // @brief integrate path forward in time to calculate speed and acceleration
     // at given distance along path
     //////////////////////////////////////////////////////////////////////
-    void integratePath(std::vector<finalPathPoint> &integratedPath, bool isBackward);
+    void integratePath(std::vector<finalPathPoint_t> &integratedPath, bool isBackward);
 };
 
 #endif // TRAJECTORY_GENERATOR_1D_H

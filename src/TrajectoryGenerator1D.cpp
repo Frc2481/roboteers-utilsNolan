@@ -7,28 +7,35 @@
 #include <fstream>
 #include <stdio.h>
 
-TrajectoryGenerator1D::TrajectoryGenerator1D()
-    : m_waypoints(),
-    m_tempPath(),
+TrajectoryGenerator1D::TrajectoryGenerator1D(
+    std::vector<waypoint_t> &waypoints,
+    const double &sampleRate,
+    const double &maxSpeed,
+    const double &maxAccel,
+    const double &maxDeccel)
+
+    : m_tempPath(),
     m_comboPath(),
     m_finalPath(),
-    m_sampleRate(50),
-    m_maxSpeed(1),
-    m_maxAccel(1),
-    m_maxDeccel(-1),
+    m_sampleRate(sampleRate),
+    m_maxSpeed(maxSpeed),
+    m_maxAccel(maxAccel),
+    m_maxDeccel(maxDeccel),
     m_rangeMin(0),
 	m_rangeMax(0),
 	m_isContinous(false),
     m_waypointsFilename("tempWaypoints.csv"),
     m_pathFilename("tempFinalPath.csv") {
+
+    setWaypoints(waypoints);
 }
 
 TrajectoryGenerator1D::~TrajectoryGenerator1D() {
 }
 
-void TrajectoryGenerator1D::setWaypoints(std::vector<waypoint> &waypoints) {
+void TrajectoryGenerator1D::setWaypoints(std::vector<waypoint_t> &waypoints) {
     m_waypoints.clear();
-    for(std::vector<waypoint>::iterator it = waypoints.begin(); it != waypoints.end(); ++it) {
+    for(std::vector<waypoint_t>::iterator it = waypoints.begin(); it != waypoints.end(); ++it) {
         it->speed = abs(it->speed);
         // check wraparound
         if(m_isContinous && ((it->pos > m_rangeMax) || (it->pos < m_rangeMin))) {
@@ -82,12 +89,12 @@ void TrajectoryGenerator1D::setIsContinous(
     m_rangeMax = rangeMax;
 }
 
-std::vector<TrajectoryGenerator1D::finalPathPoint> TrajectoryGenerator1D::getFinalPath() {
+std::vector<TrajectoryGenerator1D::finalPathPoint_t> TrajectoryGenerator1D::getFinalPath() {
     return m_finalPath;
 }
 
 void TrajectoryGenerator1D::generatePath() {
-    finalPathPoint tempPathGenPoint;
+    finalPathPoint_t tempPathGenPoint;
 
     // clear old path
     m_tempPath.clear();
@@ -139,11 +146,11 @@ void TrajectoryGenerator1D::generatePath() {
     }
     
     // integrate path forward
-    std::vector<finalPathPoint> fwdPath;
+    std::vector<finalPathPoint_t> fwdPath;
     integratePath(fwdPath, false);
 
     // integrate path backward
-    std::vector<finalPathPoint> bwdPath;
+    std::vector<finalPathPoint_t> bwdPath;
     integratePath(bwdPath, true);
 
     // combine forward and backward paths with min speed
@@ -274,8 +281,8 @@ void TrajectoryGenerator1D::writeComboPathToCSV() {
 }
 
 void TrajectoryGenerator1D::readWaypointsFromCSV() {
-    std::vector<waypoint> waypoints;
-    waypoint tempWaypoint;
+    std::vector<waypoint_t> waypoints;
+    waypoint_t tempWaypoint;
     std::string header;
     char delim;
     
@@ -334,8 +341,8 @@ void TrajectoryGenerator1D::readWaypointsFromCSV() {
     setWaypoints(waypoints);
 }
 
-void TrajectoryGenerator1D::integratePath(std::vector<finalPathPoint> &integratedPath, bool isBackward) {
-    finalPathPoint tempPathGenPoint;
+void TrajectoryGenerator1D::integratePath(std::vector<finalPathPoint_t> &integratedPath, bool isBackward) {
+    finalPathPoint_t tempPathGenPoint;
 
     // clear path
     integratedPath.clear();

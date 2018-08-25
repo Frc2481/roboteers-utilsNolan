@@ -14,17 +14,14 @@ template <typename T> int sign(T val) {
 
 class PathGenerator {
 public:
-    PathGenerator();
-    ~PathGenerator();
-
-    struct waypoint {
+    struct waypoint_t {
         double xPos;    // x position (in)
         double yPos;    // y position (in)
         double speed;   // speed (in/s)
         double maxDistThresh;   // max distance away that robot is allowed to travel from waypoint (in)
     };
 
-    struct finalPathPoint {
+    struct finalPathPoint_t {
         double time;    // timestamp (s)
         double xPos;    // x position (in)
         double yPos;    // y position (in)
@@ -35,7 +32,7 @@ public:
         double yawRate; // yaw rate (rad/s)
     };
 
-    struct pathGenPoint {
+    struct pathGenPoint_t {
         double xPos;    // x position (in)
         double yPos;    // y position (in)
         double vel;     // velocity (in/s)
@@ -43,7 +40,18 @@ public:
         double dist;    // distance traveled along path (in)
     };
 
-    void setWaypoints(std::vector<waypoint> &waypoints);
+    PathGenerator(
+        std::vector<waypoint_t> &waypoints,
+        const double &sampleRate,
+        const double &wheelTrack,
+        const double &maxSpeed,
+        const double &maxAccel,
+        const double &maxDeccel,
+        const double &maxCentripAccel);
+        
+    ~PathGenerator();
+
+    void setWaypoints(std::vector<waypoint_t> &waypoints);
     void setSampleRate(const unsigned &sampleRate);
     void setIsReverse(const bool &isReverse);
     void setWheelTrack(const double &wheelTrack);
@@ -54,7 +62,7 @@ public:
     void setWaypointsFilename(const std::string &waypointsFilename);
     void setPathFilename(const std::string &pathFilename);
 
-    std::vector<finalPathPoint> getFinalPath();
+    std::vector<finalPathPoint_t> getFinalPath();
 
     //////////////////////////////////////////////////////////////////////
     // @brief generate path from waypoints for tank drive robot to follow
@@ -82,10 +90,10 @@ public:
     void readWaypointsFromCSV();
 
 private:
-    std::vector<waypoint> m_waypoints;  // desired waypoints for robot to travel through
-    std::vector<pathGenPoint> m_tempPath;  // path generator temporary path
-    std::vector<finalPathPoint> m_comboPath; // path generator temporary path
-    std::vector<finalPathPoint> m_finalPath; // generated path for robot to follow
+    std::vector<waypoint_t> m_waypoints;  // desired waypoints for robot to travel through
+    std::vector<pathGenPoint_t> m_tempPath;  // path generator temporary path
+    std::vector<finalPathPoint_t> m_comboPath; // path generator temporary path
+    std::vector<finalPathPoint_t> m_finalPath; // generated path for robot to follow
     unsigned m_sampleRate;  // sample rate of generated path points (Hz)
     bool m_isReverse;   // reverse path direction
     double m_wheelTrack;    // width between left and right wheels (in)
@@ -101,7 +109,7 @@ private:
     // @brief integrate path forward in time to calculate speed and acceleration
     // at given distance along path
     //////////////////////////////////////////////////////////////////////
-    void integratePath(std::vector<pathGenPoint> &integratedPath, bool isBackward);
+    void integratePath(std::vector<pathGenPoint_t> &integratedPath, bool isBackward);
     
     //////////////////////////////////////////////////////////////////////
     // @brief acos() with safe bounds around +/-1 for floats

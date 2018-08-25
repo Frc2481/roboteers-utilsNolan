@@ -2,9 +2,10 @@
 #include <iostream>
 
 int main() {
-    TrajectoryGenerator1D pathGenerator;
-    std::vector<TrajectoryGenerator1D::waypoint> waypoints;
-    TrajectoryGenerator1D::waypoint tempWaypoint;
+    std::vector<TrajectoryGenerator1D::waypoint_t> waypoints;
+
+    TrajectoryGenerator1D pathGenerator(waypoints, 100, 100, 100, -100);
+    TrajectoryGenerator1D::waypoint_t tempWaypoint;
     
     pathGenerator.readWaypointsFromCSV();
     pathGenerator.generatePath();

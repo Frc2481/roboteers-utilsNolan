@@ -51,54 +51,6 @@ PIDVAController::PIDVAController(
 PIDVAController::~PIDVAController() {
 }
 
-double PIDVAController::getKp() const {
-    return m_kp;
-}
-
-double PIDVAController::getKi() const {
-    return m_ki;
-}
-
-double PIDVAController::getKd() const {
-    return m_kd;
-}
-
-double PIDVAController::getKv() const {
-    return m_kv;
-}
-
-double PIDVAController::getKa() const {
-    return m_ka;
-}
-
-double PIDVAController::getRangeMin() const {
-    return m_rangeMin;
-}
-
-double PIDVAController::getRangeMax() const {
-    return m_rangeMax;
-}
-
-bool PIDVAController::getIsContinous() const {
-    return m_isContinous;
-}
-
-double PIDVAController::getIZone() const {
-    return m_iZone;
-}
-
-double PIDVAController::getIErrorLim() const {
-    return m_iErrorLim;
-}
-
-double PIDVAController::getTargetZone() const {
-    return m_targetZone;
-}
-
-double PIDVAController::getTargetZoneDebounce() const {
-    return m_targetZoneDebounce;
-}
-
 void PIDVAController::setKp(const double &kp) {
     m_kp = kp;
 }

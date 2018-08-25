@@ -15,19 +15,6 @@ public:
 		const double &ka);
 	~PIDVAController();
 	
-	double getKp() const;
-	double getKi() const;
-	double getKd() const;
-	double getKv() const;
-	double getKa() const;
-	double getRangeMin() const;
-	double getRangeMax() const;
-	bool getIsContinous() const;
-	double getIZone() const;
-	double getIErrorLim() const;
-	double getTargetZone() const;
-	double getTargetZoneDebounce() const;
-	
 	void setKp(const double &kp);
 	void setKi(const double &ki);
 	void setKd(const double &kd);

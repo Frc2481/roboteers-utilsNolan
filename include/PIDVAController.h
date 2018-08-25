@@ -1,7 +1,8 @@
 //////////////////////////////////////////////////////////////////////
 // PIDVA controller
 //////////////////////////////////////////////////////////////////////
-#pragma once
+#ifndef PIDVA_CONTROLLER_H
+#define PIDVA_CONTROLLER_H
 
 class PIDVAController {
 public:
@@ -103,3 +104,5 @@ private:
 	double m_isOnTargetStartTime;	// timestamp when first on target (s) 
 	bool m_onTargetFirstTime;		// flag indicating if on target for first time
 };
+
+#endif // PIDVA_CONTROLLER_H

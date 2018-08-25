@@ -1,7 +1,9 @@
 //////////////////////////////////////////////////////////////////////
 // 2D rigid body translations
 //////////////////////////////////////////////////////////////////////
-#pragma once
+#ifndef TRANSLATION_2D_H
+#define TRANSLATION_2D_H
+
 #include "Rotation2D.h"
 
 class Translation2D {
@@ -66,3 +68,5 @@ private:
     double m_x;
     double m_y;
 };
+
+#endif // TRANSLATION_2D_H

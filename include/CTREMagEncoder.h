@@ -1,4 +1,6 @@
-#pragma once
+#ifndef CTRE_MAG_ENCODER_H
+#define CTRE_MAG_ENCODER_H
+
 #include <string>
 #include "ctre/Phoenix.h"
 
@@ -30,3 +32,6 @@ private:
     int m_encoderTicksZero;
     std::string m_name;
 };
+
+
+#endif // CTRE_MAG_ENCODER_H

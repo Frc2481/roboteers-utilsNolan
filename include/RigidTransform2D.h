@@ -1,7 +1,9 @@
 //////////////////////////////////////////////////////////////////////
 // 2D rigid body transformations
 //////////////////////////////////////////////////////////////////////
-#pragma once
+#ifndef RIGID_TRANSFORM_2D_H
+#define RIGID_TRANSFORM_2D_H
+
 #include "Rotation2D.h"
 #include "Translation2D.h"
 
@@ -36,3 +38,5 @@ private:
     Translation2D m_translation;
     Rotation2D m_rotation;
 };
+
+#endif // RIGID_TRANSFORM_2D_H

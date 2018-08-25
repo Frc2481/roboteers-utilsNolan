@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PATH_GENERATOR_H
+#define PATH_GENERATOR_H
+
 #include <vector>
 #include <string>
 
@@ -106,3 +108,5 @@ private:
     //////////////////////////////////////////////////////////////////////
     double safeACos(double val);
 };
+
+#endif // PATH_GENERATOR_H

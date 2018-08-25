@@ -1,7 +1,9 @@
 //////////////////////////////////////////////////////////////////////
 // 1D trajectory generator
 //////////////////////////////////////////////////////////////////////
-#pragma once
+#ifndef TRAJECTORY_GENERATOR_1D_H
+#define TRAJECTORY_GENERATOR_1D_H
+
 #include <vector>
 #include <string>
 
@@ -95,3 +97,5 @@ private:
     //////////////////////////////////////////////////////////////////////
     void integratePath(std::vector<finalPathPoint> &integratedPath, bool isBackward);
 };
+
+#endif // TRAJECTORY_GENERATOR_1D_H

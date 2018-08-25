@@ -1,7 +1,8 @@
 //////////////////////////////////////////////////////////////////////
 // 2D rigid body rotations
 //////////////////////////////////////////////////////////////////////
-#pragma once
+#ifndef ROTATION_2D_H
+#define ROTATION_2D_H
 
 class Rotation2D {
 public:
@@ -46,3 +47,5 @@ private:
     double m_cos;
     double m_sin;
 };
+
+#endif // ROTATION_2D_H 

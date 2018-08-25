@@ -13,8 +13,8 @@ public:
 
     void update();
     void zero();
+    void zeroTalon();
     int getTicks();
-    bool isZeroed()
     double getRevs();
     double getAngle();
     double getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel);
@@ -25,6 +25,7 @@ public:
     double convertWheelDistanceToRevs(const double &wheelDistance);
     double convertWheelDistanceToTicks(const double &wheelDistance);
     double convertWheelDistanceToTickSetpoint(const double &wheelDistance);
+}
 
 private:
     TalonSRX* m_talon;

@@ -13,8 +13,8 @@ public:
 
     void update();
     void zero();
+    bool isZeroed();
     int getTicks();
-    bool isZeroed()
     double getRevs();
     double getAngle();
     double getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel);

@@ -33,8 +33,9 @@ void CTREMagEncoder::zero() {
     Preferences::GetInstance()->PutDouble(m_calibrationKey, m_encoderTicksZero);
 }
 
-bool CTREMagEncoder::isZeroed() {
-    return m_encoderTicksZero != 0;
+void CTREMagEncoder::zeroTalon() {
+    m_talon->SetSelectedSensorPosition(0, 0, 0);
+    zero();
 }
 
 int CTREMagEncoder::getTicks() {

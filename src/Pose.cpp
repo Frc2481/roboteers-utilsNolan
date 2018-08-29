@@ -33,9 +33,9 @@ RigidTransform2D Pose::update(
     double robotDeltaYawGyroMeas = deltaYawGyro;
 
     // estimate lateral wheel slip
-    double deltaCentripAccel = robotDeltaDistWheelMeas * deltaYawGyro * M_PI / 180.0;
+    double deltaCentripAccel = -robotDeltaDistWheelMeas * deltaYawGyro * M_PI / 180.0;
     double deltaLatWheelSlip = robotDeltaDistWheelMeas
-        * deltaCentripAccel / 386.1 * m_cornerStiffCoeff; // 386.1 in/s^2 = 9.81 m/s^2
+        * -deltaCentripAccel / 386.1 * m_cornerStiffCoeff; // 386.1 in/s^2 = 9.81 m/s^2
 
     // update pose with measurements
     Translation2D deltaPosRobotFrame = Translation2D(deltaLatWheelSlip, robotDeltaDistWheelMeas);

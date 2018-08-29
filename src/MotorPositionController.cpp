@@ -1,5 +1,8 @@
 #include "MotorPositionController.h"
 
+MotorPositionController::MotorPositionController() {
+}
+
 MotorPositionController::MotorPositionController(
     const uint32_t &driveMotorID,
     const double &kp,

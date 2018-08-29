@@ -1,5 +1,8 @@
 #include "MotorVelocityController.h"
 
+MotorVelocityController::MotorVelocityController() {
+}
+
 MotorVelocityController::MotorVelocityController(
     const uint32_t &driveMotorID,
     const double &kp,

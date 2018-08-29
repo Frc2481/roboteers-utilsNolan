@@ -4,6 +4,10 @@
 #include "RigidTransform2D.h"
 #include "TankDriveKinematics.h"
 
+// +x = robot right
+// +y = robot forward
+// +yaw = CCW, zero is robot forward
+
 class Pose {
 public:
     Pose(const RigidTransform2D &pose, const double &wheelTrack);

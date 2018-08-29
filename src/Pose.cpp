@@ -1,4 +1,5 @@
 #include "Pose.h"
+#include <math.h>
 
 Pose::Pose(const RigidTransform2D &pose, const double &wheelTrack)
     : m_pose(pose),
@@ -9,8 +10,8 @@ Pose::Pose(const RigidTransform2D &pose, const double &wheelTrack)
 Pose::~Pose() {
 }
 
-void Pose::setCornStiffCoeff(const double &cornStiffCoeff) {
-    m_cornerStiffCoeff = cornStiffCoeff;
+void Pose::setCornerStiffCoeff(const double &cornerStiffCoeff) {
+    m_cornerStiffCoeff = cornerStiffCoeff;
 }
 
 void Pose::reset(const RigidTransform2D &pose) {

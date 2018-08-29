@@ -33,13 +33,6 @@ RigidTransform2D& RigidTransform2D::operator=(const RigidTransform2D &rhs) {
 	return *this;
 }
 
-RigidTransform2D RigidTransform2D::transformBy(const RigidTransform2D &other) const {
-    Rotation2D newRotation = m_rotation.rotateBy(other.getRotation());
-    Translation2D newTranslation = m_translation.translateBy(other.getTranslation().rotateBy(newRotation));
-
-    return RigidTransform2D(newTranslation, newRotation);
-}
-
 Translation2D RigidTransform2D::getTranslation() const {
     return m_translation;
 }
@@ -54,11 +47,4 @@ void RigidTransform2D::setTranslation(const Translation2D &translation) {
 
 void RigidTransform2D::setRotation(const Rotation2D &rotation) {
     m_rotation = rotation;
-}
-
-RigidTransform2D RigidTransform2D::inverse() const {
-    Rotation2D newRotation = m_rotation.inverse();
-    Translation2D newTranslation = m_translation.inverse().rotateBy(newRotation);
-
-    return RigidTransform2D(newTranslation, newRotation);
 }

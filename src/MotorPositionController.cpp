@@ -8,10 +8,12 @@ MotorPositionController::MotorPositionController(
     const double &kv,
     const double &ka,
     const double &iZone,
-    const double &iErrorLim)
+    const double &iErrorLim,
+    const unsigned &ticksPerRev)
     
     : m_kv(kv),
-    m_ka(ka) {
+    m_ka(ka),
+    m_ticksPerRev(ticksPerRev) {
     
     m_driveMotor = new TalonSRX(driveMotorID);
     m_driveMotor->SelectProfileSlot(0, 0);
@@ -37,6 +39,8 @@ MotorPositionController::~MotorPositionController() {
 }
 
 void MotorPositionController::update(const double &refP, const double &refV, const double &refA) {
+    refV = refV * m_ticksPerRev / 100.0; // convert to talon native units
+    refA = refA * m_ticksPerRev / 100.0 / 100.0; // convert to talon native units
     double feedforwardControl = refV * m_kv + refA * m_ka;
     m_driveMotor->Set(ControlMode::Position, refP, DemandType::ArbitraryFeedForward, feedforwardControl);
 }

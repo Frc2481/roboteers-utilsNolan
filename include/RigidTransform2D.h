@@ -18,21 +18,11 @@ public:
 
     RigidTransform2D& operator=(const RigidTransform2D &other);
 
-    //////////////////////////////////////////////////////////////////////
-    // @brief transform transform by other transform
-    //////////////////////////////////////////////////////////////////////
-    RigidTransform2D transformBy(const RigidTransform2D &other) const;
-
     Translation2D getTranslation() const;
     Rotation2D getRotation() const;
     
     void setTranslation(const Translation2D &translation);
     void setRotation(const Rotation2D &rotation);
-
-    //////////////////////////////////////////////////////////////////////
-    // @brief inverse of transformation
-    //////////////////////////////////////////////////////////////////////
-    RigidTransform2D inverse() const;
 
 private:
     Translation2D m_translation;

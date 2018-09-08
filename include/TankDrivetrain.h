@@ -18,8 +18,8 @@ public:
     void TankDrivetrain(
         const double &wheelTrack,
         const double &wheelRad,
-        const uint32_t &leftDriveMotorID,
-        const uint32_t &rightDriveMotorID,
+        uint32_t leftDriveMotorID,
+        uint32_t rightDriveMotorID,
         const double &kp,
         const double &ki,
         const double &kd,
@@ -27,8 +27,8 @@ public:
         const double &ka,
         const double &iZone,
         const double &iErrorLim,
-        const unsigned &ticksPerRev,
-        const unsigned &updateRate);
+        unsigned ticksPerRev,
+        unsigned updateRate);
     void ~TankDrivetrain();
 
     void setMaxSpeed(const double &maxSpeed);

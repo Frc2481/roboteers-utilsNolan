@@ -16,8 +16,8 @@ public:
     Rotation2D& operator=(const Rotation2D &rhs);
     Rotation2D& operator+=(const Rotation2D &rhs);
     Rotation2D& operator-=(const Rotation2D &rhs);
-	const Rotation2D operator+(const Rotation2D &other);
-    const Rotation2D operator-(const Rotation2D &other);
+	Rotation2D operator+(const Rotation2D &other) const;
+    Rotation2D operator-(const Rotation2D &other) const;
 
     double getCos() const;
     double getSin() const;

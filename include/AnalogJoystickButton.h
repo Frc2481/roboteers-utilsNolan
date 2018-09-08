@@ -6,7 +6,7 @@
 class AnalogJoystickButton : public Button
 {
 public:
-    AnalogJoystickButton(GenericHID *joystick, uint32_t axisNumber, double threshold);
+    AnalogJoystickButton(GenericHID *joystick, uint32_t axisNumber, const double &threshold);
     virtual ~AnalogJoystickButton();
 
     virtual bool Get();

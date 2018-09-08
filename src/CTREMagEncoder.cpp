@@ -37,35 +37,35 @@ void CTREMagEncoder::zeroTalon() {
     zero();
 }
 
-int CTREMagEncoder::getTicks() {
+int CTREMagEncoder::getTicks() const {
 	return m_encoderTicks - m_encoderTicksZero;
 }
 
-double CTREMagEncoder::getRevs() {
+double CTREMagEncoder::getRevs() const {
     return getEncoderTicks() / (double)TICKS_PER_REV;
 }
 
-double CTREMagEncoder::getAngle() {
+double CTREMagEncoder::getAngle() const {
     return (getEncoderRevs() % 1) * 180.0 / M_PI;
 }
 
-double CTREMagEncoder::getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel) {
+double CTREMagEncoder::getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel) const {
     return getEncoderRevs() * gearRatioEncoderToWheel * wheelRadius * 2.0 * M_PI;
 }
 
-double CTREMagEncoder::convertRevsToTicks(const double &revs) {
+double CTREMagEncoder::convertRevsToTicks(const double &revs) const {
     return revs * (double)TICKS_PER_REV;
 }
 
-double CTREMagEncoder::convertRevsToTickSetpoint(const double &revs) {
+double CTREMagEncoder::convertRevsToTickSetpoint(const double &revs) const {
     return convertRevsToTicks(revs) + m_encoderTicksZero;
 }
 
-double CTREMagEncoder::convertAngleToTicks(const double &angle) {
+double CTREMagEncoder::convertAngleToTicks(const double &angle) const {
     return convertRevsToTicks(angle * M_PI / 180.0);
 }
 
-double CTREMagEncoder::convertAngleToTickSetpoint(const double &angle) {
+double CTREMagEncoder::convertAngleToTickSetpoint(const double &angle) const {
     double angleTicks = convertAngleToTicks(angle);
     double currentTicks = getTicks();
     
@@ -82,18 +82,18 @@ double CTREMagEncoder::convertAngleToTickSetpoint(const double &angle) {
     return currentTicks + error;
 }
 
-double CTREMagEncoder::convertWheelDistanceToRevs(const double &wheelDistance) {
+double CTREMagEncoder::convertWheelDistanceToRevs(const double &wheelDistance) const {
     return wheelDistance / (wheelRadius * 2.0 * M_PI);
 }
 
-double CTREMagEncoder::convertWheelDistanceToTicks(const double &wheelDistance) {
+double CTREMagEncoder::convertWheelDistanceToTicks(const double &wheelDistance) const {
     return convertRevsToTicks(convertWheelDistanceToRevs(wheelDistance));
 }
 
-double CTREMagEncoder::convertWheelDistanceToTickSetpoint(const double &wheelDistance) {
+double CTREMagEncoder::convertWheelDistanceToTickSetpoint(const double &wheelDistance) const {
     return convertWheelDistanceToTicks(wheelDistance) + m_encoderTicksZero;
 }
 
-bool CTREMagEncoder::IsConnected() {
+bool CTREMagEncoder::IsConnected() const {
 	return m_talon->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0;
 }

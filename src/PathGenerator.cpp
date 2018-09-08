@@ -45,11 +45,11 @@ void PathGenerator::setWaypoints(std::vector<waypoint_t> &waypoints) {
     }
 }
 
-void PathGenerator::setSampleRate(const unsigned &sampleRate) {
+void PathGenerator::setSampleRate(unsigned sampleRate) {
     m_sampleRate = sampleRate;
 }
 
-void PathGenerator::setIsReverse(const bool &isReverse) {
+void PathGenerator::setIsReverse(bool isReverse) {
     m_isReverse = isReverse;
 }
 
@@ -91,7 +91,7 @@ void PathGenerator::setPathFilename(const std::string &pathFilename) {
     m_pathFilename = pathFilename;
 }
 
-std::vector<PathGenerator::finalPathPoint_t> PathGenerator::getFinalPath() {
+std::vector<PathGenerator::finalPathPoint_t> PathGenerator::getFinalPath() const {
     return m_finalPath;
 }
 
@@ -326,7 +326,7 @@ void PathGenerator::generatePath() {
     m_finalPath.push_back(tempFinalPathPoint);
 }
 
-void PathGenerator::writePathToCSV() {
+void PathGenerator::writePathToCSV() const {
     std::remove(m_pathFilename.c_str());
     
     std::ofstream myFile;
@@ -348,7 +348,7 @@ void PathGenerator::writePathToCSV() {
     myFile.close();
 }
 
-void PathGenerator::writeTempPathToCSV() {
+void PathGenerator::writeTempPathToCSV() const {
     std::remove("tempPath.csv");
     
     std::ofstream myFile;
@@ -367,7 +367,7 @@ void PathGenerator::writeTempPathToCSV() {
     myFile.close();
 }
 
-void PathGenerator::writeComboPathToCSV() {
+void PathGenerator::writeComboPathToCSV() const {
     std::remove("tempComboPath.csv");
     
     std::ofstream myFile;
@@ -576,8 +576,7 @@ void PathGenerator::integratePath(std::vector<pathGenPoint_t> &integratedPath, b
     }
 }
 
-double PathGenerator::safeACos(double val)
-{
+double PathGenerator::safeACos(double val) const {
     if(val > 1.0) {
         val = 1.0;
     }

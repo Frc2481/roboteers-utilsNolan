@@ -72,7 +72,7 @@ void PIDVAController::setKa(const double &ka) {
 }
 
 void PIDVAController::setIsContinous(
-    const bool &isContinous,
+    bool isContinous,
     const double &rangeMin,
     const double &rangeMax) {
     
@@ -192,7 +192,7 @@ void PIDVAController::update(
     m_iErrorOld = iError;
 }
 
-bool PIDVAController::isOnTarget() {
+bool PIDVAController::isOnTarget() const {
     return m_isOnTarget;
 }
 

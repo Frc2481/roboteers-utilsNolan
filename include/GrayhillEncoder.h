@@ -13,18 +13,18 @@ public:
 
     void update();
     void zero();
-    bool isZeroed();
-    int getTicks();
-    double getRevs();
-    double getAngle();
-    double getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel);
-    double convertRevsToTicks(const double &revs);
-    double convertRevsToTickSetpoint(const double &revs);
-    double convertAngleToTicks(const double &angle);
-    double convertAngleToTickSetpoint(const double &angle);
-    double convertWheelDistanceToRevs(const double &wheelDistance);
-    double convertWheelDistanceToTicks(const double &wheelDistance);
-    double convertWheelDistanceToTickSetpoint(const double &wheelDistance);
+    bool isZeroed() const;
+    int getTicks() const;
+    double getRevs() const;
+    double getAngle() const;
+    double getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel) const;
+    double convertRevsToTicks(const double &revs) const;
+    double convertRevsToTickSetpoint(const double &revs) const;
+    double convertAngleToTicks(const double &angle) const;
+    double convertAngleToTickSetpoint(const double &angle) const;
+    double convertWheelDistanceToRevs(const double &wheelDistance) const;
+    double convertWheelDistanceToTicks(const double &wheelDistance) const;
+    double convertWheelDistanceToTickSetpoint(const double &wheelDistance) const;
 
 private:
     TalonSRX* m_talon;

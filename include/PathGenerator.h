@@ -52,8 +52,8 @@ public:
     ~PathGenerator();
 
     void setWaypoints(std::vector<waypoint_t> &waypoints);
-    void setSampleRate(const unsigned &sampleRate);
-    void setIsReverse(const bool &isReverse);
+    void setSampleRate(unsigned sampleRate);
+    void setIsReverse(bool isReverse);
     void setWheelTrack(const double &wheelTrack);
     void setMaxSpeed(const double &maxSpeed);
     void setMaxAccel(const double &maxAccel);
@@ -62,7 +62,7 @@ public:
     void setWaypointsFilename(const std::string &waypointsFilename);
     void setPathFilename(const std::string &pathFilename);
 
-    std::vector<finalPathPoint_t> getFinalPath();
+    std::vector<finalPathPoint_t> getFinalPath() const;
 
     //////////////////////////////////////////////////////////////////////
     // @brief generate path from waypoints for tank drive robot to follow
@@ -72,17 +72,17 @@ public:
     //////////////////////////////////////////////////////////////////////
     // @brief write output path to csv file
     //////////////////////////////////////////////////////////////////////
-    void writePathToCSV();
+    void writePathToCSV() const;
     
     //////////////////////////////////////////////////////////////////////
     // @brief write temp path to csv file
     //////////////////////////////////////////////////////////////////////
-    void writeTempPathToCSV();
+    void writeTempPathToCSV() const;
     
     //////////////////////////////////////////////////////////////////////
     // @brief write combo path to csv file
     //////////////////////////////////////////////////////////////////////
-    void writeComboPathToCSV();
+    void writeComboPathToCSV() const;
     
     //////////////////////////////////////////////////////////////////////
     // @brief read waypoints from csv file
@@ -114,7 +114,7 @@ private:
     //////////////////////////////////////////////////////////////////////
     // @brief acos() with safe bounds around +/-1 for floats
     //////////////////////////////////////////////////////////////////////
-    double safeACos(double val);
+    double safeACos(double val) const;
 };
 
 #endif // PATH_GENERATOR_H

@@ -26,7 +26,7 @@ public:
 	//        rangeMin such as angle range of +/-180 deg
     //////////////////////////////////////////////////////////////////////
 	void setIsContinous(
-		const bool &isContinous,
+		bool isContinous,
 		const double &rangeMin,
 		const double &rangeMax);
 	
@@ -64,7 +64,7 @@ public:
 	//        error is within +/-targetZone for m_targetZoneDebounce period
 	//        time.
     //////////////////////////////////////////////////////////////////////
-	bool isOnTarget();
+	bool isOnTarget() const;
 	
 	//////////////////////////////////////////////////////////////////////
     // @brief reset error terms of controller

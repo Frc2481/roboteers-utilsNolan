@@ -38,7 +38,7 @@ public:
 	~TrajectoryGenerator1D();
 
     void setWaypoints(std::vector<waypoint_t> &waypoints);
-    void setSampleRate(const unsigned &sampleRate);
+    void setSampleRate(unsigned sampleRate);
     void setMaxSpeed(const double &maxSpeed);
     void setMaxAccel(const double &maxAccel);
     void setMaxDeccel(const double &maxDeccel);
@@ -50,11 +50,11 @@ public:
 	//        rangeMin such as angle range of +/-180 deg
     //////////////////////////////////////////////////////////////////////
 	void setIsContinous(
-		const bool &isContinous,
+		bool isContinous,
 		const double &rangeMin,
 		const double &rangeMax);
 
-    std::vector<finalPathPoint_t> getFinalPath();
+    std::vector<finalPathPoint_t> getFinalPath() const;
 
     //////////////////////////////////////////////////////////////////////
     // @brief generate path from waypoints
@@ -64,17 +64,17 @@ public:
     //////////////////////////////////////////////////////////////////////
     // @brief write output path to csv file
     //////////////////////////////////////////////////////////////////////
-    void writePathToCSV();
+    void writePathToCSV() const;
 
     //////////////////////////////////////////////////////////////////////
     // @brief write temp path to csv file
     //////////////////////////////////////////////////////////////////////
-    void writeTempPathToCSV();
+    void writeTempPathToCSV() const;
     
     //////////////////////////////////////////////////////////////////////
     // @brief write combo path to csv file
     //////////////////////////////////////////////////////////////////////
-    void writeComboPathToCSV();
+    void writeComboPathToCSV() const;
     
     //////////////////////////////////////////////////////////////////////
     // @brief read waypoints from csv file

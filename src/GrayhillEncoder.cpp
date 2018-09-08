@@ -23,39 +23,39 @@ void GrayhillEncoder::zero() {
     m_encoderTicksZero = m_talon->GetSelectedSensorPosition(0);
 }
 
-bool GrayhillEncoder::isZeroed() {
+bool GrayhillEncoder::isZeroed() const {
     return m_encoderTicksZero != 0;
 }
 
-int GrayhillEncoder::getTicks() {
+int GrayhillEncoder::getTicks() const {
 	return m_encoderTicks - m_encoderTicksZero;
 }
 
-double GrayhillEncoder::getRevs() {
+double GrayhillEncoder::getRevs() const {
     return getEncoderTicks() / (double)TICKS_PER_REV;
 }
 
-double GrayhillEncoder::getAngle() {
+double GrayhillEncoder::getAngle() const {
     return (getEncoderRevs() % 1) * 180.0 / M_PI;
 }
 
-double GrayhillEncoder::getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel) {
+double GrayhillEncoder::getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel) const {
     return getEncoderRevs() * gearRatioEncoderToWheel * wheelRadius * 2.0 * M_PI;
 }
 
-double GrayhillEncoder::convertRevsToTicks(const double &revs) {
+double GrayhillEncoder::convertRevsToTicks(const double &revs) const {
     return revs * (double)TICKS_PER_REV;
 }
 
-double GrayhillEncoder::convertRevsToTickSetpoint(const double &revs) {
+double GrayhillEncoder::convertRevsToTickSetpoint(const double &revs) const {
     return convertRevsToTicks(revs) + m_encoderTicksZero;
 }
 
-double GrayhillEncoder::convertAngleToTicks(const double &angle) {
+double GrayhillEncoder::convertAngleToTicks(const double &angle) const {
     return convertRevsToTicks(angle * M_PI / 180.0);
 }
 
-double GrayhillEncoder::convertAngleToTickSetpoint(const double &angle) {
+double GrayhillEncoder::convertAngleToTickSetpoint(const double &angle) const {
     double angleTicks = convertAngleToTicks(angle);
     double currentTicks = getTicks();
     
@@ -72,14 +72,14 @@ double GrayhillEncoder::convertAngleToTickSetpoint(const double &angle) {
     return currentTicks + error;
 }
 
-double GrayhillEncoder::convertWheelDistanceToRevs(const double &wheelDistance) {
+double GrayhillEncoder::convertWheelDistanceToRevs(const double &wheelDistance) const {
     return wheelDistance / (wheelRadius * 2.0 * M_PI);
 }
 
-double GrayhillEncoder::convertWheelDistanceToTicks(const double &wheelDistance) {
+double GrayhillEncoder::convertWheelDistanceToTicks(const double &wheelDistance) const {
     return convertRevsToTicks(convertWheelDistanceToRevs(wheelDistance));
 }
 
-double GrayhillEncoder::convertWheelDistanceToTickSetpoint(const double &wheelDistance) {
+double GrayhillEncoder::convertWheelDistanceToTickSetpoint(const double &wheelDistance) const {
     return convertWheelDistanceToTicks(wheelDistance) + m_encoderTicksZero;
 }

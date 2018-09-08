@@ -50,11 +50,11 @@ Rotation2D& Rotation2D::operator-=(const Rotation2D &rhs) {
     return *this;
 }
 
-const Rotation2D Rotation2D::operator+(const Rotation2D &other) {
+Rotation2D Rotation2D::operator+(const Rotation2D &other) const {
     return (*this).rotateBy(other);
 }
 
-const Rotation2D Rotation2D::operator-(const Rotation2D &other) {
+Rotation2D Rotation2D::operator-(const Rotation2D &other) const {
     return (*this).rotateBy(other.inverse());
 }
 

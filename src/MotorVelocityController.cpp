@@ -4,7 +4,7 @@ MotorVelocityController::MotorVelocityController() {
 }
 
 MotorVelocityController::MotorVelocityController(
-    const uint32_t &driveMotorID,
+    uint32_t driveMotorID,
     const double &kp,
     const double &ki,
     const double &kd,
@@ -12,7 +12,7 @@ MotorVelocityController::MotorVelocityController(
     const double &ka,
     const double &iZone,
     const double &iErrorLim,
-    const unsigned &ticksPerRev)
+    unsigned ticksPerRev)
     
     : m_kv(kv),
     m_ka(ka),

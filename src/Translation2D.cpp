@@ -38,11 +38,11 @@ Translation2D& Translation2D::operator-=(const Translation2D &rhs) {
     return *this;
 }
 
-const Translation2D Translation2D::operator+(const Translation2D &other) {
+Translation2D Translation2D::operator+(const Translation2D &other) const {
     return (*this).translateBy(other);
 }
 
-const Translation2D Translation2D::operator-(const Translation2D &other) {
+Translation2D Translation2D::operator-(const Translation2D &other) const {
     return (*this).translateBy(other.inverse());
 }
 

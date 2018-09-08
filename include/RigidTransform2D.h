@@ -12,8 +12,8 @@ public:
     RigidTransform2D();
     RigidTransform2D(const Translation2D &translation, const Rotation2D &rotation);
     RigidTransform2D(const RigidTransform2D &other);
-    RigidTransform2D fromTranslation(const Translation2D &translation);
-    RigidTransform2D fromRotation(const Rotation2D &rotation);
+    static RigidTransform2D fromTranslation(const Translation2D &translation);
+    static RigidTransform2D fromRotation(const Rotation2D &rotation);
     ~RigidTransform2D();
 
     RigidTransform2D& operator=(const RigidTransform2D &other);

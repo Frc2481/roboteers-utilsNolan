@@ -47,7 +47,7 @@ void TrajectoryGenerator1D::setWaypoints(std::vector<waypoint_t> &waypoints) {
     }
 }
 
-void TrajectoryGenerator1D::setSampleRate(const unsigned &sampleRate) {
+void TrajectoryGenerator1D::setSampleRate(unsigned sampleRate) {
     m_sampleRate = sampleRate;
 }
 
@@ -70,7 +70,7 @@ void TrajectoryGenerator1D::setMaxDeccel(const double &maxDeccel) {
 }
 
 void TrajectoryGenerator1D::setIsContinous(
-    const bool &isContinous,
+    bool isContinous,
     const double &rangeMin,
     const double &rangeMax) {
     
@@ -89,7 +89,7 @@ void TrajectoryGenerator1D::setIsContinous(
     m_rangeMax = rangeMax;
 }
 
-std::vector<TrajectoryGenerator1D::finalPathPoint_t> TrajectoryGenerator1D::getFinalPath() {
+std::vector<TrajectoryGenerator1D::finalPathPoint_t> TrajectoryGenerator1D::getFinalPath() const {
     return m_finalPath;
 }
 
@@ -223,7 +223,7 @@ void TrajectoryGenerator1D::generatePath() {
     m_finalPath.push_back(tempPathGenPoint);
 }
 
-void TrajectoryGenerator1D::writePathToCSV() {
+void TrajectoryGenerator1D::writePathToCSV() const {
     std::remove(m_pathFilename.c_str());
     
     std::ofstream myFile;
@@ -242,7 +242,7 @@ void TrajectoryGenerator1D::writePathToCSV() {
     myFile.close();
 }
 
-void TrajectoryGenerator1D::writeTempPathToCSV() {
+void TrajectoryGenerator1D::writeTempPathToCSV() const {
     std::remove("tempPath.csv");
     
     std::ofstream myFile;
@@ -261,7 +261,7 @@ void TrajectoryGenerator1D::writeTempPathToCSV() {
     myFile.close();
 }
 
-void TrajectoryGenerator1D::writeComboPathToCSV() {
+void TrajectoryGenerator1D::writeComboPathToCSV() const {
     std::remove("tempComboPath.csv");
     
     std::ofstream myFile;

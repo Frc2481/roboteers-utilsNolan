@@ -1,6 +1,6 @@
 #include "AnalogJoystickButton.h"
 
-AnalogJoystickButton::AnalogJoystickButton(GenericHID *joystick, uint32_t axisNumber, double threshold)
+AnalogJoystickButton::AnalogJoystickButton(GenericHID *joystick, uint32_t axisNumber, const double &threshold)
 	: m_threshold(threshold),
 	m_pJoystick(joystick),
 	m_axisNumber(axisNumber) {
@@ -9,8 +9,7 @@ AnalogJoystickButton::AnalogJoystickButton(GenericHID *joystick, uint32_t axisNu
 AnalogJoystickButton::~AnalogJoystickButton() {
 }
 
-bool AnalogJoystickButton::Get()
-{
+bool AnalogJoystickButton::Get() {
 	if(m_threshold < 0) {
 		return m_pJoystick->GetRawAxis(m_axisNumber) < m_threshold;
 	}

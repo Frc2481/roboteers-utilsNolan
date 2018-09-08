@@ -7,7 +7,7 @@ class MotorPositionController {
 public:
     void MotorPositionController();
     void MotorPositionController(
-		const uint32_t &driveMotorID,
+		uint32_t driveMotorID,
         const double &kp,
 		const double &ki,
 		const double &kd,
@@ -15,7 +15,7 @@ public:
 		const double &ka,
         const double &iZone,
         const double &iErrorLim,
-        const unsigned &ticksPerRev);
+        unsigned ticksPerRev);
     void ~MotorPositionController();
 
     //////////////////////////////////////////////////////////////////////

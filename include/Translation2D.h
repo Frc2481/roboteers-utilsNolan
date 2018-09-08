@@ -20,8 +20,8 @@ public:
     Translation2D& operator-=(const double &rhs);
     Translation2D& operator*=(const double &rhs);
     Translation2D& operator/=(const double &rhs);
-	const Translation2D operator+(const Translation2D &other);
-    const Translation2D operator-(const Translation2D &other);
+	Translation2D operator+(const Translation2D &other) const;
+    Translation2D operator-(const Translation2D &other) const;
 
     double getX() const;
     double getY() const;

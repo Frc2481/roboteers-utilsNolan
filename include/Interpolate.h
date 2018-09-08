@@ -19,7 +19,7 @@ namespace interpolate {
         const std::vector<double> &xData,
         const std::vector<double> &yData,
         const double &x,
-        const bool &extrapolate
+        bool extrapolate
     );
 }
 

@@ -1,5 +1,5 @@
-#ifndef PATH_GENERATOR_H
-#define PATH_GENERATOR_H
+#ifndef TANK_DRIVE_PATH_GENERATOR_H
+#define TANK_DRIVE_PATH_GENERATOR_H
 
 #include <vector>
 #include <string>
@@ -12,7 +12,7 @@ template <typename T> int sign(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
-class PathGenerator {
+class TankDrivePathGenerator {
 public:
     struct waypoint_t {
         double xPos;    // x position (in)
@@ -40,7 +40,7 @@ public:
         double dist;    // distance traveled along path (in)
     };
 
-    PathGenerator(
+    TankDrivePathGenerator(
         std::vector<waypoint_t> &waypoints,
         const double &sampleRate,
         const double &wheelTrack,
@@ -49,7 +49,7 @@ public:
         const double &maxDeccel,
         const double &maxCentripAccel);
         
-    ~PathGenerator();
+    ~TankDrivePathGenerator();
 
     void setWaypoints(std::vector<waypoint_t> &waypoints);
     void setSampleRate(unsigned sampleRate);
@@ -117,4 +117,4 @@ private:
     double safeACos(double val) const;
 };
 
-#endif // PATH_GENERATOR_H
+#endif // TANK_DRIVE_PATH_GENERATOR_H

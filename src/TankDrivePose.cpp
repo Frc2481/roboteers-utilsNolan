@@ -1,24 +1,24 @@
-#include "Pose.h"
+#include "TankDrivePose.h"
 #include <math.h>
 
-Pose::Pose(const RigidTransform2D &pose, const double &wheelTrack)
+TankDrivePose::TankDrivePose(const Pose2D &pose, const double &wheelTrack)
     : m_pose(pose),
     m_kinematics(wheelTrack),
     m_cornerStiffCoeff(0) {
 }
 
-Pose::~Pose() {
+TankDrivePose::~TankDrivePose() {
 }
 
-void Pose::setCornerStiffCoeff(const double &cornerStiffCoeff) {
+void TankDrivePose::setCornerStiffCoeff(const double &cornerStiffCoeff) {
     m_cornerStiffCoeff = cornerStiffCoeff;
 }
 
-void Pose::reset(const RigidTransform2D &pose) {
+void TankDrivePose::reset(const Pose2D &pose) {
     m_pose = pose;
 }
 
-RigidTransform2D Pose::update(
+Pose2D TankDrivePose::update(
     const double &deltaDistLeftWheel,
     const double &deltaDistRightWheel,
     const double &deltaYawGyro) {
@@ -43,7 +43,7 @@ RigidTransform2D Pose::update(
     Translation2D deltaPosGlobalFrame = (deltaPosRobotFrame.rotateBy(m_pose.getRotation())
         + deltaPosRobotFrame.rotateBy(newRobotYaw)).scaleBy(0.5); // trapezoidal integration
     Translation2D newRobotPos = m_pose.getTranslation().translateBy(deltaPosGlobalFrame);
-    m_pose = RigidTransform2D(newRobotPos, newRobotYaw);
+    m_pose = Pose2D(newRobotPos, newRobotYaw);
 
     return m_pose;
 

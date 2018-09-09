@@ -1,14 +1,14 @@
-#include "PathGenerator.h"
+#include "TankDrivePathGenerator.h"
 #include <math.h>
 #include <limits>
 #include <algorithm>
-#include "RigidTransform2D.h"
+#include "Pose2D.h"
 #include "Interpolate.h"
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
 
-PathGenerator::PathGenerator(
+TankDrivePathGenerator::TankDrivePathGenerator(
     std::vector<waypoint_t> &waypoints,
     const double &sampleRate,
     const double &wheelTrack,
@@ -33,10 +33,10 @@ PathGenerator::PathGenerator(
     setWaypoints(waypoints);
 }
 
-PathGenerator::~PathGenerator() {
+TankDrivePathGenerator::~TankDrivePathGenerator() {
 }
 
-void PathGenerator::setWaypoints(std::vector<waypoint_t> &waypoints) {
+void TankDrivePathGenerator::setWaypoints(std::vector<waypoint_t> &waypoints) {
     m_waypoints.clear();
     for(std::vector<waypoint_t>::iterator it = waypoints.begin(); it != waypoints.end(); ++it) {
         it->speed = abs(it->speed);
@@ -45,57 +45,57 @@ void PathGenerator::setWaypoints(std::vector<waypoint_t> &waypoints) {
     }
 }
 
-void PathGenerator::setSampleRate(unsigned sampleRate) {
+void TankDrivePathGenerator::setSampleRate(unsigned sampleRate) {
     m_sampleRate = sampleRate;
 }
 
-void PathGenerator::setIsReverse(bool isReverse) {
+void TankDrivePathGenerator::setIsReverse(bool isReverse) {
     m_isReverse = isReverse;
 }
 
-void PathGenerator::setWheelTrack(const double &wheelTrack) {
+void TankDrivePathGenerator::setWheelTrack(const double &wheelTrack) {
     if(wheelTrack != 0) {
         m_wheelTrack = abs(wheelTrack);
     }
 }
 
-void PathGenerator::setMaxSpeed(const double &maxSpeed) {
+void TankDrivePathGenerator::setMaxSpeed(const double &maxSpeed) {
     if(maxSpeed != 0) {
         m_maxSpeed = abs(maxSpeed);
     }
 }
 
-void PathGenerator::setMaxAccel(const double &maxAccel) {
+void TankDrivePathGenerator::setMaxAccel(const double &maxAccel) {
     if(maxAccel != 0) {
         m_maxAccel = abs(maxAccel);
     }
 }
 
-void PathGenerator::setMaxDeccel(const double &maxDeccel) {
+void TankDrivePathGenerator::setMaxDeccel(const double &maxDeccel) {
     if(maxDeccel != 0) {
         m_maxDeccel = -abs(maxDeccel);
     }
 }
 
-void PathGenerator::setMaxCentripAccel(const double &maxCentripAccel) {
+void TankDrivePathGenerator::setMaxCentripAccel(const double &maxCentripAccel) {
     if(maxCentripAccel != 0) {
         m_maxCentripAccel = abs(maxCentripAccel);
     }
 }
 
-void PathGenerator::setWaypointsFilename(const std::string &waypointsFilename) {
+void TankDrivePathGenerator::setWaypointsFilename(const std::string &waypointsFilename) {
     m_waypointsFilename = waypointsFilename;
 }
 
-void PathGenerator::setPathFilename(const std::string &pathFilename) {
+void TankDrivePathGenerator::setPathFilename(const std::string &pathFilename) {
     m_pathFilename = pathFilename;
 }
 
-std::vector<PathGenerator::finalPathPoint_t> PathGenerator::getFinalPath() const {
+std::vector<TankDrivePathGenerator::finalPathPoint_t> TankDrivePathGenerator::getFinalPath() const {
     return m_finalPath;
 }
 
-void PathGenerator::generatePath() {
+void TankDrivePathGenerator::generatePath() {
     pathGenPoint_t tempPathGenPoint;
     finalPathPoint_t tempFinalPathPoint;
 
@@ -326,7 +326,7 @@ void PathGenerator::generatePath() {
     m_finalPath.push_back(tempFinalPathPoint);
 }
 
-void PathGenerator::writePathToCSV() const {
+void TankDrivePathGenerator::writePathToCSV() const {
     std::remove(m_pathFilename.c_str());
     
     std::ofstream myFile;
@@ -348,7 +348,7 @@ void PathGenerator::writePathToCSV() const {
     myFile.close();
 }
 
-void PathGenerator::writeTempPathToCSV() const {
+void TankDrivePathGenerator::writeTempPathToCSV() const {
     std::remove("tempPath.csv");
     
     std::ofstream myFile;
@@ -367,7 +367,7 @@ void PathGenerator::writeTempPathToCSV() const {
     myFile.close();
 }
 
-void PathGenerator::writeComboPathToCSV() const {
+void TankDrivePathGenerator::writeComboPathToCSV() const {
     std::remove("tempComboPath.csv");
     
     std::ofstream myFile;
@@ -389,7 +389,7 @@ void PathGenerator::writeComboPathToCSV() const {
     myFile.close();
 }
 
-void PathGenerator::readWaypointsFromCSV() {
+void TankDrivePathGenerator::readWaypointsFromCSV() {
     std::vector<waypoint_t> waypoints;
     waypoint_t tempWaypoint;
     std::string header;
@@ -454,7 +454,7 @@ void PathGenerator::readWaypointsFromCSV() {
     setWaypoints(waypoints);
 }
 
-void PathGenerator::integratePath(std::vector<pathGenPoint_t> &integratedPath, bool isBackward) {
+void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integratedPath, bool isBackward) {
     pathGenPoint_t tempPathGenPoint;
 
     // clear path
@@ -576,7 +576,7 @@ void PathGenerator::integratePath(std::vector<pathGenPoint_t> &integratedPath, b
     }
 }
 
-double PathGenerator::safeACos(double val) const {
+double TankDrivePathGenerator::safeACos(double val) const {
     if(val > 1.0) {
         val = 1.0;
     }

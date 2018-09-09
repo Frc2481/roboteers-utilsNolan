@@ -5,13 +5,13 @@ project(frcMain)
 set(SOURCES src/main.cpp
             src/Rotation2D.cpp
             src/Translation2D.cpp
-            src/RigidTransform2D.cpp
+            src/Pose2D.cpp
             src/Interpolate.cpp
-            src/PathGenerator.cpp
+            src/TankDrivePathGenerator.cpp
             src/PIDVAController.cpp
             src/TrajectoryGenerator1D.cpp
             src/TankDriveKinematics.cpp
-            src/Pose.cpp
+            src/TankDrivePose.cpp
 )
 
 include_directories(include)

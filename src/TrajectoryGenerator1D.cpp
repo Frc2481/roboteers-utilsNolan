@@ -38,9 +38,8 @@ void TrajectoryGenerator1D::setWaypoints(std::vector<waypoint_t> &waypoints) {
     for(std::vector<waypoint_t>::iterator it = waypoints.begin(); it != waypoints.end(); ++it) {
         it->speed = abs(it->speed);
         // check wraparound
-        if(m_isContinous && ((it->pos > m_rangeMax) || (it->pos < m_rangeMin))) {
-            it->pos = m_rangeMin - 
-                (m_rangeMax - m_rangeMin) * cos(it->pos / (m_rangeMax - m_rangeMin) * 2 * M_PI);
+        if(m_isContinous) {
+            it->pos = fmod(it->pos + m_rangeMax, m_rangeMax - m_rangeMin) - m_rangeMin;
         }
 
         m_waypoints.push_back(*it);
@@ -201,9 +200,8 @@ void TrajectoryGenerator1D::generatePath() {
         
         tempPathGenPoint.pos = interpolate::interp(tempPathDist, tempPathPos, tempPathGenPoint.dist, false);
         // check wraparound
-        if(m_isContinous && ((tempPathGenPoint.pos > m_rangeMax) || (tempPathGenPoint.pos < m_rangeMin))) {
-            tempPathGenPoint.pos = m_rangeMin - 
-                (m_rangeMax - m_rangeMin) * cos(tempPathGenPoint.pos / (m_rangeMax - m_rangeMin) * 2 * M_PI);
+        if(m_isContinous) {
+            tempPathGenPoint.pos = fmod(tempPathGenPoint.pos + m_rangeMax, m_rangeMax - m_rangeMin) - m_rangeMin;
         }
 
         m_finalPath.push_back(tempPathGenPoint);
@@ -216,9 +214,8 @@ void TrajectoryGenerator1D::generatePath() {
     tempPathGenPoint.accel = 0;
     tempPathGenPoint.pos = m_tempPath.back().pos;
     // check wraparound
-    if(m_isContinous && ((tempPathGenPoint.pos > m_rangeMax) || (tempPathGenPoint.pos < m_rangeMin))) {
-        tempPathGenPoint.pos = m_rangeMin - 
-            (m_rangeMax - m_rangeMin) * cos(tempPathGenPoint.pos / (m_rangeMax - m_rangeMin) * 2 * M_PI);
+    if(m_isContinous) {
+        tempPathGenPoint.pos = fmod(tempPathGenPoint.pos + m_rangeMax, m_rangeMax - m_rangeMin) - m_rangeMin;
     }
     m_finalPath.push_back(tempPathGenPoint);
 }

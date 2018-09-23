@@ -202,7 +202,7 @@ void TankDrivePathGenerator::generatePath() {
 
                 // add point to path gen points and increment phi
                 m_tempPath.push_back(tempPathGenPoint);
-                phi -= phiStep;
+                phi = phi - sign(v21.cross(v23)) * phiStep;
             }
         }
     }
@@ -394,7 +394,7 @@ void TankDrivePathGenerator::readWaypointsFromCSV() {
     waypoint_t tempWaypoint;
     std::string header;
     char delim;
-    
+
     // open file
     std::ifstream myFile;
     myFile.open(m_waypointsFilename, std::ifstream::in);
@@ -403,40 +403,46 @@ void TankDrivePathGenerator::readWaypointsFromCSV() {
     unsigned sampleRate;
     getline(myFile, header, ',');
     myFile >> sampleRate;
+    getline(myFile, header); // skip extra delimeters
     setSampleRate(sampleRate);
         
     bool isReverse;
     getline(myFile, header, ',');
     myFile >> isReverse;
+    getline(myFile, header); // skip extra delimeters
     setIsReverse(isReverse);
     
     double wheelTrack;
     getline(myFile, header, ',');
     myFile >> wheelTrack;
+    getline(myFile, header); // skip extra delimeters
     setWheelTrack(wheelTrack);
         
     double maxSpeed;
     getline(myFile, header, ',');
     myFile >> maxSpeed;
+    getline(myFile, header); // skip extra delimeters
     setMaxSpeed(maxSpeed);
     
     double maxAccel;
     getline(myFile, header, ',');
     myFile >> maxAccel;
+    getline(myFile, header); // skip extra delimeters
     setMaxAccel(maxAccel);
     
     double maxDeccel;
     getline(myFile, header, ',');
     myFile >> maxDeccel;
+    getline(myFile, header); // skip extra delimeters
     setMaxDeccel(maxDeccel);
     
     double maxCentripAccel;
     getline(myFile, header, ',');
     myFile >> maxCentripAccel;
+    getline(myFile, header); // skip extra delimeters
     setMaxCentripAccel(maxCentripAccel);
     
     // read data
-    getline(myFile, header); // skip \n
     getline(myFile, header); // skip blank line
     getline(myFile, header); // skip headers
     
@@ -445,6 +451,7 @@ void TankDrivePathGenerator::readWaypointsFromCSV() {
                 >> tempWaypoint.speed >> delim
                 >> tempWaypoint.maxDistThresh) {
         waypoints.push_back(tempWaypoint);
+        getline(myFile, header); // skip extra delimeters
     }
     
     // close file

@@ -291,44 +291,51 @@ void TrajectoryGenerator1D::readWaypointsFromCSV() {
     unsigned sampleRate;
     getline(myFile, header, ',');
     myFile >> sampleRate;
+    getline(myFile, header); // skip extra delimeters
     setSampleRate(sampleRate);
     
     double maxSpeed;
     getline(myFile, header, ',');
     myFile >> maxSpeed;
+    getline(myFile, header); // skip extra delimeters
     setMaxSpeed(maxSpeed);
     
     double maxAccel;
     getline(myFile, header, ',');
     myFile >> maxAccel;
+    getline(myFile, header); // skip extra delimeters
     setMaxAccel(maxAccel);
     
     double maxDeccel;
     getline(myFile, header, ',');
     myFile >> maxDeccel;
+    getline(myFile, header); // skip extra delimeters
     setMaxDeccel(maxDeccel);
 
     bool isContinous;
     getline(myFile, header, ',');
     myFile >> isContinous;
+    getline(myFile, header); // skip extra delimeters
 
     double minRange;
     getline(myFile, header, ',');
     myFile >> minRange;
+    getline(myFile, header); // skip extra delimeters
 
     double maxRange;
     getline(myFile, header, ',');
     myFile >> maxRange;
+    getline(myFile, header); // skip extra delimeters
     setIsContinous(isContinous, minRange, maxRange);
     
     // read data
-    getline(myFile, header); // skip \n
     getline(myFile, header); // skip blank line
     getline(myFile, header); // skip headers
     
     while(myFile >> tempWaypoint.pos >> delim
                 >> tempWaypoint.speed) {
         waypoints.push_back(tempWaypoint);
+        getline(myFile, header); // skip extra delimeters
     }
     
     // close file

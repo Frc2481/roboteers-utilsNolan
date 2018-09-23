@@ -2,8 +2,13 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import argparse
 
-csvFileName = 'PathGeneratorFinalPath.csv' # csv file name
+# read csv file name
+parser = argparse.ArgumentParser()
+parser.add_argument("csvFileName", help="path to csv file to plot")
+args = parser.parse_args()
+
 fieldFileName = '2018FieldTopDown.png' # field image file name
 fieldWidth = 12.0 * 54.0 / 2.0  # field length (in)
 fieldLength = 12.0 * 54.0 # field length (in)
@@ -35,7 +40,7 @@ def rotMat2D(angDeg):
                       [np.sin(angRad), np.cos(angRad)]])
 
 # read csv
-with open(csvFileName) as csvFile:
+with open(args.csvFileName) as csvFile:
     csvReader = csv.reader(csvFile, delimiter=',')
 
     # skip headers

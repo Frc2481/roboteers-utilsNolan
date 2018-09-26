@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
+#include "NormalizeToRange.h"
 
 TrajectoryGenerator1D::TrajectoryGenerator1D(
     std::vector<waypoint_t> &waypoints,
@@ -39,7 +40,7 @@ void TrajectoryGenerator1D::setWaypoints(std::vector<waypoint_t> &waypoints) {
         it->speed = abs(it->speed);
         // check wraparound
         if(m_isContinous) {
-            it->pos = fmod(it->pos + m_rangeMax, m_rangeMax - m_rangeMin) - m_rangeMin;
+            it->pos = normalizeToRange::normalizeToRange(it->pos, m_rangeMin, m_rangeMax, true);
         }
 
         m_waypoints.push_back(*it);
@@ -102,13 +103,8 @@ void TrajectoryGenerator1D::generatePath() {
 
     // calculate direction of travel
     double difference = m_waypoints[1].pos - m_waypoints[0].pos;
-    if(m_isContinous && (fabs(difference) > (m_rangeMax - m_rangeMin) / 2)) {
-        if(difference > 0) {
-            difference = difference - (m_rangeMax - m_rangeMin);
-        }
-        else {
-            difference = difference + (m_rangeMax - m_rangeMin);
-        }
+    if(m_isContinous) {
+        normalizeToRange::rangedDifference(difference, m_rangeMin, m_rangeMax);
     }
     int directionSign = sign(difference);
 
@@ -125,13 +121,8 @@ void TrajectoryGenerator1D::generatePath() {
     for(unsigned i = 1; i < m_waypoints.size(); ++i) {
         // unwrap position to make continous
         double difference = m_waypoints[i].pos - m_waypoints[i - 1].pos;
-        if(m_isContinous && (fabs(difference) > (m_rangeMax - m_rangeMin) / 2)) {
-            if(difference > 0) {
-                difference = difference - (m_rangeMax - m_rangeMin);
-            }
-            else {
-                difference = difference + (m_rangeMax - m_rangeMin);
-            }
+        if(m_isContinous) {
+            normalizeToRange::rangedDifference(difference, m_rangeMin, m_rangeMax);
         }
         tempPathGenPoint.pos = m_tempPath[i - 1].pos + difference;
         m_totalPathDist += fabs(difference);
@@ -201,7 +192,7 @@ void TrajectoryGenerator1D::generatePath() {
         tempPathGenPoint.pos = interpolate::interp(tempPathDist, tempPathPos, tempPathGenPoint.dist, false);
         // check wraparound
         if(m_isContinous) {
-            tempPathGenPoint.pos = fmod(tempPathGenPoint.pos + m_rangeMax, m_rangeMax - m_rangeMin) - m_rangeMin;
+            tempPathGenPoint.pos = normalizeToRange::normalizeToRange(tempPathGenPoint.pos, m_rangeMin, m_rangeMax, true);
         }
 
         m_finalPath.push_back(tempPathGenPoint);
@@ -215,7 +206,7 @@ void TrajectoryGenerator1D::generatePath() {
     tempPathGenPoint.pos = m_tempPath.back().pos;
     // check wraparound
     if(m_isContinous) {
-        tempPathGenPoint.pos = fmod(tempPathGenPoint.pos + m_rangeMax, m_rangeMax - m_rangeMin) - m_rangeMin;
+        tempPathGenPoint.pos = normalizeToRange::normalizeToRange(tempPathGenPoint.pos, m_rangeMin, m_rangeMax, true);
     }
     m_finalPath.push_back(tempPathGenPoint);
 }

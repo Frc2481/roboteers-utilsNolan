@@ -1,5 +1,6 @@
 #include "PIDVAController.h"
 #include <cmath>
+#include "NormalizeToRange.h"
 
 PIDVAController::PIDVAController()
     : m_kp(0),
@@ -122,20 +123,15 @@ void PIDVAController::update(
 
     // check reference wraparound
     if(m_isContinous) {
-        refP = fmod(refP + m_rangeMax, m_rangeMax - m_rangeMin) - m_rangeMin;
+        refP = normalizeToRange::normalizeToRange(refP, m_rangeMin, m_rangeMax, true);
     }
 
     // calculate error
     double error = refP - measP;
     
     // check wraparound
-    if(m_isContinous && (fabs(error) > (m_rangeMax - m_rangeMin) / 2.0)) {
-        if(error > 0) {
-            error = error - (m_rangeMax - m_rangeMin);
-        }
-        else {
-            error = error + (m_rangeMax - m_rangeMin);
-        }
+    if(m_isContinous) {
+        normalizeToRange::rangedDifference(error, m_rangeMin, m_rangeMax);
     }
 
     // calculate i error

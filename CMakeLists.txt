@@ -12,6 +12,7 @@ set(SOURCES src/main.cpp
             src/TrajectoryGenerator1D.cpp
             src/TankDriveKinematics.cpp
             src/TankDrivePose.cpp
+            src/NormalizeToRange.cpp
 )
 
 include_directories(include)

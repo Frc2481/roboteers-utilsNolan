@@ -39,7 +39,7 @@ public:
     // @brief command robot to drive
     // @param robotVel - forward velocity of robot (in/s)
     // @param robotYawRate - yaw rate of robot (deg/s)
-    // &param robotAccel - forward acceleration of robot (in/s^2)
+    // @param robotAccel - forward acceleration of robot (in/s^2)
     //////////////////////////////////////////////////////////////////////
     void drive(
         const double &robotVel,

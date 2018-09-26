@@ -1,4 +1,0 @@
-auto path follower
--ignore erroneous encoder data
-Limelight and vision
-

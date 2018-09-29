@@ -1,13 +1,12 @@
 #include "CTREMagEncoder.h"
 #include <math.h>
 #include <sstream>
-#include <WPILib.h>
+#include "WPILib.h"
 
 CTREMagEncoder::CTREMagEncoder(TalonSRX* talon, const std::string &name),
 	: m_talon(talon),
     m_encoderTicks(0),
     m_encoderTicksZero(0),
-    m_ticksPerRev(ticksPerRev),
     m_name(name) {
 
     std::stringstream ss;
@@ -16,7 +15,6 @@ CTREMagEncoder::CTREMagEncoder(TalonSRX* talon, const std::string &name),
     m_encoderTicksZero = Preferences::GetInstance()->GetDouble(m_calibrationKey);
 
 	m_talon->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute, 0, 0);
-	m_talon->SetSensorPhase(true);
 	m_talon->SetStatusFramePeriod(Status_2_Feedback0, 10, 0);
 }
 

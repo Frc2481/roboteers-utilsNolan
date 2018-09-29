@@ -15,9 +15,12 @@ public:
     void zero();
     bool isZeroed() const;
     int getTicks() const;
+    int getTickVelocity() const;
     double getRevs() const;
+    double getRevVelocity() const;
     double getAngle() const;
     double getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel) const;
+    double getWheelVelocity(const double &wheelRadius, const double &gearRatioEncoderToWheel) const;
     double convertRevsToTicks(const double &revs) const;
     double convertRevsToTickSetpoint(const double &revs) const;
     double convertAngleToTicks(const double &angle) const;

@@ -1,12 +1,11 @@
 #include "GrayhillEncoder.h"
 #include <math.h>
-#include <WPILib.h>
+#include "WPILib.h"
 
 GrayhillEncoder::GrayhillEncoder(TalonSRX* talon, const std::string &name),
 	: m_talon(talon),
     m_encoderTicks(0),
     m_encoderTicksZero(0),
-    m_ticksPerRev(ticksPerRev),
     m_name(name) {
 
 	m_talon->SetStatusFramePeriod(Status_2_Feedback0, 10, 0);
@@ -17,6 +16,7 @@ GrayhillEncoder::~GrayhillEncoder() {
 
 void GrayhillEncoder::update() {
     m_encoderTicks = m_talon->GetSelectedSensorPosition(0);
+    m_encoderTickVel = m_talon->getSelectedSensorVelocity(0);
 }
 
 void GrayhillEncoder::zero() {
@@ -31,8 +31,16 @@ int GrayhillEncoder::getTicks() const {
 	return m_encoderTicks - m_encoderTicksZero;
 }
 
+int GrayhillEncoder::getTickVelocity() const {
+    return m_encoderTickVel * 10; // convert from talon native units
+}
+
 double GrayhillEncoder::getRevs() const {
     return getEncoderTicks() / (double)TICKS_PER_REV;
+}
+
+double GrayhillEncoder::getRevVelocity() const {
+    return getTickVelocity() / (double)TICKS_PER_REV;
 }
 
 double GrayhillEncoder::getAngle() const {
@@ -41,6 +49,10 @@ double GrayhillEncoder::getAngle() const {
 
 double GrayhillEncoder::getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel) const {
     return getEncoderRevs() * gearRatioEncoderToWheel * wheelRadius * 2.0 * M_PI;
+}
+
+double GrayhillEncoder::getWheelVelocity(const double &wheelRadius, const double &gearRatioEncoderToWheel) const {
+    return getRevVelocity() * gearRatioEncoderToWheel * wheelRadius * 2.0 * M_PI;
 }
 
 double GrayhillEncoder::convertRevsToTicks(const double &revs) const {

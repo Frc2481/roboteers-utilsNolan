@@ -1,24 +1,23 @@
 #ifndef TANK_DRIVE_POSE_H
 #define TANK_DRIVE_POSE_H
 
-#include "Pose2D.h"
-#include "TankDriveKinematics.h"
+#include "Utils/Pose2D.h"
+#include "Utils/TankDriveKinematics.h"
 
-// +x = robot right
-// +y = robot forward
-// +yaw = CCW, zero is robot forward
+// +x = field right
+// +y = field forward
+// +yaw = CCW, zero is field forward
 
 class TankDrivePose {
 public:
-    TankDrivePose(const Pose2D &pose, const double &wheelTrack);
+    TankDrivePose(
+        const Pose2D &pose,
+        const double &wheelTrack,
+        const double &cornerStiffCoeff);
     ~TankDrivePose();
 
-    void setCornerStiffCoeff(const double &cornerStiffCoeff);
-
-    //////////////////////////////////////////////////////////////////////
-    // @brief reset pose
-    //////////////////////////////////////////////////////////////////////
     void reset(const Pose2D &pose);
+    Pose2D get();
 
     //////////////////////////////////////////////////////////////////////
     // @brief update pose estimate

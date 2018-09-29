@@ -1,21 +1,25 @@
 #include "TankDrivePose.h"
 #include <math.h>
 
-TankDrivePose::TankDrivePose(const Pose2D &pose, const double &wheelTrack)
+TankDrivePose::TankDrivePose(
+    const Pose2D &pose,
+    const double &wheelTrack,
+    const double &cornerStiffCoeff)
+    
     : m_pose(pose),
     m_kinematics(wheelTrack),
-    m_cornerStiffCoeff(0) {
+    m_cornerStiffCoeff(cornerStiffCoeff) {
 }
 
 TankDrivePose::~TankDrivePose() {
 }
 
-void TankDrivePose::setCornerStiffCoeff(const double &cornerStiffCoeff) {
-    m_cornerStiffCoeff = cornerStiffCoeff;
-}
-
 void TankDrivePose::reset(const Pose2D &pose) {
     m_pose = pose;
+}
+
+Pose2D TankDrivePose::get() {
+    return m_pose;
 }
 
 Pose2D TankDrivePose::update(

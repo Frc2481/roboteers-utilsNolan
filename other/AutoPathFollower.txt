@@ -1,7 +1,0 @@
-generate path
-ignore abnormal encoder readings
-update pose
-find closest point on path
-control law
-update drive command
-check for done

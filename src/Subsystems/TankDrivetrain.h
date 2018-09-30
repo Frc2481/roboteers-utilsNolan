@@ -34,8 +34,7 @@ public:
     void drive(
         const double &robotVel,
         const double &robotYawRate,
-        const double &robotAccel,
-        const double &time);
+        const double &robotAccel);
     void stop();
 
     Pose2D getPose();

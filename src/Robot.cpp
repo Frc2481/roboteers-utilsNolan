@@ -10,7 +10,7 @@ public:
 
 private:
     void RobotInit() {
-        SetPeriod(ROBOT_SCHEDULER_PERIOD);
+        SetPeriod(robotSechdulerPeriod);
         CommandBase::init();
     }
 

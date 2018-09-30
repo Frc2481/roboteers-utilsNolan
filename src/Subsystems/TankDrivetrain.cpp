@@ -85,31 +85,6 @@ void TankDrivetrain::drive(
         robotAccel = m_maxDeccel;
     }
 
-    double deltaTime = time - m_oldTime;
-    double limitVelHigh;
-    double limitVelLow;
-
-    double avgAccel = (m_maxAccel - m_maxDeccel) * updateRate / 2.0;
-    if(fabs(robotVel) < avgAccel) { // account for behavior around zero
-        limitVelHigh = avgAccel;
-        limitVelLow = -avgAccel;
-    }
-    if(velSign > 0) {
-        limitVelHigh = m_oldVel + m_maxAccel / (double)updateRate;
-        limitVelLow = m_oldVel + m_maxDeccel / (double)updateRate;
-    }
-    else if(velSign < 0) {
-        limitVelHigh = m_oldVel - m_maxAccel / (double)updateRate;
-        limitVelLow = m_oldVel - m_maxDeccel / (double)updateRate;
-    }
-
-    if(robotVel > limitVelHigh) {
-        robotVel = limitVelHigh;
-    }
-    else if(robotVel < limitVelLow) {
-        robotVel = limitVelLow;
-    }
-
     // limit centrip accel
     if(fabs(robotVel * robotYawRate * 180.0 / M_PI) > m_maxCentripAccel) {
         robotVel = velSign * m_maxCentripAccel / fabs(robotYawRate * 180.0 / M_PI);
@@ -162,9 +137,9 @@ void TankDriveTrain::updatePose() {
     double deltaDistLeftWheel = m_leftWheelDist - oldLeftWheelDist;
 
     // check for wheel slip
-    if(fabs(deltaDistLeftWheel) > fabs(m_leftWheelVelCmd * ROBOT_SCHEDULER_PERIOD * WHEEL_SLIP_NOISE_RATIO)) {
+    if(fabs(deltaDistLeftWheel) > fabs(m_leftWheelVelCmd * robotSechdulerPeriod * WHEEL_SLIP_NOISE_RATIO)) {
             // account for sample time and measurement noise
-        deltaDistLeftWheel = m_leftWheelVelCmd * ROBOT_SCHEDULER_PERIOD;
+        deltaDistLeftWheel = m_leftWheelVelCmd * robotSechdulerPeriod;
     }
 
     // read right wheel encoder
@@ -173,9 +148,9 @@ void TankDriveTrain::updatePose() {
     double deltaDistRightWheel = m_rightWheelDist - oldRightWheelDist;
 
     // check for wheel slip
-    if(fabs(deltaDistRightWheel) > fabs(m_rightWheelVelCmd * ROBOT_SCHEDULER_PERIOD * WHEEL_SLIP_NOISE_RATIO)) {
+    if(fabs(deltaDistRightWheel) > fabs(m_rightWheelVelCmd * robotSechdulerPeriod * WHEEL_SLIP_NOISE_RATIO)) {
             // account for sample time and measurement noise
-        deltaDistRightWheel = m_rightWheelVelCmd * ROBOT_SCHEDULER_PERIOD;
+        deltaDistRightWheel = m_rightWheelVelCmd * robotSechdulerPeriod;
     }
 
     // read IMU

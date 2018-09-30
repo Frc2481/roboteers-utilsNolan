@@ -25,11 +25,11 @@ public:
         double time;    // timestamp (s)
         double xPos;    // x position (in)
         double yPos;    // y position (in)
-        double yaw;     // yaw (rad)
+        double yaw;     // yaw (deg)
         double dist;    // distance traveled along path (in)
         double vel;     // velocity (in/s)
         double accel;   // acceleration (in/s)
-        double yawRate; // yaw rate (rad/s)
+        double yawRate; // yaw rate (deg/s)
     };
 
     struct pathGenPoint_t {

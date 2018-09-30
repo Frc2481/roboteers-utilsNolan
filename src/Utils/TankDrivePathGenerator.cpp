@@ -2,7 +2,6 @@
 #include <math.h>
 #include <limits>
 #include <algorithm>
-#include "Pose2D.h"
 #include "Interpolate.h"
 #include <iostream>
 #include <fstream>

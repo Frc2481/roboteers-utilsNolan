@@ -4,9 +4,11 @@
 #include <vector>
 #include <limits>
 #include "CommandBase.h"
-#include "Subsystems/TrankDrivetrain.h"
+#include "Subsystems/TankDrivetrain.h"
 #include "Utils/TankDrivePathGenerator.h"
 #include "Utils/Translation2D.h"
+
+#define PATH_TIMEOUT_ALLOWANCE 0.5 // timeout path if takes longer than total path time plus this allowance (s)
 
 template <typename T> int sign(T val) {
     return (T(0) < val) - (val < T(0));
@@ -25,7 +27,8 @@ public:
 		m_targetZone(targetZone),
 		m_kPTurn(kPTurn) {
 		
-		Requires(Requires(CommandBase::m_pTankDrivetrain.get()););
+		Requires(CommandBase::m_pTankDrivetrain.get());
+		setInterruptible(true);
 
 		// generate path
 		TankDrivePathGenerator pathGenerator(
@@ -47,10 +50,11 @@ public:
 		}
 	}
 
-	~DriveTrainFollowPath() {
+	~TankDrivetrainFollowPath() {
 	}
 
 	void Initialize() {
+		SetTimeout(m_path.end().time + PATH_TIMEOUT_ALLOWANCE);
 	}
 
 	void Execute() {

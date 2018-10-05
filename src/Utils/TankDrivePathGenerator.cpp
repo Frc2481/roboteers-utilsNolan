@@ -539,30 +539,26 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
         }
 
         // hold and limit lateral slip speed through turn and limit individual wheel speed
+        double radiusCurve = std::numeric_limits<double>::infinity();
         if((1 < i) && (i < (m_tempPath.size() - 2))) {
             if(!isBackward) {
                 // check if in turn
                 if((m_tempPath[i - 1].radCurve == m_tempPath[i].radCurve)
-                    && (m_tempPath[i].radCurve != std::numeric_limits<double>::infinity())
-                    && (m_tempPath[i - 1].radCurve != std::numeric_limits<double>::infinity())) {
-                    latSlipSpeed = sqrt(m_maxCentripAccel * m_tempPath[i].radCurve);
-                    limitWheelSpeed = m_maxSpeed / (1 + (1 / m_tempPath[i].radCurve) * (m_wheelTrack / 2.0));
+                    && (m_tempPath[i].radCurve != std::numeric_limits<double>::infinity())) {
+                    radiusCurve = m_tempPath[i].radCurve;
                 }
             }
             else {
                 // check if in turn
                 if((m_tempPath[i + 1].radCurve == m_tempPath[i].radCurve)
-                    && (m_tempPath[i].radCurve != std::numeric_limits<double>::infinity())
-                    && (m_tempPath[i + 1].radCurve != std::numeric_limits<double>::infinity())) {
-                    latSlipSpeed = sqrt(m_maxCentripAccel * m_tempPath[i].radCurve);
-                    limitWheelSpeed = m_maxSpeed / (1 + (1 / m_tempPath[i].radCurve) * (m_wheelTrack / 2.0));
+                    && (m_tempPath[i].radCurve != std::numeric_limits<double>::infinity())) {
+                    radiusCurve = m_tempPath[i].radCurve;
                 }
             }
         }
-        else {
-            latSlipSpeed = std::numeric_limits<double>::infinity();
-            limitWheelSpeed = std::numeric_limits<double>::infinity();
-        }
+
+        latSlipSpeed = sqrt(m_maxCentripAccel * radiusCurve);
+        limitWheelSpeed = m_maxSpeed / (1 + (1 / radiusCurve) * (m_wheelTrack / 2.0));
 
         // use minimum speed from all constraints
         double speed = std::min(std::min(std::min(std::min(accelSpeed, pathSpeed), latSlipSpeed), limitWheelSpeed), m_maxSpeed);

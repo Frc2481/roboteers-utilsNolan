@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
+#include "normalizeToRange.h"
 
 TankDrivePathGenerator::TankDrivePathGenerator(
     std::vector<waypoint_t> &waypoints,
@@ -136,7 +137,7 @@ void TankDrivePathGenerator::generatePath() {
         }
 
         // check if points lie on same line
-        if(theta == M_PI) {
+        if((theta == M_PI) || (theta == 0)) {
             // do not insert rounded corner
             tempPathGenPoint.xPos = p2.getX();
             tempPathGenPoint.yPos = p2.getY();
@@ -301,6 +302,7 @@ void TankDrivePathGenerator::generatePath() {
         double dx = tempFinalPathPoint.xPos - m_finalPath.back().xPos;
         double dy = tempFinalPathPoint.yPos - m_finalPath.back().yPos;
         tempFinalPathPoint.yaw = atan2(dy, dx) * 180.0 / M_PI;
+        tempFinalPathPoint.yaw = normalizeToRange::normalizeToRange(tempFinalPathPoint.yaw - 90, -180, 180, true);
 
         // add yaw to first point in final path
         if(m_finalPath.size() == 1) {
@@ -321,6 +323,7 @@ void TankDrivePathGenerator::generatePath() {
     double dx = tempFinalPathPoint.xPos - m_finalPath.back().xPos;
     double dy = tempFinalPathPoint.yPos - m_finalPath.back().yPos;
     tempFinalPathPoint.yaw = atan2(dy, dx) * 180.0 / M_PI;
+    tempFinalPathPoint.yaw = normalizeToRange::normalizeToRange(tempFinalPathPoint.yaw - 90, -180, 180, true);
     tempFinalPathPoint.yawRate = 0;
     m_finalPath.push_back(tempFinalPathPoint);
 }
@@ -492,8 +495,16 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
         i = m_tempPath.size() - 2;
     }
     
-    while(((integratedPath.back().dist < m_totalPathDist) && !isBackward)
-          || ((integratedPath.back().dist > 0) && isBackward)) {
+    while(((integratedPath.back().dist < (m_totalPathDist - INTEGRATE_PATH_DIST_STEP)) && !isBackward)
+          || ((integratedPath.back().dist > INTEGRATE_PATH_DIST_STEP) && isBackward)) {
+        // increment distance traveled and add to point
+        if(!isBackward) {
+            tempPathGenPoint.dist += INTEGRATE_PATH_DIST_STEP;
+        }
+        else {
+            tempPathGenPoint.dist -= INTEGRATE_PATH_DIST_STEP;
+        }
+        
         // assume that sample rate is high enough so that temp path points do not need skipped
         if(!isBackward) {
             if(tempPathGenPoint.dist > m_tempPath[i].dist) {
@@ -507,21 +518,13 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
                 isNewTempPoint = true;
             }
         }
-        
-        // increment distance traveled and add to point
-        if(!isBackward) {
-            tempPathGenPoint.dist += INTEGRATE_PATH_DIST_STEP;
-        }
-        else {
-            tempPathGenPoint.dist -= INTEGRATE_PATH_DIST_STEP;
-        }
 
         // calculate acceleration speed
         if(!isBackward) {
-            accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) + 2 * m_maxAccel * INTEGRATE_PATH_DIST_STEP);
+            accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) + 2.0 * m_maxAccel * INTEGRATE_PATH_DIST_STEP);
         }
         else {
-            accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) - 2 * m_maxDeccel * INTEGRATE_PATH_DIST_STEP);
+            accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) - 2.0 * m_maxDeccel * INTEGRATE_PATH_DIST_STEP);
         }
 
         // get path speed
@@ -579,11 +582,11 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
 }
 
 double TankDrivePathGenerator::safeACos(double val) const {
-    if(val > 1.0) {
-        val = 1.0;
+    if(val > 1) {
+        val = 1;
     }
-    else if (val < -1.0) {
-        val = -1.0;
+    else if (val < -1) {
+        val = -1;
     }
     
     return acos(val);

@@ -44,7 +44,7 @@ MotorVelocityController::~MotorVelocityController() {
 
 void MotorVelocityController::update(const double &refV, const double &refA) {
     refV = refV * m_ticksPerRev / 10.0; // convert to talon native units
-    refA = refA * m_ticksPerRev / 10.0 / 100.0; // convert to talon native units
+    refA = refA * m_ticksPerRev / 10.0; // convert to talon native units
     double feedforwardControl = refV * m_kv + refA * m_ka;
     m_pDriveMotor->Set(ControlMode::Velocity, refV, DemandType::ArbitraryFeedForward, feedforwardControl);
 }

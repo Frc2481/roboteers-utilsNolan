@@ -43,7 +43,7 @@ MotorPositionController::~MotorPositionController() {
 
 void MotorPositionController::update(const double &refP, const double &refV, const double &refA) {
     refV = refV * m_ticksPerRev / 10.0; // convert to talon native units
-    refA = refA * m_ticksPerRev / 10.0 / 10.0; // convert to talon native units
+    refA = refA * m_ticksPerRev / 10.0; // convert to talon native units
     double feedforwardControl = refV * m_kv + refA * m_ka;
     m_pDriveMotor->Set(ControlMode::Position, refP, DemandType::ArbitraryFeedForward, feedforwardControl);
 }

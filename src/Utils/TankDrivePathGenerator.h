@@ -4,9 +4,9 @@
 #include <vector>
 #include <string>
 
-#define MIN_ARC_RAD 0.1 // (in)
-#define NUM_PHI_STEPS 51
-#define INTEGRATE_PATH_DIST_STEP 0.01 // (in)
+#define MIN_ARC_RAD 10 // (in)
+#define NUM_PHI_STEPS 21
+#define INTEGRATE_PATH_DIST_STEP 1 // (in)
 
 template <typename T> int sign(T val) {
     return (T(0) < val) - (val < T(0));

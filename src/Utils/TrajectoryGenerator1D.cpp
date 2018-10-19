@@ -366,22 +366,8 @@ void TrajectoryGenerator1D::integratePath(std::vector<finalPathPoint_t> &integra
         i = m_tempPath.size() - 2;
     }
     
-    while(((integratedPath.back().dist < m_totalPathDist) && !isBackward)
-          || ((integratedPath.back().dist > 0) && isBackward)) {
-        // assume that sample rate is high enough so that temp path points do not need skipped
-        if(!isBackward) {
-            if(tempPathGenPoint.dist > m_tempPath[i].dist) {
-                i++;
-                isNewTempPoint = true;
-            }
-        }
-        else {
-            if(tempPathGenPoint.dist < m_tempPath[i].dist) {
-                i--;
-                isNewTempPoint = true;
-            }
-        }
-        
+    while(((integratedPath.back().dist < (m_totalPathDist - INTEGRATE_PATH_DIST_STEP)) && !isBackward)
+          || ((integratedPath.back().dist > INTEGRATE_PATH_DIST_STEP) && isBackward)) {      
         // increment distance traveled and add to point
         if(!isBackward) {
             tempPathGenPoint.dist += INTEGRATE_PATH_DIST_STEP;
@@ -390,26 +376,34 @@ void TrajectoryGenerator1D::integratePath(std::vector<finalPathPoint_t> &integra
             tempPathGenPoint.dist -= INTEGRATE_PATH_DIST_STEP;
         }
 
+        // get path speed
+        // assume that sample rate is high enough so that temp path points do not need skipped
+        pathSpeed = std::numeric_limits<double>::infinity();
+        if(!isBackward) {
+            if((tempPathGenPoint.dist + INTEGRATE_PATH_DIST_STEP) >= m_tempPath[i].dist) {
+                pathSpeed = m_tempPath[i].vel;
+                i++;
+            }
+            else if(tempPathGenPoint.dist >= m_tempPath[i].dist) {
+                pathSpeed = m_tempPath[i].vel;
+            }
+        }
+        else {
+            if((tempPathGenPoint.dist - INTEGRATE_PATH_DIST_STEP) <= m_tempPath[i].dist) {
+                pathSpeed = m_tempPath[i].vel;
+                i--;
+            }
+            else if(tempPathGenPoint.dist <= m_tempPath[i].dist) {
+                pathSpeed = m_tempPath[i].vel;
+            }
+        }
+
         // calculate acceleration speed
         if(!isBackward) {
             accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) + 2 * m_maxAccel * INTEGRATE_PATH_DIST_STEP);
         }
         else {
             accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) - 2 * m_maxDeccel * INTEGRATE_PATH_DIST_STEP);
-        }
-
-        // get path speed
-        if(isNewTempPoint) {
-            if(!isBackward) {
-                pathSpeed = m_tempPath[i - 1].vel;
-            }
-            else {
-                pathSpeed = m_tempPath[i + 1].vel;
-            }
-            isNewTempPoint = false;
-        }
-        else {
-            pathSpeed = std::numeric_limits<double>::infinity();
         }
 
         // use minimum speed from all constraints

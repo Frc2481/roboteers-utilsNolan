@@ -7,6 +7,7 @@
 #include <fstream>
 #include <stdio.h>
 #include "normalizeToRange.h"
+#include "Translation2D.h"
 
 TankDrivePathGenerator::TankDrivePathGenerator(
     std::vector<waypoint_t> &waypoints,
@@ -27,8 +28,8 @@ TankDrivePathGenerator::TankDrivePathGenerator(
     m_maxAccel(maxAccel),
     m_maxDeccel(maxDeccel),
     m_maxCentripAccel(maxCentripAccel),
-    m_waypointsFilename("tempWaypoints.csv"),
-    m_pathFilename("tempFinalPath.csv") {
+    m_waypointsFilename("PathGeneratorWaypoints.csv"),
+    m_pathFilename("PathGeneratorFinalPath.csv") {
     
     setWaypoints(waypoints);
 }
@@ -301,8 +302,11 @@ void TankDrivePathGenerator::generatePath() {
         tempFinalPathPoint.yPos = interpolate::interp(tempPathDist, tempPathYPos, tempFinalPathPoint.dist, false);
         double dx = tempFinalPathPoint.xPos - m_finalPath.back().xPos;
         double dy = tempFinalPathPoint.yPos - m_finalPath.back().yPos;
-        tempFinalPathPoint.yaw = atan2(dy, dx) * 180.0 / M_PI;
-        tempFinalPathPoint.yaw = normalizeToRange::normalizeToRange(tempFinalPathPoint.yaw - 90, -180, 180, true);
+        tempFinalPathPoint.yaw = atan2(dy, dx) * 180.0 / M_PI - 90.0;
+        if(m_isReverse) {
+          tempFinalPathPoint.yaw -= 180.0;  
+        }
+        tempFinalPathPoint.yaw = normalizeToRange::normalizeToRange(tempFinalPathPoint.yaw, -180, 180, true);
 
         // add yaw to first point in final path
         if(m_finalPath.size() == 1) {
@@ -322,8 +326,11 @@ void TankDrivePathGenerator::generatePath() {
     tempFinalPathPoint.yPos = m_tempPath.back().yPos;
     double dx = tempFinalPathPoint.xPos - m_finalPath.back().xPos;
     double dy = tempFinalPathPoint.yPos - m_finalPath.back().yPos;
-    tempFinalPathPoint.yaw = atan2(dy, dx) * 180.0 / M_PI;
-    tempFinalPathPoint.yaw = normalizeToRange::normalizeToRange(tempFinalPathPoint.yaw - 90, -180, 180, true);
+    tempFinalPathPoint.yaw = atan2(dy, dx) * 180.0 / M_PI - 90.0;
+    if(m_isReverse) {
+        tempFinalPathPoint.yaw -= 180.0;  
+    }
+    tempFinalPathPoint.yaw = normalizeToRange::normalizeToRange(tempFinalPathPoint.yaw, -180, 180, true);
     tempFinalPathPoint.yawRate = 0;
     m_finalPath.push_back(tempFinalPathPoint);
 }
@@ -485,7 +492,6 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
     double pathSpeed;
     double latSlipSpeed;
     double limitWheelSpeed;
-    bool isNewTempPoint = false;
     unsigned i;
     
     if(!isBackward) {
@@ -505,17 +511,25 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
             tempPathGenPoint.dist -= INTEGRATE_PATH_DIST_STEP;
         }
         
+        // get path speed
         // assume that sample rate is high enough so that temp path points do not need skipped
+        pathSpeed = std::numeric_limits<double>::infinity();
         if(!isBackward) {
-            if(tempPathGenPoint.dist > m_tempPath[i].dist) {
+            if((tempPathGenPoint.dist + INTEGRATE_PATH_DIST_STEP) >= m_tempPath[i].dist) {
+                pathSpeed = m_tempPath[i].vel;
                 i++;
-                isNewTempPoint = true;
+            }
+            else if(tempPathGenPoint.dist >= m_tempPath[i].dist) {
+                pathSpeed = m_tempPath[i].vel;
             }
         }
         else {
-            if(tempPathGenPoint.dist < m_tempPath[i].dist) {
+            if((tempPathGenPoint.dist - INTEGRATE_PATH_DIST_STEP) <= m_tempPath[i].dist) {
+                pathSpeed = m_tempPath[i].vel;
                 i--;
-                isNewTempPoint = true;
+            }
+            else if(tempPathGenPoint.dist <= m_tempPath[i].dist) {
+                pathSpeed = m_tempPath[i].vel;
             }
         }
 
@@ -525,20 +539,6 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
         }
         else {
             accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) - 2.0 * m_maxDeccel * INTEGRATE_PATH_DIST_STEP);
-        }
-
-        // get path speed
-        if(isNewTempPoint) {
-            if(!isBackward) {
-                pathSpeed = m_tempPath[i - 1].vel;
-            }
-            else {
-                pathSpeed = m_tempPath[i + 1].vel;
-            }
-            isNewTempPoint = false;
-        }
-        else {
-            pathSpeed = std::numeric_limits<double>::infinity();
         }
 
         // hold and limit lateral slip speed through turn and limit individual wheel speed

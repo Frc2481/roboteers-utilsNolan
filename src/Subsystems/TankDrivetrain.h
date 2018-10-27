@@ -26,15 +26,23 @@ public:
     virtual void Periodic();
 
     //////////////////////////////////////////////////////////////////////
-    // @brief command robot to drive
+    // @brief command robot to drive using open loop control
+    // @param percentLeftDrive - left drive percent (-1 to 1)
+    // @param percentRightDrive - right drive percent (-1 to 1)
+    //////////////////////////////////////////////////////////////////////
+    void driveOpenLoopControl(double &percentLeftDrive, double &percentRightDrive)
+
+    //////////////////////////////////////////////////////////////////////
+    // @brief command robot to drive using closed loop control
     // @param robotVel - forward velocity of robot (in/s)
     // @param robotYawRate - yaw rate of robot (deg/s)
     // @param robotAccel - forward acceleration of robot (in/s^2)
     //////////////////////////////////////////////////////////////////////
-    void drive(
+    void driveClosedLoopControl(
         const double &robotVel,
         const double &robotYawRate,
         const double &robotAccel);
+    
     void stop();
 
     Pose2D getPose();

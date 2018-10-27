@@ -103,7 +103,7 @@ public:
 		robotYawRate -= m_kPTurn * leftRightOfPath * distToClosestPoint; // assume this is perpindicular distance to path if it is closest point on path
 
 		// update drive
-		m_pTankDrivetrain->drive(robotVel, robotYawRate, robotAccel);
+		m_pTankDrivetrain->driveClosedLoopControl(robotVel, robotYawRate, robotAccel);
 	}
 
 	void Interrupted() {

@@ -40,7 +40,7 @@ public:
 		rotateController.update(refAngle, 0, 0, pose.getRotation().getDegrees(), m_time, robotYawRate);
 
 		// update drive
-		m_pTankDrivetrain->drive(0, robotYawRate, 0);
+		m_pTankDrivetrain->driveClosedLoopControl(0, robotYawRate, 0);
 	}
 
 	void Interrupted() {

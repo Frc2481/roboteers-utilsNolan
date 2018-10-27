@@ -61,7 +61,12 @@ void TankDrivetrain::Periodic() {
     updatePose();
 }
 
-void TankDrivetrain::drive(
+void TankDrivetrain::driveOpenLoopControl(double &percentLeftDrive, double &percentRightDrive) {
+    m_pLeftDriveMotorController->updateOpenLoopControl(percentLeftDrive);
+    m_pRightDriveMotorController->updateOpenLoopControl(percentRightDrive);
+}
+
+void TankDrivetrain::driveClosedLoopControl(
     const double &robotVel,
     const double &robotYawRate,
     const double &robotAccel) {
@@ -98,7 +103,7 @@ void TankDrivetrain::drive(
         m_leftWheelVelCmd = m_maxSpeed;
         m_rightWheelVelCmd = m_leftWheelVelCmd - m_wheelTrack * robotYawRate * 180.0 / M_PI;
     }
-    else if (m_leftWheelVelCmd < - m_maxSpeed) {
+    else if (m_leftWheelVelCmd < -m_maxSpeed) {
         m_maxSpeed = -m_maxSpeed;
         m_rightWheelVelCmd = m_leftWheelVelCmd - m_wheelTrack * robotYawRate * 180.0 / M_PI;
     }
@@ -106,7 +111,7 @@ void TankDrivetrain::drive(
         m_rightWheelVelCmd = m_maxSpeed;
         m_leftWheelVelCmd = m_rightWheelVelCmd + m_wheelTrack * robotYawRate * 180.0 / M_PI;
     }
-    else if (m_rightWheelVelCmd < - m_maxSpeed) {
+    else if (m_rightWheelVelCmd < -m_maxSpeed) {
         m_rightWheelVelCmd = -m_maxSpeed;
         m_rightWheelVelCmd = m_rightWheelVelCmd + m_wheelTrack * robotYawRate * 180.0 / M_PI;
     }
@@ -118,12 +123,12 @@ void TankDrivetrain::drive(
     double rightWheelAngAccel = robotAccel / m_wheelRad * 180.0 / M_PI;
     
     // update motor vel controller
-    m_pLeftDriveMotorController->update(leftWheelAngVel, leftWheelAngAccel);
-    m_pRightDriveMotorController->update(righttWheelAngVel, rightWheelAngAccel);
+    m_pLeftDriveMotorController->updateClosedLoopControl(leftWheelAngVel, leftWheelAngAccel);
+    m_pRightDriveMotorController->updateClosedLoopControl(righttWheelAngVel, rightWheelAngAccel);
 }
 
 void TankDrivetrain::stop() {
-    drive(0, 0, m_maxDeccel);
+    driveOpenLoopControl(0, 0);
 }
 
 Pose2D TankDriveTrain::getPose() {

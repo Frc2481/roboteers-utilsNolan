@@ -25,14 +25,11 @@ public:
 
 	void Execute() {
 		// get joystick input
-		double leftIn = oi->GetDriverStick()->GetRawAxis(XB_LEFT_Y_AXIS)
-		double rightIn = oi->GetDriverStick()->GetRawAxis(XB_RIGHT_Y_AXIS)
-
-		double robotVel = kp * (leftIn + rightIn) / 2.0
-		double robotYawRate = kp * (rightIn - leftIn) / 2.0
+		double percentLeftDrive = oi->GetDriverStick()->GetRawAxis(XB_LEFT_Y_AXIS)
+		double percentRightDrive = oi->GetDriverStick()->GetRawAxis(XB_RIGHT_Y_AXIS)
 
 		// update drive
-		m_pTankDrivetrain->drive(robotVel, robotYawRate, 0);
+		m_pTankDrivetrain->driveOpenLoopdriveOpenLoopControl(percentLeftDrive, percentRightDrive);
 	}
 
 	void Interrupted() {

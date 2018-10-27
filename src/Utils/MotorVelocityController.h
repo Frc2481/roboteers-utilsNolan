@@ -19,11 +19,17 @@ public:
     void ~MotorVelocityController();
 
     //////////////////////////////////////////////////////////////////////
-    // @brief update reference points of motor controller
+    // @brief update reference points of closed loop motor controller
     // @param refV - angular velocity reference point (deg/s)
     // @param refA - angular acceleration reference point (deg/s^2)
     //////////////////////////////////////////////////////////////////////
-    void update(const double &refV, const double &refA);
+    void updateClosedLoopControl(const double &refV, const double &refA);
+
+    //////////////////////////////////////////////////////////////////////
+    // @brief update reference points of open loop motor controller
+    // @param refPercent - percent reference point (-1 to 1)
+    //////////////////////////////////////////////////////////////////////
+    void updateOpenLoopControl(const double &refPercent);
 
 private:
     TalonSRX* m_pDriveMotor;

@@ -21,7 +21,7 @@ MotorVelocityController::MotorVelocityController(
     m_ticksPerRev(ticksPerRev) {
 
     m_pDriveMotor->SelectProfileSlot(0, 0);
-	m_pDriveMotor->Set(ControlMode::Velocity, 0);
+	m_pDriveMotor->Set(ControlMode::PercentOutput, 0);
 	m_pDriveMotor->Config_kP(0, kp, 0);
 	m_pDriveMotor->Config_kI(0, ki, 0);
 	m_pDriveMotor->Config_kD(0, kd, 0);
@@ -42,9 +42,13 @@ MotorVelocityController::MotorVelocityController(
 MotorVelocityController::~MotorVelocityController() {
 }
 
-void MotorVelocityController::update(const double &refV, const double &refA) {
+void MotorVelocityController::updateClosedLoopControl(const double &refV, const double &refA) {
     refV = refV * m_ticksPerRev / 10.0; // convert to talon native units
     refA = refA * m_ticksPerRev / 10.0; // convert to talon native units
     double feedforwardControl = refV * m_kv + refA * m_ka;
     m_pDriveMotor->Set(ControlMode::Velocity, refV, DemandType::ArbitraryFeedForward, feedforwardControl);
+}
+
+void MotorVelocityController::updateOpenLoopControl(const double &refPercent) {
+    m_pDriveMotor->Set(ControlMode::PercentOutput, refPercent);
 }

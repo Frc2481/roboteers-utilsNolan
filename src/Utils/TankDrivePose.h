@@ -16,22 +16,30 @@ public:
         const double &cornerStiffCoeff);
     ~TankDrivePose();
 
-    void reset(const Pose2D &pose);
-    Pose2D get();
+    void reset(const Pose2D &pose, const Pose2D &poseDot);
+    Pose2D getPose();
+    Pose2D getPoseDot();
 
     //////////////////////////////////////////////////////////////////////
     // @brief update pose estimate
     // @param deltaDistLeftWheel - change in left wheel linear distance (in)
     // @param deltaDistRightWheel - change in right wheel linear distance (in)
     // @param deltaYawGyro - change in gyro yaw (deg)
+    // @param velLeftWheel - left wheel linear velocity (in/s)
+    // @param velRightWheel - right wheel linear velocity (in/s)
+    // @param yawRateGyro - yaw rate gyro (deg/s)
     //////////////////////////////////////////////////////////////////////
-    Pose2D update(
+    void update(
         const double &deltaDistLeftWheel,
         const double &deltaDistRightWheel,
-        const double &deltaYawGyro);
+        const double &deltaYawGyro,
+        const double &velLeftWheel,
+        const double &velRightWheel,
+        const double &yawRateGyro);
 
 private:
     Pose2D m_pose;
+    Pose2D m_poseDot;
     TankDriveKinematics m_kinematics;
     double m_cornerStiffCoeff;
 };

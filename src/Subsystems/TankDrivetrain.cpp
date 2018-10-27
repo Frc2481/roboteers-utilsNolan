@@ -132,7 +132,11 @@ void TankDrivetrain::stop() {
 }
 
 Pose2D TankDriveTrain::getPose() {
-    m_tankDrivePose.get();
+    m_tankDrivePose.getPose();
+}
+
+Pose2D TankDriveTrain::getPoseDot() {
+    m_tankDrivePose.getPoseDot();
 }
 
 void TankDriveTrain::updatePose() {
@@ -140,35 +144,40 @@ void TankDriveTrain::updatePose() {
     double oldLeftWheelDist = m_leftWheelDist;
     m_leftWheelDist = m_pLeftDriveEncoder->getWheelDistance(m_wheelRad, m_driveGearRatio);
     double deltaDistLeftWheel = m_leftWheelDist - oldLeftWheelDist;
+    double velLeftWheel = m_pLeftDriveEncoder->getWheelVelocity(m_wheelRad, m_driveGearRatio);
 
     // check for wheel slip
-    if(fabs(deltaDistLeftWheel) > fabs(m_leftWheelVelCmd * robotSechdulerPeriod * WHEEL_SLIP_NOISE_RATIO)) {
+    if(fabs(velLeftWheel) > fabs(m_leftWheelVelCmd * WHEEL_SLIP_NOISE_RATIO)) {
             // account for sample time and measurement noise
         deltaDistLeftWheel = m_leftWheelVelCmd * robotSechdulerPeriod;
+        velLeftWheel = m_leftWheelVelCmd;
     }
 
     // read right wheel encoder
     double oldRightWheelDist = m_rightWheelDist;
     m_rightWheelDist = m_pRightDriveEncoder->getWheelDistance(m_wheelRad, m_driveGearRatio);
     double deltaDistRightWheel = m_rightWheelDist - oldRightWheelDist;
+    double velRightWheel = m_pRightDriveEncoder->getWheelVelocity(m_wheelRad, m_driveGearRatio);
 
     // check for wheel slip
-    if(fabs(deltaDistRightWheel) > fabs(m_rightWheelVelCmd * robotSechdulerPeriod * WHEEL_SLIP_NOISE_RATIO)) {
+    if(fabs(velRightWheel) > fabs(m_rightWheelVelCmd * WHEEL_SLIP_NOISE_RATIO)) {
             // account for sample time and measurement noise
         deltaDistRightWheel = m_rightWheelVelCmd * robotSechdulerPeriod;
+        velRightWheel = m_rightWheelVelCmd;
     }
 
     // read IMU
     double oldGyroYaw = m_gyroYaw;
     m_gyroYaw = -m_pChassisIMU->GetYaw();
     double deltaYawGyro = m_gyroYaw - oldGyroYaw;
+    double yawRateGyro = -m_pChassisIMU->GetRate();
 
     // update pose
-    m_tankDrivePose.update(deltaDistLeftWheel, deltaDistRightWheel, deltaYawGyro);
+    m_tankDrivePose.update(deltaDistLeftWheel, deltaDistRightWheel, deltaYawGyro, velLeftWheel, velRightWheel, yawRateGyro);
 }
 
-void TankDriveTrain::resetPose(const Pose2D &pose) {
-    m_tankDrivePose.reset(pose);
+void TankDriveTrain::resetPose(const Pose2D &pose, const Pose2D &poseDot) {
+    m_tankDrivePose.reset(pose, poseDot);
     m_pLeftDriveEncoder->zero();
     m_leftWheelDist = 0;
     m_pRightDriveEncoder->zero();

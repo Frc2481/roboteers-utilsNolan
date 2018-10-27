@@ -46,8 +46,9 @@ public:
     void stop();
 
     Pose2D getPose();
+    Pose2D getPoseDot();
     void updatePose();
-    void resetPose(const Pose2D &pose);
+    void resetPose(const Pose2D &pose, const Pose2D &poseDot);
 
 private:
     TalonSRX* m_pLeftDriveMotor;

@@ -5,7 +5,7 @@ MotorVelocityController::MotorVelocityController() {
 
 MotorVelocityController::MotorVelocityController(
     TalonSRX* talon,
-    uint32_t driveMotorID,
+    bool inverted,
     const double &kp,
     const double &ki,
     const double &kd,
@@ -36,7 +36,7 @@ MotorVelocityController::MotorVelocityController(
 	m_pDriveMotor->ConfigPeakOutputForward(1.0, 0.0);
 	m_pDriveMotor->ConfigPeakOutputReverse(-1.0, 0.0);
 	m_pDriveMotor->SetSensorPhase(true);
-	m_pDriveMotor->SetInverted(false);
+	m_pDriveMotor->SetInverted(inverted);
 }
 
 MotorVelocityController::~MotorVelocityController() {

@@ -57,6 +57,8 @@ private:
     MotorVelocityController* m_pRightDriveMotorController;
     GrayhillEncoder* m_pLeftDriveEncoder;
     GrayhillEncoder* m_pRightDriveEncoder;
+    TalonSRX* m_pLeftDriveMotorSlave;
+    TalonSRX* m_pRightDriveMotorSlave;
     AHRS* m_pChassisIMU;
     double m_wheelRad; // wheel radius (in)
     double m_wheelTrack; // wheel track (in)

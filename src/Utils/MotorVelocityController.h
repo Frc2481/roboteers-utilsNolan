@@ -8,6 +8,7 @@ public:
     void MotorVelocityController();
     void MotorVelocityController(
 		TalonSRX* talon,
+        bool inverted,
         const double &kp,
 		const double &ki,
 		const double &kd,

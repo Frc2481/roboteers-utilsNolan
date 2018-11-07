@@ -21,6 +21,7 @@ TankDrivetrain::TankDrivetrain()
     m_pLeftDriveMotor = new TalonSRX(leftDriveMotorID);
     m_pLeftDriveMotorController = new MotorVelocityController(
         m_pLeftDriveMotor,
+        false,
         kp,
         ki,
         kd,
@@ -30,10 +31,13 @@ TankDrivetrain::TankDrivetrain()
         iErrorLim,
         ticksPerRev);
     m_pLeftDriveEncoder = new GrayhillEncoder(m_pLeftDriveMotorController, leftDriveEncoderName);
+    m_pLeftDriveMotorSlave = new TalonSRX(leftDriveMotorSlaveID);
+    m_pLeftDriveMotorSlave->Set(ControlMode::Follower, leftDriveMotorID);
     
     m_pRightDriveMotor = new TalonSRX(rightDriveMotorID);
     m_pRightDriveMotorController = new MotorVelocityController(
         m_pRightDriveMotor,
+        true,
         kp,
         ki,
         kd,
@@ -43,6 +47,8 @@ TankDrivetrain::TankDrivetrain()
         iErrorLim,
         ticksPerRev);
     m_pRightDriveEncoder = new GrayhillEncoder(m_pRightDriveMotor, rightDriveEncoderName);
+    m_pRightDriveMotorSlave = new TalonSRX(rightDriveMotorSlaveID);
+    m_pRightDriveMotorSlave->Set(ControlMode::Follower, rightDriveMotorID);
 
     m_pChassisIMU = new AHRS(SPI::kMXP);
 
@@ -50,6 +56,33 @@ TankDrivetrain::TankDrivetrain()
 }
 
 TankDrivetrain::~TankDrivetrain() {
+    delete m_pLeftDriveMotor;
+    m_pLeftDriveMotor = nullptr;
+
+    delete m_pRightDriveMotor;
+    m_pRightDriveMotor = nullptr;
+    
+    delete m_pLeftDriveMotorController;
+    m_pLeftDriveMotorController = nullptr;
+    
+    delete m_pRightDriveMotorController;
+    m_pRightDriveMotorController = nullptr;
+    
+    delete m_pLeftDriveEncoder;
+    m_pLeftDriveEncoder = nullptr;
+    
+    delete m_pRightDriveEncoder;
+    m_pRightDriveEncoder = nullptr;
+    
+    delete m_pLeftDriveMotorSlave;
+    m_pLeftDriveMotorSlave = nullptr;
+    
+    delete m_pRightDriveMotorSlave;
+    m_pRightDriveMotorSlave = nullptr;
+    
+    delete m_pChassisIMU;
+    m_pChassisIMU = nullptr;
+    
 }
 
 void TankDrivetrain::InitDefaultCommand() {

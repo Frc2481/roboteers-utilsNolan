@@ -8,6 +8,7 @@ public:
     void MotorPositionController();
     void MotorPositionController(
 		TalonSRX* talon,
+        bool inverted,
         const double &kp,
 		const double &ki,
 		const double &kd,

@@ -5,6 +5,7 @@ MotorPositionController::MotorPositionController() {
 
 MotorPositionController::MotorPositionController(
     TalonSRX* talon,
+    bool inverted,
     const double &kp,
     const double &ki,
     const double &kd,
@@ -35,7 +36,7 @@ MotorPositionController::MotorPositionController(
 	m_pDriveMotor->ConfigPeakOutputForward(1.0, 0.0);
 	m_pDriveMotor->ConfigPeakOutputReverse(-1.0, 0.0);
 	m_pDriveMotor->SetSensorPhase(true);
-	m_pDriveMotor->SetInverted(false);
+	m_pDriveMotor->SetInverted(inverted);
 }
 
 MotorPositionController::~MotorPositionController() {

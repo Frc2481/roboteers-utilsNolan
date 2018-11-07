@@ -7,8 +7,7 @@
 #include "Subsystems/TankDrivetrain.h"
 #include "Utils/TankDrivePathGenerator.h"
 #include "Utils/Translation2D.h"
-
-#define PATH_TIMEOUT_ALLOWANCE 0.5 // timeout path if takes longer than total path time plus this allowance (s)
+#include "RobotParameters.h"
 
 template <typename T> int sign(T val) {
     return (T(0) < val) - (val < T(0));
@@ -24,8 +23,7 @@ public:
 		: CommandBase("TankDrivetrainFollowPath"),
 		m_lastPointReached(false),
 		m_distToEnd(std::numeric_limits<double>::infinity())
-		m_targetZone(targetZone),
-		m_kPTurn(kPTurn) {
+		m_targetZone(targetZone) {
 		
 		Requires(CommandBase::m_pTankDrivetrain.get());
 		setInterruptible(true);
@@ -33,12 +31,12 @@ public:
 		// generate path
 		TankDrivePathGenerator pathGenerator(
 			waypoints,
-			1 / robotSechdulerPeriod,
-			wheelTrack,
-			maxSpeed,
-			maxAccel,
-			maxDeccel,
-			maxCentripAccel);
+			1 / (double)RobotParameters::k_updateRate,
+			RobotParameters::k_wheelTrack,
+			RobotParameters::k_maxSpeed,
+			RobotParameters::k_maxAccel,
+			RobotParameters::k_maxDeccel,
+			RobotParameters::k_maxCentripAccel);
 		pathGenerator.setIsReverse(isReverse);
 		pathGenerator.generatePath();
 		m_path = pathGenerator.getFinalPath();
@@ -54,7 +52,7 @@ public:
 	}
 
 	void Initialize() {
-		SetTimeout(m_path.end().time + PATH_TIMEOUT_ALLOWANCE);
+		SetTimeout(m_path.end().time + RobotParameters::k_pathFollowerTimeoutAllowance);
 	}
 
 	void Execute() {
@@ -100,7 +98,7 @@ public:
 		// need to get direction vector to determine if left or right of path
 		Translation2D vectClosestPointToNextPoint = Translation2D(1, 0).rotateBy(Rotation2D::fromDegrees(*closestPointIt.yaw));
 		int leftRightOfPath = sign(vectClosestPointToNextPoint.cross(vectRobotToClosestPoint));
-		robotYawRate -= m_kPTurn * leftRightOfPath * distToClosestPoint; // assume this is perpindicular distance to path if it is closest point on path
+		robotYawRate -= RobotParameters::k_pathFollowerKpTurn * leftRightOfPath * distToClosestPoint; // assume this is perpindicular distance to path if it is closest point on path
 
 		// update drive
 		m_pTankDrivetrain->driveClosedLoopControl(robotVel, robotYawRate, robotAccel);

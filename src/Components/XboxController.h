@@ -4,25 +4,25 @@
 
 #include "WPILib.h"
 
-#define XB_LEFT_X_AXIS          0
-#define XB_LEFT_Y_AXIS          1
-#define XB_LEFT_TRIGGER         2
-#define XB_RIGHT_TRIGGER        3
-#define XB_RIGHT_X_AXIS         4
-#define XB_RIGHT_Y_AXIS         5
-#define XB_A_BUTTON             1
-#define XB_B_BUTTON             2
-#define XB_X_BUTTON             3
-#define XB_Y_BUTTON             4
-#define XB_LEFT_BUMPER          5
-#define XB_RIGHT_BUMPER         6
-#define XB_BACK_BUTTON          7
-#define XB_START_BUTTON         8
-#define XB_LEFT_STICK_CLICK     9
-#define XB_RIGHT_STICK_CLICK    10
-#define XB_DPAD_TOP             0
-#define XB_DPAD_RIGHT           90
-#define XB_DPAD_BOTTOM          180
-#define XB_DPAD_LEFT            270
+#define XBOX_LEFT_X_AXIS        0
+#define XBOX_LEFT_Y_AXIS        1
+#define XBOX_LEFT_TRIGGER       2
+#define XBOX_RIGHT_TRIGGER      3
+#define XBOX_RIGHT_X_AXIS       4
+#define XBOX_RIGHT_Y_AXIS       5
+#define XBOX_A_BUTTON           1
+#define XBOX_B_BUTTON           2
+#define XBOX_X_BUTTON           3
+#define XBOX_Y_BUTTON           4
+#define XBOX_LEFT_BUMPER        5
+#define XBOX_RIGHT_BUMPER       6
+#define XBOX_BACK_BUTTON        7
+#define XBOX_START_BUTTON       8
+#define XBOX_LEFT_STICK_CLICK   9
+#define XBOX_RIGHT_STICK_CLICK  10
+#define XBOX_DPAD_TOP           0
+#define XBOX_DPAD_RIGHT         90
+#define XBOX_DPAD_BOTTOM        180
+#define XBOX_DPAD_LEFT          270
 
 #endif // XBOX_CONTROLLER_H

@@ -4,8 +4,6 @@
 #include <string>
 #include "ctre/Phoenix.h"
 
-#define TICKS_PER_REV 4096
-
 class CTREMagEncoder {
 public:
     CTREMagEncoder(TalonSRX* talon, const std::string &name);

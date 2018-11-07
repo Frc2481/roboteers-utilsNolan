@@ -2,6 +2,7 @@
 #include <math.h>
 #include <sstream>
 #include "WPILib.h"
+#include "RobotParameters.h"
 
 CTREMagEncoder::CTREMagEncoder(TalonSRX* talon, const std::string &name),
 	: m_talon(talon),
@@ -40,7 +41,7 @@ int CTREMagEncoder::getTicks() const {
 }
 
 double CTREMagEncoder::getRevs() const {
-    return getEncoderTicks() / (double)TICKS_PER_REV;
+    return getEncoderTicks() / (double)RobotParameters::k_ctreMagEncoderTicksPerRev;
 }
 
 double CTREMagEncoder::getAngle() const {
@@ -52,7 +53,7 @@ double CTREMagEncoder::getWheelDistance(const double &wheelRadius, const double 
 }
 
 double CTREMagEncoder::convertRevsToTicks(const double &revs) const {
-    return revs * (double)TICKS_PER_REV;
+    return revs * (double)RobotParameters::k_ctreMagEncoderTicksPerRev;
 }
 
 double CTREMagEncoder::convertRevsToTickSetpoint(const double &revs) const {
@@ -68,12 +69,12 @@ double CTREMagEncoder::convertAngleToTickSetpoint(const double &angle) const {
     double currentTicks = getTicks();
     
     double error = angleTicks - currentTicks;
-    if(fabs(error) > (double)TICKS_PER_REV / 2.0) {
+    if(fabs(error) > (double)RobotParameters::k_ctreMagEncoderTicksPerRev / 2.0) {
         if(error > 0) {
-            error = error - (double)TICKS_PER_REV;
+            error = error - (double)RobotParameters::k_ctreMagEncoderTicksPerRev;
         }
         else {
-            error = error + (double)TICKS_PER_REV;
+            error = error + (double)RobotParameters::k_ctreMagEncoderTicksPerRev;
         }
     }
     

@@ -25,8 +25,8 @@ public:
 
 	void Execute() {
 		// get joystick input
-		double percentLeftDrive = oi->GetDriverStick()->GetRawAxis(XB_LEFT_Y_AXIS)
-		double percentRightDrive = oi->GetDriverStick()->GetRawAxis(XB_RIGHT_Y_AXIS)
+		double percentLeftDrive = oi->GetDriverStick()->GetRawAxis(XBOX_LEFT_Y_AXIS)
+		double percentRightDrive = oi->GetDriverStick()->GetRawAxis(XBOX_RIGHT_Y_AXIS)
 
 		// update drive
 		m_pTankDrivetrain->driveOpenLoopdriveOpenLoopControl(percentLeftDrive, percentRightDrive);

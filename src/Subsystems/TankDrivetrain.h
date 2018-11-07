@@ -8,8 +8,6 @@
 #include "ctre/Phoenix.h"
 #include "Utils/GrayhillEncoder.h"
 
-#define WHEEL_SLIP_NOISE_RATIO 1.2 // wheel encoder noise ratio used to detect wheel slip
-
 // +x = robot right
 // +y = robot forward
 // +yaw = CCW, zero is robot forward

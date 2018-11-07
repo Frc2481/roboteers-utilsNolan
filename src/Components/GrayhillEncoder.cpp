@@ -1,6 +1,7 @@
 #include "GrayhillEncoder.h"
 #include <math.h>
 #include "WPILib.h"
+#include "RobotParameters.h"
 
 GrayhillEncoder::GrayhillEncoder(TalonSRX* talon, const std::string &name),
 	: m_talon(talon),
@@ -36,11 +37,11 @@ int GrayhillEncoder::getTickVelocity() const {
 }
 
 double GrayhillEncoder::getRevs() const {
-    return getEncoderTicks() / (double)TICKS_PER_REV;
+    return getEncoderTicks() / (double)RobotParameters::k_grayhillEncoderTicksPerRev;
 }
 
 double GrayhillEncoder::getRevVelocity() const {
-    return getTickVelocity() / (double)TICKS_PER_REV;
+    return getTickVelocity() / (double)RobotParameters::k_grayhillEncoderTicksPerRev;
 }
 
 double GrayhillEncoder::getAngle() const {
@@ -56,7 +57,7 @@ double GrayhillEncoder::getWheelVelocity(const double &wheelRadius, const double
 }
 
 double GrayhillEncoder::convertRevsToTicks(const double &revs) const {
-    return revs * (double)TICKS_PER_REV;
+    return revs * (double)RobotParameters::k_grayhillEncoderTicksPerRev;
 }
 
 double GrayhillEncoder::convertRevsToTickSetpoint(const double &revs) const {
@@ -72,12 +73,12 @@ double GrayhillEncoder::convertAngleToTickSetpoint(const double &angle) const {
     double currentTicks = getTicks();
     
     double error = angleTicks - currentTicks;
-    if(fabs(error) > (double)TICKS_PER_REV / 2.0) {
+    if(fabs(error) > (double)RobotParameters::k_grayhillEncoderTicksPerRev / 2.0) {
         if(error > 0) {
-            error = error - (double)TICKS_PER_REV;
+            error = error - (double)RobotParameters::k_grayhillEncoderTicksPerRev;
         }
         else {
-            error = error + (double)TICKS_PER_REV;
+            error = error + (double)RobotParameters::k_grayhillEncoderTicksPerRev;
         }
     }
     

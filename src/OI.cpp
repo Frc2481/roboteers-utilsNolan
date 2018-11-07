@@ -1,8 +1,9 @@
 #include "OI.h"
+#include "RobotMap.h"
 
 OI::OI() {
-    m_pDriverStick = new Joystick2481(0);
-    m_pOperatorStick = new Joystick2481(1);
+    m_pDriverStick = new Joystick2481(DRIVER_XBOX_CONTROLLER_ID);
+    m_pOperatorStick = new Joystick2481(OPERATOR_XBOX_CONTROLLER_ID);
 }
 
 ~OI:OI() {

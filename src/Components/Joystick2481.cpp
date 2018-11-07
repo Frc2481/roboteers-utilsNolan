@@ -25,7 +25,7 @@ float Joystick2481::GetRawAxis(int axis) {
         return scale * (1 / (pow(second, 2.0)) * pow(input, 3.0));
     }
 	//linear outside of deadband
-    else{
+    else {
         return scale * (slope * input + offset);
     }
 

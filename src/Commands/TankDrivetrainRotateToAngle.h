@@ -6,6 +6,7 @@
 #include "CommandBase.h"
 #include "Subsystems/TankDrivetrain.h"
 #include "PIDVAController.h"
+#include "RobotParameters.h"
 
 class TankDrivetrainRotateToAngle : public CommandBase {
 public:
@@ -17,10 +18,15 @@ public:
 		Requires(CommandBase::m_pTankDrivetrain.get());
 		setInterruptible(true);
 
-		PIDVAController::PIDVAController rotateController(1, 0, 0, 0, 0);
+		PIDVAController::PIDVAController rotateController(
+			RobotParameters::k_rotateToAngleControllerKp,
+			RobotParameters::k_rotateToAngleControllerKi,
+			RobotParameters::k_rotateToAngleControllerKd,
+			RobotParameters::k_rotateToAngleControllerKv,
+			RobotParameters::k_rotateToAngleControllerKa);
 		rotateController.setIsContinous(true, -180, 180);
-		rotateController.setTargetZone(1);
-		rotateController.setTargetZoneDebounce(1);
+		rotateController.setTargetZone(RobotParameters::k_rotateToAngleControllerTargetZone);
+		rotateController.setTargetZoneDebounce(RobotParameters::k_rotateToAngleControllerTargetZoneDebounce);
 	}
 
 	~TankDrivetrainRotateToAngle() {

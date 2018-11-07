@@ -4,8 +4,6 @@
 #include <string>
 #include "ctre/Phoenix.h"
 
-#define TICKS_PER_REV 512
-
 class GrayhillEncoder {
 public:
     GrayhillEncoder(TalonSRX* talon, const std::string &name);

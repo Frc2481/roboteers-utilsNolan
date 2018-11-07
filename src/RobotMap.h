@@ -1,6 +1,14 @@
-#ifndef ROBOTMAP_H
-#define ROBOTMAP_H
+#ifndef ROBOT_MAP_H
+#define ROBOT_MAP_H
 
 #include "WPILib.h"
 
-#endif // ROBOTMAP_H
+#define LEFT_DRIVE_MOTOR_ID 1
+#define LEFT_DRIVE_MOTOR_SLAVE_ID 2
+#define RIGHT_DRIVE_MOTOR_ID 3
+#define RIGHT_DRIVE_MOTOR_SLAVE_ID 4
+
+#define DRIVER_XBOX_CONTROLLER_ID 1
+#define OPERATOR_XBOX_CONTROLLER_ID 2
+
+#endif // ROBOT_MAP_H

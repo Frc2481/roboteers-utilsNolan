@@ -14,8 +14,8 @@ public:
     Joystick2481* GetOperatorStick();
 
 private:    
-    Joystick2481* m_driverStick;
-    Joystick2481* m_operatorStick;
+    Joystick2481* m_pDriverStick;
+    Joystick2481* m_pOperatorStick;
 };
 
 #endif // OI_H

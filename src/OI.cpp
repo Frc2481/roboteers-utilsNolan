@@ -1,22 +1,22 @@
 #include "OI.h"
 
 OI::OI() {
-    m_driverStick = new Joystick2481(0);
-    m_operatorStick = new Joystick2481(1);
+    m_pDriverStick = new Joystick2481(0);
+    m_pOperatorStick = new Joystick2481(1);
 }
 
 ~OI:OI() {
-    delete m_driverStick;
-    m_driverStick = nullptr;
+    delete m_pDriverStick;
+    m_pDriverStick = nullptr;
 
-    delete m_operatorStick;
-    m_operatorStick = nullptr;
+    delete m_pOperatorStick;
+    m_pOperatorStick = nullptr;
 }
 
 Joystick2481* OI::GetDriverStick() {
-    return m_driverStick;
+    return m_pDriverStick;
 }
 
 Joystick2481* OI::GetOperatorStick() {
-    return m_operatorStick;
+    return m_pOperatorStick;
 }

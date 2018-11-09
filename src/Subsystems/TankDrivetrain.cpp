@@ -134,21 +134,27 @@ void TankDrivetrain::driveClosedLoopControl(
     m_kinematics.inverseKinematics(robotVel, robotYawRate, m_leftWheelVelCmd, m_rightWheelVelCmd);
 
     // limit wheel vel
-    if(m_leftWheelVelCmd > m_maxSpeed) {
-        m_leftWheelVelCmd = m_maxSpeed;
-        m_rightWheelVelCmd = m_leftWheelVelCmd - m_wheelTrack * robotYawRate * 180.0 / M_PI;
-    }
-    else if (m_leftWheelVelCmd < -m_maxSpeed) {
-        m_maxSpeed = -m_maxSpeed;
-        m_rightWheelVelCmd = m_leftWheelVelCmd - m_wheelTrack * robotYawRate * 180.0 / M_PI;
-    }
-    if(m_rightWheelVelCmd > m_maxSpeed) {
-        m_rightWheelVelCmd = m_maxSpeed;
-        m_leftWheelVelCmd = m_rightWheelVelCmd + m_wheelTrack * robotYawRate * 180.0 / M_PI;
-    }
-    else if (m_rightWheelVelCmd < -m_maxSpeed) {
-        m_rightWheelVelCmd = -m_maxSpeed;
-        m_rightWheelVelCmd = m_rightWheelVelCmd + m_wheelTrack * robotYawRate * 180.0 / M_PI;
+    if((fabs(m_leftWheelVelCmd) > m_maxSpeed) || (fabs(m_rightWheelVelCmd) > m_maxSpeed)) {
+        if(robotVel >= 0) { // moving forward
+            if(robotYawRate >= 0) { // turning left
+                m_rightWheelVelCmd = m_maxSpeed;
+                m_leftWheelVelCmd = m_rightWheelVelCmd - m_wheelTrack * robotYawRate * 180.0 / M_PI;
+            }
+            else { // turning right
+                m_leftWheelVelCmd = m_maxSpeed;
+                m_rightWheelVelCmd = m_leftWheelVelCmd + m_wheelTrack * robotYawRate * 180.0 / M_PI;
+            }
+        }
+        else { // moving backward
+            if(robotYawRate <= 0) { // turning left
+                m_rightWheelVelCmd = -m_maxSpeed;
+                m_leftWheelVelCmd = m_rightWheelVelCmd - m_wheelTrack * robotYawRate * 180.0 / M_PI;
+            }
+            else { // turning right
+                m_leftWheelVelCmd = -m_maxSpeed;
+                m_rightWheelVelCmd = m_leftWheelVelCmd + m_wheelTrack * robotYawRate * 180.0 / M_PI;
+            }
+        }
     }
 
     // convert wheel vel from translational to rotational

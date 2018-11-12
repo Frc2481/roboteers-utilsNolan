@@ -1,10 +1,10 @@
 #include "MotorPositionController.h"
 
-MotorPositionController::MotorPositionController() {
+void MotorPositionController::MotorPositionController() {
 }
 
-MotorPositionController::MotorPositionController(
-    TalonSRX* talon,
+void MotorPositionController::MotorPositionController(
+    TalonSRX* pTalon,
     bool inverted,
     const double &kp,
     const double &ki,
@@ -15,7 +15,7 @@ MotorPositionController::MotorPositionController(
     const double &iErrorLim,
     unsigned ticksPerRev)
     
-    : m_pDriveMotor(talon),
+    : m_pDriveMotor(pTalon),
     m_kv(kv),
     m_ka(ka),
     m_ticksPerRev(ticksPerRev) {
@@ -39,12 +39,12 @@ MotorPositionController::MotorPositionController(
 	m_pDriveMotor->SetInverted(inverted);
 }
 
-MotorPositionController::~MotorPositionController() {
+void MotorPositionController::~MotorPositionController() {
 }
 
 void MotorPositionController::update(const double &refP, const double &refV, const double &refA) {
     refV = refV * m_ticksPerRev / 10.0; // convert to talon native units
     refA = refA * m_ticksPerRev / 10.0; // convert to talon native units
     double feedforwardControl = refV * m_kv + refA * m_ka;
-    m_pDriveMotor->Set(ControlMode::Position, refP, DemandType::ArbitraryFeedForward, feedforwardControl);
+    m_pDriveMotor->Set(ControlMode::Position, refP, DemandType::DemandType_ArbitraryFeedForward, feedforwardControl);
 }

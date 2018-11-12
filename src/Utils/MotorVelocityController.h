@@ -7,7 +7,7 @@ class MotorVelocityController {
 public:
     void MotorVelocityController();
     void MotorVelocityController(
-		TalonSRX* talon,
+		TalonSRX* pTalon,
         bool inverted,
         const double &kp,
 		const double &ki,

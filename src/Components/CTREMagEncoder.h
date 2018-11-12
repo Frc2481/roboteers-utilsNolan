@@ -6,7 +6,7 @@
 
 class CTREMagEncoder {
 public:
-    CTREMagEncoder(TalonSRX* talon, const std::string &name);
+    CTREMagEncoder(TalonSRX* pTalon, const std::string &name);
     ~CTREMagEncoder();
 
     void update();
@@ -20,16 +20,16 @@ public:
     double convertRevsToTickSetpoint(const double &revs) const;
     double convertAngleToTicks(const double &angle) const;
     double convertAngleToTickSetpoint(const double &angle) const;
-    double convertWheelDistanceToRevs(const double &wheelDistance) const;
-    double convertWheelDistanceToTicks(const double &wheelDistance) const;
-    double convertWheelDistanceToTickSetpoint(const double &wheelDistance) const;
-}
+    double convertWheelDistanceToRevs(const double &wheelRadius,  const double &wheelDistance) const;
+    double convertWheelDistanceToTicks(const double &wheelRadius, const double &wheelDistance) const;
+    double convertWheelDistanceToTickSetpoint(const double &wheelRadius, const double &wheelDistance) const;
+    bool IsConnected() const;
 
 private:
-    TalonSRX* m_talon;
+    TalonSRX* m_pTalon;
     int m_encoderTicks;
     int m_encoderTicksZero;
-    std::string m_name;
+    std::string m_calibrationKey;
 };
 
 #endif // CTRE_MAG_ENCODER_H

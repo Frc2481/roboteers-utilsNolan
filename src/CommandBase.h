@@ -1,10 +1,9 @@
 #ifndef COMMAND_BASE_H
 #define COMMAND_BASE_H
 
-#include "WPILib.h"
-#include "Commands/Command.h"
-#include "Commands/Scheduler.h"
+#include <WPILib.h>
 #include "OI.h"
+#include "Subsystems/TankDrivetrain.h"
 
 class CommandBase: public Command
 {
@@ -14,7 +13,8 @@ public:
 
     static void init();
 	
-    static std::unique_ptr<OI> oi;
+    static std::unique_ptr<OI> m_pOI;
+    static std::unique_ptr<TankDrivetrain> m_pTankDrivetrain;
 };
 
 #endif // COMMAND_BASE_H

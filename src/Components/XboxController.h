@@ -1,8 +1,5 @@
-
 #ifndef XBOX_CONTROLLER_H
 #define XBOX_CONTROLLER_H
-
-#include "WPILib.h"
 
 #define XBOX_LEFT_X_AXIS        0
 #define XBOX_LEFT_Y_AXIS        1

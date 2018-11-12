@@ -6,7 +6,7 @@ OI::OI() {
     m_pOperatorStick = new Joystick2481(OPERATOR_XBOX_CONTROLLER_ID);
 }
 
-~OI:OI() {
+OI::~OI() {
     delete m_pDriverStick;
     m_pDriverStick = nullptr;
 

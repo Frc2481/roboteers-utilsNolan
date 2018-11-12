@@ -1,8 +1,6 @@
 #ifndef ROBOT_MAP_H
 #define ROBOT_MAP_H
 
-#include "WPILib.h"
-
 #define LEFT_DRIVE_MOTOR_ID 1
 #define LEFT_DRIVE_MOTOR_SLAVE_ID 2
 #define RIGHT_DRIVE_MOTOR_ID 3

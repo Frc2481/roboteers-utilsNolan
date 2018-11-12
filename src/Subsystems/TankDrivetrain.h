@@ -1,12 +1,14 @@
 #ifndef TANK_DRIVETRAIN_H
 #define TANK_DRIVETRAIN_H
 
-#include "WPILib.h"
-#include "Commands/Subsystem.h"
-#include "Utils/TankDriveKinematics.h"
-#include "Utils/MotorVelocityController.h"
+#include <WPILib.h>
 #include "ctre/Phoenix.h"
-#include "Utils/GrayhillEncoder.h"
+#include "Components/GrayhillEncoder.h"
+#include "Utils/Pose2D.h"
+#include "Utils/TankDrivePose.h"
+#include "Utils/MotorVelocityController.h"
+
+class AHRS;
 
 // +x = robot right
 // +y = robot forward
@@ -28,7 +30,7 @@ public:
     // @param percentLeftDrive - left drive percent (-1 to 1)
     // @param percentRightDrive - right drive percent (-1 to 1)
     //////////////////////////////////////////////////////////////////////
-    void driveOpenLoopControl(double &percentLeftDrive, double &percentRightDrive)
+    void driveOpenLoopControl(const double &percentLeftDrive, const double &percentRightDrive);
 
     //////////////////////////////////////////////////////////////////////
     // @brief command robot to drive using closed loop control

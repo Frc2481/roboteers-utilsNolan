@@ -4,7 +4,6 @@
 #include <vector>
 #include <limits>
 #include "CommandBase.h"
-#include "Subsystems/TankDrivetrain.h"
 #include "Components/Joystick2481.h"
 #include "XboxController.h"
 
@@ -14,7 +13,7 @@ public:
 		: CommandBase("TankDrivetrainJoystickDrive") {
 		
 		Requires(CommandBase::m_pTankDrivetrain.get());
-		setInterruptible(true);
+		SetInterruptible(true);
 	}
 
 	~TankDrivetrainJoystickDrive() {
@@ -25,11 +24,11 @@ public:
 
 	void Execute() {
 		// get joystick input
-		double percentLeftDrive = oi->GetDriverStick()->GetRawAxis(XBOX_LEFT_Y_AXIS)
-		double percentRightDrive = oi->GetDriverStick()->GetRawAxis(XBOX_RIGHT_Y_AXIS)
+		double percentLeftDrive = m_pOI->GetDriverStick()->GetRawAxis(XBOX_LEFT_Y_AXIS)
+		double percentRightDrive = m_pOI->GetDriverStick()->GetRawAxis(XBOX_RIGHT_Y_AXIS)
 
 		// update drive
-		m_pTankDrivetrain->driveOpenLoopdriveOpenLoopControl(percentLeftDrive, percentRightDrive);
+		m_pTankDrivetrain->driveOpenLoopControl(percentLeftDrive, percentRightDrive);
 	}
 
 	void Interrupted() {

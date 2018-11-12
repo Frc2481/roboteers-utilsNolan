@@ -6,7 +6,7 @@
 
 class GrayhillEncoder {
 public:
-    GrayhillEncoder(TalonSRX* talon, const std::string &name);
+    GrayhillEncoder(TalonSRX* pTalon, const std::string &name);
     ~GrayhillEncoder();
 
     void update();
@@ -23,15 +23,16 @@ public:
     double convertRevsToTickSetpoint(const double &revs) const;
     double convertAngleToTicks(const double &angle) const;
     double convertAngleToTickSetpoint(const double &angle) const;
-    double convertWheelDistanceToRevs(const double &wheelDistance) const;
-    double convertWheelDistanceToTicks(const double &wheelDistance) const;
-    double convertWheelDistanceToTickSetpoint(const double &wheelDistance) const;
+    double convertWheelDistanceToRevs(const double &wheelRadius,  const double &wheelDistance) const;
+    double convertWheelDistanceToTicks(const double &wheelRadius, const double &wheelDistance) const;
+    double convertWheelDistanceToTickSetpoint(const double &wheelRadius, const double &wheelDistance) const;
 
 private:
-    TalonSRX* m_talon;
+    TalonSRX* m_pTalon;
     int m_encoderTicks;
     int m_encoderTicksZero;
     std::string m_name;
+    double m_encoderTickVel;
 };
 
 #endif // GRAYHILL_ENCODER_H

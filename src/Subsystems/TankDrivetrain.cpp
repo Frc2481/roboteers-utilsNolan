@@ -1,6 +1,7 @@
 #include "TankDrivetrain.h"
 #include "RobotMap.h"
 #include "RobotParameters.h"
+#include "Commands/TankDrivetrainJoystickDrive.h"
 
 TankDrivetrain::TankDrivetrain()
     : Subsystem("TankDrivetrain"),
@@ -30,7 +31,7 @@ TankDrivetrain::TankDrivetrain()
         RobotParameters::k_driveMotorControllerKv,
         RobotParameters::k_driveMotorControllerKa,
         0,
-        iErrorLim,
+        0,
         RobotParameters::k_grayhillEncoderTicksPerRev);
     m_pLeftDriveEncoder = new GrayhillEncoder(m_pLeftDriveMotorController, "LEFT_DRIVE_MOTOR_ENCODER");
     m_pLeftDriveMotorSlave = new TalonSRX(LEFT_DRIVE_MOTOR_SLAVE_ID);
@@ -46,7 +47,7 @@ TankDrivetrain::TankDrivetrain()
         RobotParameters::k_driveMotorControllerKv,
         RobotParameters::k_driveMotorControllerKa,
         0,
-        iErrorLim,
+        0,
         RobotParameters::k_grayhillEncoderTicksPerRev);
     m_pRightDriveEncoder = new GrayhillEncoder(m_pRightDriveMotor, "RIGHT_DRIVE_MOTOR_ENCODER");
     m_pRightDriveMotorSlave = new TalonSRX(RIGHT_DRIVE_MOTOR_SLAVE_ID);
@@ -57,7 +58,7 @@ TankDrivetrain::TankDrivetrain()
     resetPose(Pose2D(0, 0));
 }
 
-TankDrivetrain::~TankDrivetrain() {
+void TankDrivetrain::~TankDrivetrain() {
     delete m_pLeftDriveMotor;
     m_pLeftDriveMotor = nullptr;
 
@@ -88,7 +89,7 @@ TankDrivetrain::~TankDrivetrain() {
 }
 
 void TankDrivetrain::InitDefaultCommand() {
-	SetDefaultCommand(new defaultCommand);
+	SetDefaultCommand(new TankDrivetrainJoystickDrive);
 }
 
 void TankDrivetrain::Periodic() {
@@ -96,7 +97,7 @@ void TankDrivetrain::Periodic() {
     updatePose();
 }
 
-void TankDrivetrain::driveOpenLoopControl(double &percentLeftDrive, double &percentRightDrive) {
+void TankDrivetrain::driveOpenLoopControl(const double &percentLeftDrive, const double &percentRightDrive) {
     m_pLeftDriveMotorController->updateOpenLoopControl(percentLeftDrive);
     m_pRightDriveMotorController->updateOpenLoopControl(percentRightDrive);
 }
@@ -172,15 +173,15 @@ void TankDrivetrain::stop() {
     driveOpenLoopControl(0, 0);
 }
 
-Pose2D TankDriveTrain::getPose() {
-    m_tankDrivePose.getPose();
+Pose2D TankDrivetrain::getPose() {
+    return m_tankDrivePose.getPose();
 }
 
-Pose2D TankDriveTrain::getPoseDot() {
-    m_tankDrivePose.getPoseDot();
+Pose2D TankDrivetrain::getPoseDot() {
+    return m_tankDrivePose.getPoseDot();
 }
 
-void TankDriveTrain::updatePose() {
+void TankDrivetrain::updatePose() {
     // read left wheel encoder
     double oldLeftWheelDist = m_leftWheelDist;
     m_leftWheelDist = m_pLeftDriveEncoder->getWheelDistance(m_wheelRad, m_driveGearRatio);
@@ -188,9 +189,9 @@ void TankDriveTrain::updatePose() {
     double velLeftWheel = m_pLeftDriveEncoder->getWheelVelocity(m_wheelRad, m_driveGearRatio);
 
     // check for wheel slip
-    if(fabs(velLeftWheel) > fabs(m_leftWheelVelCmd * RobotParameters::k_wheelSlipNosieRatio)) {
+    if(fabs(velLeftWheel) > fabs(m_leftWheelVelCmd * RobotParameters::k_wheelSlipNoiseRatio)) {
             // account for sample time and measurement noise
-        deltaDistLeftWheel = m_leftWheelVelCmd * robotSechdulerPeriod;
+        deltaDistLeftWheel = m_leftWheelVelCmd * 1.0 / (double)m_updateRate;
         velLeftWheel = m_leftWheelVelCmd;
     }
 
@@ -201,9 +202,9 @@ void TankDriveTrain::updatePose() {
     double velRightWheel = m_pRightDriveEncoder->getWheelVelocity(m_wheelRad, m_driveGearRatio);
 
     // check for wheel slip
-    if(fabs(velRightWheel) > fabs(m_rightWheelVelCmd * RobotParameters::k_wheelSlipNosieRatio)) {
+    if(fabs(velRightWheel) > fabs(m_rightWheelVelCmd * RobotParameters::k_wheelSlipNoiseRatio)) {
             // account for sample time and measurement noise
-        deltaDistRightWheel = m_rightWheelVelCmd * robotSechdulerPeriod;
+        deltaDistRightWheel = m_rightWheelVelCmd * 1.0 / (double)m_updateRate;
         velRightWheel = m_rightWheelVelCmd;
     }
 
@@ -217,7 +218,7 @@ void TankDriveTrain::updatePose() {
     m_tankDrivePose.update(deltaDistLeftWheel, deltaDistRightWheel, deltaYawGyro, velLeftWheel, velRightWheel, yawRateGyro);
 }
 
-void TankDriveTrain::resetPose(const Pose2D &pose, const Pose2D &poseDot) {
+void TankDrivetrain::resetPose(const Pose2D &pose, const Pose2D &poseDot) {
     m_tankDrivePose.reset(pose, poseDot);
     m_pLeftDriveEncoder->zero();
     m_leftWheelDist = 0;

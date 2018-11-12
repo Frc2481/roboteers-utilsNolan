@@ -4,7 +4,6 @@
 #include <vector>
 #include <limits>
 #include "CommandBase.h"
-#include "Subsystems/TankDrivetrain.h"
 #include "PIDVAController.h"
 #include "RobotParameters.h"
 
@@ -16,34 +15,34 @@ public:
 		m_time(0) {
 		
 		Requires(CommandBase::m_pTankDrivetrain.get());
-		setInterruptible(true);
+		SetInterruptible(true);
 
-		PIDVAController::PIDVAController rotateController(
+		m_pRotateController = new PIDVAController(
 			RobotParameters::k_rotateToAngleControllerKp,
 			RobotParameters::k_rotateToAngleControllerKi,
 			RobotParameters::k_rotateToAngleControllerKd,
 			RobotParameters::k_rotateToAngleControllerKv,
 			RobotParameters::k_rotateToAngleControllerKa);
-		rotateController.setIsContinous(true, -180, 180);
-		rotateController.setTargetZone(RobotParameters::k_rotateToAngleControllerTargetZone);
-		rotateController.setTargetZoneDebounce(RobotParameters::k_rotateToAngleControllerTargetZoneDebounce);
+		m_pRotateController->setIsContinous(true, -180, 180);
+		m_pRotateController->setTargetZone(RobotParameters::k_rotateToAngleControllerTargetZone);
+		m_pRotateController->setTargetZoneDebounce(RobotParameters::k_rotateToAngleControllerTargetZoneDebounce);
 	}
 
 	~TankDrivetrainRotateToAngle() {
 	}
 
-	void Initialize(refAngle) {
+	void Initialize(const double &refAngle) {
 		m_refAng = refAngle;
 		m_time = 0;
-		rotateController.reset(m_time);
+		m_pRotateController->reset(m_time);
 	}
 
 	void Execute() {
 		// update controller
 		Pose2D pose = m_pTankDrivetrain->getPose();
-		m_time += robotSechdulerPeriod;
+		m_time += 1.0 / (double)RobotParameters::k_updateRate;
 		double robotYawRate;
-		rotateController.update(refAngle, 0, 0, pose.getRotation().getDegrees(), m_time, robotYawRate);
+		m_pRotateController->update(m_refAng, 0, 0, pose.getRotation().getDegrees(), m_time, robotYawRate);
 
 		// update drive
 		m_pTankDrivetrain->driveClosedLoopControl(0, robotYawRate, 0);
@@ -54,15 +53,20 @@ public:
 	}
 
 	bool IsFinished() {
-		return rotateController.isOnTarget();
+		return m_pRotateController->isOnTarget();
 	}
 
 	void End() {
 		m_pTankDrivetrain->stop();
+
+		delete m_pTankDrivetrain;
+		m_pTankDrivetrain = nullptr;
 	}
 
 private:
-	m_time;
+	double m_refAng;
+	double m_time;
+	PIDVAController* m_pRotateController;
 };
 
 #endif // COMMANDS_TANK_DRIVETRAIN_ROTATE_TO_ANGLE_H

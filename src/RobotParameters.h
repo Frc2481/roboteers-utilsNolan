@@ -13,7 +13,7 @@ public:
     static constexpr double k_maxCentripAccel = 20; // in/s^2
     static constexpr double k_cornerStiffCoeff = 0;
     static constexpr double k_driveGearRatio = 1; // gear ratio from encoder to wheel
-    static constexpr double k_wheelSlipNoiseRatio = 1.2 // wheel encoder noise ratio used to detect wheel slip
+    static constexpr double k_wheelSlipNoiseRatio = 1.2; // wheel encoder noise ratio used to detect wheel slip
 
     static constexpr double k_driveMotorControllerKp = 1;
     static constexpr double k_driveMotorControllerKi = 0;

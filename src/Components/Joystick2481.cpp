@@ -1,4 +1,5 @@
 #include "Joystick2481.h"
+#include <Joystick.h>
 #include <math.h>
 
 Joystick2481::Joystick2481(int port)
@@ -22,7 +23,7 @@ float Joystick2481::GetRawAxis(int axis) {
     }
 	// polynomial inside of deadband
     if ((-deadband < input) && (input < deadband)) {
-        return scale * (1 / (pow(second, 2.0)) * pow(input, 3.0));
+        return scale * (1.0 / (pow(second, 2.0)) * pow(input, 3.0));
     }
 	//linear outside of deadband
     else {

@@ -1,10 +1,9 @@
 #ifndef ANALOG_JOYSTICK_BUTTON_H
 #define ANALOG_JOYSTICK_BUTTON_H
 
-#include "WPILib.h"
+#include <WPILib.h>
 
-class AnalogJoystickButton : public Button
-{
+class AnalogJoystickButton : public Button {
 public:
     AnalogJoystickButton(GenericHID *joystick, uint32_t axisNumber, const double &threshold);
     virtual ~AnalogJoystickButton();

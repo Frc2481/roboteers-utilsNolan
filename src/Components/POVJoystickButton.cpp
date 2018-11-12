@@ -2,7 +2,8 @@
 
 POVJoystickButton::POVJoystickButton(GenericHID *joystick, uint32_t povNumber, int angle)
 	: m_pJoystick(joystick),
-	m_povNumber(povNumber), {
+	m_povNumber(povNumber),
+	m_angle(0) {
 }
 
 POVJoystickButton::~POVJoystickButton() {

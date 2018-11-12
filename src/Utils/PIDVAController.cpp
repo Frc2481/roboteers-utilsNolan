@@ -97,11 +97,11 @@ void PIDVAController::setIZone(const double &iZone) {
 }
 
 void PIDVAController::setIErrorLim(const double &iErrorLim) {
-    m_iErrorLim = abs(iErrorLim);
+    m_iErrorLim = fabs(iErrorLim);
 }
 
 void PIDVAController::setTargetZone(const double &targetZone) {
-    m_targetZone = abs(targetZone);
+    m_targetZone = fabs(targetZone);
 }
 
 void PIDVAController::setTargetZoneDebounce(const double &targetZoneDebounce) {
@@ -146,7 +146,7 @@ void PIDVAController::update(
     }
 
     // only apply i term if in i zone
-    if(abs(error) > m_iZone) {
+    if(fabs(error) > m_iZone) {
         iError = 0;
     }
 
@@ -155,13 +155,13 @@ void PIDVAController::update(
     
     // calculate control signal
     cntrl = m_kp * error
-        + m_ki * iError;
-        + m_kd * dError;
-        + m_kv * refV;
+        + m_ki * iError
+        + m_kd * dError
+        + m_kv * refV
         + m_ka * refA;
 
     // check if on target
-    if(abs(error) < m_targetZone) {
+    if(fabs(error) < m_targetZone) {
         // check if on target for first time
         if(m_onTargetFirstTime) {
             m_isOnTargetStartTime = time;

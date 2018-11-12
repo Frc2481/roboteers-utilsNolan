@@ -1,12 +1,11 @@
 #ifndef COMBO_JOYSTICK_BUTTON_H
 #define COMBO_JOYSTICK_BUTTON_H
 
-#include "WPILib.h"
+#include <WPILib.h>
 
-class ComboJoystickButton : public Button
-{
+class ComboJoystickButton : public Button {
 public:
-    ComboJoystickButton(Button *primaryButton, Button *secondaryButton, bool secondaryPressed)
+    ComboJoystickButton(Button *primaryButton, Button *secondaryButton, bool secondaryPressed);
     virtual ~ComboJoystickButton();
 
     virtual bool Get();

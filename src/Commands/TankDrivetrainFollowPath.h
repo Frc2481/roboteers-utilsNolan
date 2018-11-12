@@ -4,7 +4,6 @@
 #include <vector>
 #include <limits>
 #include "CommandBase.h"
-#include "Subsystems/TankDrivetrain.h"
 #include "Utils/TankDrivePathGenerator.h"
 #include "Utils/Translation2D.h"
 #include "RobotParameters.h"
@@ -22,16 +21,16 @@ public:
 
 		: CommandBase("TankDrivetrainFollowPath"),
 		m_lastPointReached(false),
-		m_distToEnd(std::numeric_limits<double>::infinity())
+		m_distToEnd(std::numeric_limits<double>::infinity()),
 		m_targetZone(targetZone) {
 		
 		Requires(CommandBase::m_pTankDrivetrain.get());
-		setInterruptible(true);
+		SetInterruptible(true);
 
 		// generate path
 		TankDrivePathGenerator pathGenerator(
 			waypoints,
-			1 / (double)RobotParameters::k_updateRate,
+			1.0 / (double)RobotParameters::k_updateRate,
 			RobotParameters::k_wheelTrack,
 			RobotParameters::k_maxSpeed,
 			RobotParameters::k_maxAccel,
@@ -40,6 +39,7 @@ public:
 		pathGenerator.setIsReverse(isReverse);
 		pathGenerator.generatePath();
 		m_path = pathGenerator.getFinalPath();
+		m_kPTurn = RobotParameters::k_pathFollowerKpTurn;
 
 		// ensure target zone is achievable
 		if(m_targetZone < 1)
@@ -52,7 +52,7 @@ public:
 	}
 
 	void Initialize() {
-		SetTimeout(m_path.end().time + RobotParameters::k_pathFollowerTimeoutAllowance);
+		SetTimeout(m_path.end()->time + RobotParameters::k_pathFollowerTimeoutAllowance);
 	}
 
 	void Execute() {
@@ -68,14 +68,14 @@ public:
 
 		Translation2D vectRobotToClosestPoint;
 		double distToClosestPoint = std::numeric_limits<double>::infinity();
-		std::vector<finalPathPoint_t>::iterator closestPointIt;
+		std::vector<TankDrivePathGenerator::finalPathPoint_t>::iterator closestPointIt;
 		// could start search at last closest point for efficiency gain but decided not to in case
 		// pose jumps backward along path and want to start tracking path from new point on path.
 		// could end search after a few iterations for efficiency gain bud decided not to in case
 		// pose jumps forward along path and want to start tracking path from new point on path.
-		for(std::vector<finalPathPoint_t>::iterator it = m_path.begin(); it != m_path.end(); ++it) {
-			Translation2D vectRobotToPoint = pose.getTranslation() - Translation2D(*it.xPos, *it.yPos);
-			double distToPoint = Translation2D::norm(vectRobotToPoint);
+		for(std::vector<TankDrivePathGenerator::finalPathPoint_t>::iterator it = m_path.begin(); it != m_path.end(); ++it) {
+			Translation2D vectRobotToPoint = pose.getTranslation() - Translation2D(it->xPos, it->yPos);
+			double distToPoint = vectRobotToPoint.norm();
 			if(distToPoint < distToClosestPoint) {
 				vectRobotToClosestPoint = vectRobotToPoint;
 				distToClosestPoint = distToPoint;
@@ -89,14 +89,14 @@ public:
 		}
 
 		// calculate distance to end of path
-		m_distToEnd = Translation2D::norm(pose.getTranslation() - Translation2D(m_path.end().xPos, m_path.end().yPos));
+		m_distToEnd = (pose.getTranslation() - Translation2D(m_path.end()->xPos, m_path.end()->yPos)).norm();
 
 		// control law
-		robotVel = *closestPointIt.vel;
-		robotAccel = *closestPointIt.accel;
-		robotYawRate = *closestPointIt.yawRate;
+		double robotVel = closestPointIt->vel;
+		double robotAccel = closestPointIt->accel;
+		double robotYawRate = closestPointIt->yawRate;
 		// need to get direction vector to determine if left or right of path
-		Translation2D vectClosestPointToNextPoint = Translation2D(1, 0).rotateBy(Rotation2D::fromDegrees(*closestPointIt.yaw));
+		Translation2D vectClosestPointToNextPoint = Translation2D(1, 0).rotateBy(Rotation2D::fromDegrees(closestPointIt->yaw));
 		int leftRightOfPath = sign(vectClosestPointToNextPoint.cross(vectRobotToClosestPoint));
 		robotYawRate -= RobotParameters::k_pathFollowerKpTurn * leftRightOfPath * distToClosestPoint; // assume this is perpindicular distance to path if it is closest point on path
 

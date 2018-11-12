@@ -1,7 +1,6 @@
 #ifndef OI_H
 #define OI_H
 
-#include "WPILib.h"
 #include "Components/XboxController.h"
 #include "Components/Joystick2481.h"
 

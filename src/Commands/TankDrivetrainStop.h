@@ -4,7 +4,6 @@
 #include <vector>
 #include <limits>
 #include "CommandBase.h"
-#include "Subsystems/TankDrivetrain.h"
 
 class TankDrivetrainStop : public CommandBase {
 public:
@@ -12,7 +11,7 @@ public:
 		: CommandBase("TankDrivetrainStop") {
 		
 		Requires(CommandBase::m_pTankDrivetrain.get());
-		setInterruptible(false);
+		SetInterruptible(false);
 	}
 
 	~TankDrivetrainStop() {

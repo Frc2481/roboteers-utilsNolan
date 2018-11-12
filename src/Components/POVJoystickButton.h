@@ -1,10 +1,9 @@
 #ifndef POV_JOYSTICK_BUTTON_H
 #define POV_JOYSTICK_BUTTON_H
 
-#include "WPILib.h"
+#include <WPILib.h>
 
-class POVJoystickButton : public Button
-{
+class POVJoystickButton : public Button {
 public:
     POVJoystickButton(GenericHID *joystick, uint32_t povNumber, int angle);
     virtual ~POVJoystickButton();

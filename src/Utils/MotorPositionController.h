@@ -7,7 +7,7 @@ class MotorPositionController {
 public:
     void MotorPositionController();
     void MotorPositionController(
-		TalonSRX* talon,
+		TalonSRX* pTalon,
         bool inverted,
         const double &kp,
 		const double &ki,

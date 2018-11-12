@@ -1,46 +1,42 @@
-#include "WPILib.h"
-#include <TimedRobot.h>
-#include "CommandBase.h"
+#include "Robot.h"
 #include <LiveWindow/LiveWindow.h>
 #include <SmartDashboard/SendableChooser.h>
 #include <SmartDashboard/SmartDashboard.h>
+#include "CommandBase.h"
+#include "RobotParameters.h"
 
-class Robot: public TimedRobot {
-public:
+void Robot::RobotInit() {
+	SetPeriod(RobotParameters::k_updateRate);
+	CommandBase::init();
+}
 
-private:
-    void RobotInit() {
-        SetPeriod(robotSechdulerPeriod);
-        CommandBase::init();
-    }
+void Robot::AutonomousInit() {
+}
 
-    void AutonomousInit() override {
-    }
-    
-    void DisabledInit() override {
-    }
-    
-    void TeleopInit() override {
-        if (autonomousCommand != nullptr) {
-            autonomousCommand->Cancel();
-        }
-    }
+void Robot::DisabledInit() {
+}
 
-    void AutonomousPeriodic() override {
-        frc::Scheduler::GetInstance()->Run();
-    }
+void Robot::TeleopInit() {
+	if (m_pAutonomousCommand != nullptr) {
+		m_pAutonomousCommand->Cancel();
+		m_pAutonomousCommand = nullptr;
+	}
+}
 
-    void TeleopPeriodic() override {
-        frc::Scheduler::GetInstance()->Run();
-    }
-    
-    void DisabledPeriodic() override {
-        frc::Scheduler::GetInstance()->Run();
-    }
+void AutonomousPeriodic() {
+	Scheduler::GetInstance()->Run();
+}
 
-    void TestPeriodic() override {
-        frc::LiveWindow::GetInstance()->Run();
-    }
-};
+void TeleopPeriodic() {
+	Scheduler::GetInstance()->Run();
+}
+
+void DisabledPeriodic() {
+	Scheduler::GetInstance()->Run();
+}
+
+void TestPeriodic() {
+	LiveWindow::GetInstance()->Run();
+}
 
 START_ROBOT_CLASS(Robot)

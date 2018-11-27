@@ -5,8 +5,8 @@
 
 class MotorVelocityController {
 public:
-    void MotorVelocityController();
-    void MotorVelocityController(
+    MotorVelocityController();
+    MotorVelocityController(
 		TalonSRX* pTalon,
         bool inverted,
         const double &kp,
@@ -17,14 +17,14 @@ public:
         const double &iZone,
         const double &iErrorLim,
         unsigned ticksPerRev);
-    void ~MotorVelocityController();
+    ~MotorVelocityController();
 
     //////////////////////////////////////////////////////////////////////
     // @brief update reference points of closed loop motor controller
     // @param refV - angular velocity reference point (deg/s)
     // @param refA - angular acceleration reference point (deg/s^2)
     //////////////////////////////////////////////////////////////////////
-    void updateClosedLoopControl(const double &refV, const double &refA);
+    void updateClosedLoopControl(double refV, double refA);
 
     //////////////////////////////////////////////////////////////////////
     // @brief update reference points of open loop motor controller

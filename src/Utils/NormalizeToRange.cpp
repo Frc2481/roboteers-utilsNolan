@@ -1,6 +1,6 @@
 #include "NormalizeToRange.h"
 #include <algorithm>
-#include <math.h>
+#include <cmath>
 
 namespace normalizeToRange {
     double normalizeToRange(double value, double rangeMin, double rangeMax, bool includeMax) {

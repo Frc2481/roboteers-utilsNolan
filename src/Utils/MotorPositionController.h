@@ -5,8 +5,8 @@
 
 class MotorPositionController {
 public:
-    void MotorPositionController();
-    void MotorPositionController(
+    MotorPositionController();
+    MotorPositionController(
 		TalonSRX* pTalon,
         bool inverted,
         const double &kp,
@@ -17,7 +17,7 @@ public:
         const double &iZone,
         const double &iErrorLim,
         unsigned ticksPerRev);
-    void ~MotorPositionController();
+    ~MotorPositionController();
 
     //////////////////////////////////////////////////////////////////////
     // @brief update reference points of motor controller
@@ -25,7 +25,7 @@ public:
     // @param refV - angular velocity reference point (deg/s)
     // @param refA - angular acceleration reference point (deg/s^2)
     //////////////////////////////////////////////////////////////////////
-    void update(const double &refP, const double &refV, const double &refA);
+    void update(double refP, const double refV, double refA);
 
 private:
     TalonSRX* m_pDriveMotor;

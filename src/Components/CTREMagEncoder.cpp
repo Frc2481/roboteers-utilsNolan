@@ -1,6 +1,7 @@
 #include "CTREMagEncoder.h"
 #include <WPILib.h>
 #include <sstream>
+#include <cmath>
 #include "RobotParameters.h"
 
 CTREMagEncoder::CTREMagEncoder(TalonSRX* pTalon, const std::string &name)
@@ -43,7 +44,7 @@ double CTREMagEncoder::getRevs() const {
 }
 
 double CTREMagEncoder::getAngle() const {
-    return (getRevs() % 1) * 180.0 / M_PI;
+    return std::fabs(std::fmod(getRevs(), 1)) * 180.0 / M_PI;
 }
 
 double CTREMagEncoder::getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel) const {

@@ -8,7 +8,7 @@
 #include "Utils/TankDrivePose.h"
 #include "Utils/MotorVelocityController.h"
 
-class AHRS;
+//class AHRS;
 
 // +x = robot right
 // +y = robot forward
@@ -20,9 +20,9 @@ template <typename T> int sign(T val) {
 
 class TankDrivetrain : public Subsystem {
 public:
-    void TankDrivetrain();
-    void ~TankDrivetrain();
-    virtual void InitDefaultCommand();
+    TankDrivetrain();
+    ~TankDrivetrain();
+//    virtual void InitDefaultCommand();
     virtual void Periodic();
 
     //////////////////////////////////////////////////////////////////////
@@ -39,9 +39,9 @@ public:
     // @param robotAccel - forward acceleration of robot (in/s^2)
     //////////////////////////////////////////////////////////////////////
     void driveClosedLoopControl(
-        const double &robotVel,
-        const double &robotYawRate,
-        const double &robotAccel);
+        double robotVel,
+        double robotYawRate,
+        double robotAccel);
     
     void stop();
 
@@ -59,7 +59,7 @@ private:
     GrayhillEncoder* m_pRightDriveEncoder;
     TalonSRX* m_pLeftDriveMotorSlave;
     TalonSRX* m_pRightDriveMotorSlave;
-    AHRS* m_pChassisIMU;
+//    AHRS* m_pChassisIMU;
     double m_wheelRad; // wheel radius (in)
     double m_wheelTrack; // wheel track (in)
     TankDriveKinematics m_kinematics;
@@ -69,7 +69,7 @@ private:
     double m_maxCentripAccel; // max centripetal accel (in/s^2)
     double m_updateRate; // update rate (Hz)
     TankDrivePose m_tankDrivePose;
-    double m_driveGearRatio;
+    double m_driveEncoderGearRatio;
     double m_leftWheelDist;
     double m_rightWheelDist;
     double m_leftWheelVelCmd;

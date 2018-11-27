@@ -1,9 +1,9 @@
 #include "MotorVelocityController.h"
 
-void MotorVelocityController::MotorVelocityController() {
+MotorVelocityController::MotorVelocityController() {
 }
 
-void MotorVelocityController::MotorVelocityController(
+MotorVelocityController::MotorVelocityController(
     TalonSRX* pTalon,
     bool inverted,
     const double &kp,
@@ -39,14 +39,14 @@ void MotorVelocityController::MotorVelocityController(
 	m_pDriveMotor->SetInverted(inverted);
 }
 
-void MotorVelocityController::~MotorVelocityController() {
+MotorVelocityController::~MotorVelocityController() {
 }
 
-void MotorVelocityController::updateClosedLoopControl(const double &refV, const double &refA) {
+void MotorVelocityController::updateClosedLoopControl(double refV, double refA) {
     refV = refV * m_ticksPerRev / 10.0; // convert to talon native units
     refA = refA * m_ticksPerRev / 10.0; // convert to talon native units
     double feedforwardControl = refV * m_kv + refA * m_ka;
-    m_pDriveMotor->Set(ControlMode::Velocity, refV, DemandType::DemandType_ArbitraryFeedForward, feedforwardControl);
+    m_pDriveMotor->Set(ControlMode::Velocity, refA, DemandType::DemandType_ArbitraryFeedForward, feedforwardControl);
 }
 
 void MotorVelocityController::updateOpenLoopControl(const double &refPercent) {

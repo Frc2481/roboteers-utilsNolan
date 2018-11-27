@@ -1,18 +1,19 @@
 #ifndef ROBOT_PARAMETERS_H
 #define ROBOT_PARAMETERS_H
 
-class RobotParameters {
-public:
+namespace RobotParameters {
+//public:
 	static constexpr unsigned k_updateRate = 20; // Hz
 
     static constexpr double k_wheelRad = 3; // in
-    static constexpr double k_wheelTrack = 20; // in
+    static constexpr double k_wheelTrack = 18.25; // in
     static constexpr double k_maxSpeed = 100; // in/s
     static constexpr double k_maxAccel = 100; // in/s^2
     static constexpr double k_maxDeccel = -100; // in/s^2
     static constexpr double k_maxCentripAccel = 20; // in/s^2
     static constexpr double k_cornerStiffCoeff = 0;
-    static constexpr double k_driveGearRatio = 1; // gear ratio from encoder to wheel
+    static constexpr double k_driveGearRatio = 1; // gear ratio from motor to wheel
+    static constexpr double k_driveEncoderGearRatio = 3 * 20 / 12; // gear ratio from encoder to wheel
     static constexpr double k_wheelSlipNoiseRatio = 1.2; // wheel encoder noise ratio used to detect wheel slip
 
     static constexpr double k_driveMotorControllerKp = 1;

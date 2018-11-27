@@ -11,9 +11,9 @@ public:
     virtual bool Get();
 
 private:
+	double m_threshold;
     GenericHID *m_pJoystick;
 	uint32_t m_axisNumber;
-	double m_threshold;
 };
 
 #endif // ANALOG_JOYSTICK_BUTTON_H

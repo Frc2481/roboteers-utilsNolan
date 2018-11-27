@@ -1,5 +1,6 @@
 #include "GrayhillEncoder.h"
 #include <WPILib.h>
+#include <cmath>
 #include "RobotParameters.h"
 
 GrayhillEncoder::GrayhillEncoder(TalonSRX* pTalon, const std::string &name)
@@ -44,7 +45,7 @@ double GrayhillEncoder::getRevVelocity() const {
 }
 
 double GrayhillEncoder::getAngle() const {
-    return (getRevs() % 1) * 180.0 / M_PI;
+    return std::fabs(std::fmod(getRevs(), 1)) * 180.0 / M_PI;
 }
 
 double GrayhillEncoder::getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel) const {

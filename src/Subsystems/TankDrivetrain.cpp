@@ -41,13 +41,12 @@ TankDrivetrain::TankDrivetrain()
         0,
         0,
         RobotParameters::k_grayhillEncoderTicksPerRev * RobotParameters::k_driveMotorToEncoderGearRatioLow);
-    // @TODO: high vs low gear ratio setTicksPerRev
     m_pRightDriveEncoder = new GrayhillEncoder(m_pRightDriveMotor, "RIGHT_DRIVE_MOTOR_ENCODER");
     m_pRightDriveMotorSlave = new TalonSRX(RIGHT_DRIVE_MOTOR_SLAVE_ID);
     m_pRightDriveMotorSlave->Set(ControlMode::Follower, RIGHT_DRIVE_MOTOR_ID);
 
     m_pShifter = new Solenoid(DRIVE_XMSN_SHIFTER_ID);
-    setShiftState(false);
+//    setShiftState(false);
 
 //    m_pChassisIMU = new AHRS(SPI::kMXP);
 
@@ -92,10 +91,31 @@ void TankDrivetrain::InitDefaultCommand() {
 
 void TankDrivetrain::Periodic() {
     // update shift state
-	getShiftState();
+//	getShiftState();
 
 	// update pose
-    updatePose();
+//    updatePose();
+
+	printf("left drive encoder ticks = %d\n", m_pLeftDriveEncoder->getTicks());
+	printf("right drive encoder ticks = %d\n", m_pRightDriveEncoder->getTicks());
+
+//	printf("left drive encoder tick vel = %d\n", m_pLeftDriveEncoder->getTickVelocity());
+//	printf("right drive encoder tick vel = %d\n", m_pRightDriveEncoder->getTickVelocity());
+
+//	printf("left drive encoder revs = %d\n", m_pLeftDriveEncoder->getRevs());
+//	printf("right drive encoder revs = %d\n", m_pRightDriveEncoder->getRevs());
+
+//	printf("left drive encoder rev velocity = %d\n", m_pLeftDriveEncoder->getRevVelocity());
+//	printf("right drive encoder rev velocity = %d\n", m_pRightDriveEncoder->getRevVelocity());
+
+//	printf("left drive encoder angle = %d\n", m_pLeftDriveEncoder->getAngle());
+//	printf("right drive encoder angle = %d\n", m_pRightDriveEncoder->getAngle());
+
+//	printf("left drive encoder wheel dist = %d\n", m_pLeftDriveEncoder->getWheelDistance());
+//	printf("right drive encoder wheel dist = %d\n", m_pRightDriveEncoder->getWheelDistance());
+
+//	printf("left drive encoder wheel vel = %d\n", m_pLeftDriveEncoder->getWheelVelocity());
+//	printf("right drive encoder wheel vel = %d\n", m_pRightDriveEncoder->getWheelVelocity());
 }
 
 void TankDrivetrain::driveOpenLoopControl(double percentLeftDrive, double percentRightDrive) {
@@ -181,6 +201,7 @@ void TankDrivetrain::setShiftState(bool isHighGear) {
 bool TankDrivetrain::getShiftState() {
 	bool isHighGear = m_pShifter->Get();
 
+	// set appropriate motor controller gear ratio
 	if(isHighGear) {
 		m_pLeftDriveMotorController->setTicksPerRev(RobotParameters::k_grayhillEncoderTicksPerRev * RobotParameters::k_driveMotorToEncoderGearRatioHigh);
 		m_pRightDriveMotorController->setTicksPerRev(RobotParameters::k_grayhillEncoderTicksPerRev * RobotParameters::k_driveMotorToEncoderGearRatioHigh);

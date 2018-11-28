@@ -9,25 +9,25 @@
 class Translation2D {
 public:
     Translation2D();
-    Translation2D(const double &x, const double &y);
+    Translation2D(double x, double y);
     Translation2D(const Translation2D &other);
     ~Translation2D();
 
     Translation2D& operator=(const Translation2D &other);
     Translation2D& operator+=(const Translation2D &rhs);
-    Translation2D& operator+=(const double &rhs);
+    Translation2D& operator+=(double rhs);
     Translation2D& operator-=(const Translation2D &rhs);
-    Translation2D& operator-=(const double &rhs);
-    Translation2D& operator*=(const double &rhs);
-    Translation2D& operator/=(const double &rhs);
+    Translation2D& operator-=(double rhs);
+    Translation2D& operator*=(double rhs);
+    Translation2D& operator/=(double rhs);
 	Translation2D operator+(const Translation2D &other) const;
     Translation2D operator-(const Translation2D &other) const;
 
     double getX() const;
     double getY() const;
     
-    void setX(const double &x);
-    void setY(const double &y);
+    void setX(double x);
+    void setY(double y);
 
     //////////////////////////////////////////////////////////////////////
     // @brief vector norm
@@ -62,7 +62,7 @@ public:
     //////////////////////////////////////////////////////////////////////
     // @brief scale vector by scalar
     //////////////////////////////////////////////////////////////////////
-    Translation2D scaleBy(const double &scalar) const;
+    Translation2D scaleBy(double scalar) const;
 
 private:
     double m_x;

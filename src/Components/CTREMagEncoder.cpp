@@ -3,6 +3,7 @@
 #include <sstream>
 #include <cmath>
 #include "RobotParameters.h"
+#include "Utils/NormalizeToRange.h"
 
 CTREMagEncoder::CTREMagEncoder(TalonSRX* pTalon, const std::string &name)
 	: m_pTalon(pTalon),
@@ -44,26 +45,26 @@ double CTREMagEncoder::getRevs() const {
 }
 
 double CTREMagEncoder::getAngle() const {
-    return std::fabs(std::fmod(getRevs(), 1)) * 180.0 / M_PI;
+    return normalizeToRange::normalizeToRange(std::fmod(getRevs(), 1) * 180.0 / M_PI, -180, 180, true);
 }
 
-double CTREMagEncoder::getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel) const {
+double CTREMagEncoder::getWheelDistance(double wheelRadius, double gearRatioEncoderToWheel) const {
     return getRevs() * gearRatioEncoderToWheel * wheelRadius * 2.0 * M_PI;
 }
 
-double CTREMagEncoder::convertRevsToTicks(const double &revs) const {
+double CTREMagEncoder::convertRevsToTicks(double revs) const {
     return revs * (double)RobotParameters::k_ctreMagEncoderTicksPerRev;
 }
 
-double CTREMagEncoder::convertRevsToTickSetpoint(const double &revs) const {
+double CTREMagEncoder::convertRevsToTickSetpoint(double revs) const {
     return convertRevsToTicks(revs) + m_encoderTicksZero;
 }
 
-double CTREMagEncoder::convertAngleToTicks(const double &angle) const {
+double CTREMagEncoder::convertAngleToTicks(double angle) const {
     return convertRevsToTicks(angle * M_PI / 180.0);
 }
 
-double CTREMagEncoder::convertAngleToTickSetpoint(const double &angle) const {
+double CTREMagEncoder::convertAngleToTickSetpoint(double angle) const {
     double angleTicks = convertAngleToTicks(angle);
     double currentTicks = getTicks();
     
@@ -80,15 +81,15 @@ double CTREMagEncoder::convertAngleToTickSetpoint(const double &angle) const {
     return currentTicks + error;
 }
 
-double CTREMagEncoder::convertWheelDistanceToRevs(const double &wheelRadius, const double &wheelDistance) const {
+double CTREMagEncoder::convertWheelDistanceToRevs(double wheelRadius, double wheelDistance) const {
     return wheelDistance / (wheelRadius * 2.0 * M_PI);
 }
 
-double CTREMagEncoder::convertWheelDistanceToTicks(const double &wheelRadius, const double &wheelDistance) const {
+double CTREMagEncoder::convertWheelDistanceToTicks(double wheelRadius, double wheelDistance) const {
     return convertRevsToTicks(convertWheelDistanceToRevs(wheelRadius, wheelDistance));
 }
 
-double CTREMagEncoder::convertWheelDistanceToTickSetpoint(const double &wheelRadius, const double &wheelDistance) const {
+double CTREMagEncoder::convertWheelDistanceToTickSetpoint(double wheelRadius, double wheelDistance) const {
     return convertWheelDistanceToTicks(wheelRadius, wheelDistance) + m_encoderTicksZero;
 }
 

@@ -1,6 +1,6 @@
 #include "AnalogJoystickButton.h"
 
-AnalogJoystickButton::AnalogJoystickButton(GenericHID *joystick, uint32_t axisNumber, const double &threshold)
+AnalogJoystickButton::AnalogJoystickButton(GenericHID *joystick, uint32_t axisNumber, double threshold)
 	: m_threshold(threshold),
 	m_pJoystick(joystick),
 	m_axisNumber(axisNumber) {

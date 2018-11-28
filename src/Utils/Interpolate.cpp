@@ -3,7 +3,7 @@
 double interpolate::interp(
     const std::vector<double> &xData,
     const std::vector<double> &yData,
-    const double &x,
+    double x,
     bool extrapolate) {
 
     // find index of interval for interpolation

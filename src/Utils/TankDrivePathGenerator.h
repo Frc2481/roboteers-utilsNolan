@@ -42,23 +42,23 @@ public:
 
     TankDrivePathGenerator(
         std::vector<waypoint_t> &waypoints,
-        const double &sampleRate,
-        const double &wheelTrack,
-        const double &maxSpeed,
-        const double &maxAccel,
-        const double &maxDeccel,
-        const double &maxCentripAccel);
+        double sampleRate,
+        double wheelTrack,
+        double maxSpeed,
+        double maxAccel,
+        double maxDeccel,
+        double maxCentripAccel);
         
     ~TankDrivePathGenerator();
 
     void setWaypoints(std::vector<waypoint_t> &waypoints);
     void setSampleRate(unsigned sampleRate);
     void setIsReverse(bool isReverse);
-    void setWheelTrack(const double &wheelTrack);
-    void setMaxSpeed(const double &maxSpeed);
-    void setMaxAccel(const double &maxAccel);
-    void setMaxDeccel(const double &maxDeccel);
-    void setMaxCentripAccel(const double &maxCentripAccel);
+    void setWheelTrack(double wheelTrack);
+    void setMaxSpeed(double maxSpeed);
+    void setMaxAccel(double maxAccel);
+    void setMaxDeccel(double maxDeccel);
+    void setMaxCentripAccel(double maxCentripAccel);
     void setWaypointsFilename(const std::string &waypointsFilename);
     void setPathFilename(const std::string &pathFilename);
 

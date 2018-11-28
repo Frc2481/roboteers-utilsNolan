@@ -1,50 +1,43 @@
-//#include "Robot.h"
+#include "Robot.h"
 #include <LiveWindow/LiveWindow.h>
 #include <SmartDashboard/SendableChooser.h>
 #include <SmartDashboard/SmartDashboard.h>
 #include "CommandBase.h"
 #include "RobotParameters.h"
 
-class Robot : public TimedRobot {
-public:
-
-private:
-void RobotInit() {
+void Robot::RobotInit() {
 	SetPeriod(1.0 / RobotParameters::k_updateRate);
 	CommandBase::init();
 }
 
-void AutonomousInit() {
+void Robot::AutonomousInit() {
 }
 
-void DisabledInit() {
+void Robot::DisabledInit() {
 }
 
-void TeleopInit() {
+void Robot::TeleopInit() {
 	if (m_pAutonomousCommand != nullptr) {
 		m_pAutonomousCommand->Cancel();
 		m_pAutonomousCommand = nullptr;
 	}
 }
 
-void AutonomousPeriodic() {
+void Robot::AutonomousPeriodic() {
 	Scheduler::GetInstance()->Run();
 }
 
-void TeleopPeriodic() {
+void Robot::TeleopPeriodic() {
 	Scheduler::GetInstance()->Run();
 }
 
-void DisabledPeriodic() {
+void Robot::DisabledPeriodic() {
 	Scheduler::GetInstance()->Run();
 	CommandBase::m_pTankDrivetrain->Periodic();
 }
 
-void TestPeriodic() {
+void Robot::TestPeriodic() {
 //	LiveWindow::GetInstance()->Run();
 }
-
-std::unique_ptr<Command> m_pAutonomousCommand;
-};
 
 START_ROBOT_CLASS(Robot)

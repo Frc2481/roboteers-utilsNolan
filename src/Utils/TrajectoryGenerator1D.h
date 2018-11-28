@@ -30,18 +30,18 @@ public:
 
     TrajectoryGenerator1D(
         std::vector<waypoint_t> &waypoints,
-        const double &sampleRate,
-        const double &maxSpeed,
-        const double &maxAccel,
-        const double &maxDeccel);
+        double sampleRate,
+        double maxSpeed,
+        double maxAccel,
+        double maxDeccel);
 
 	~TrajectoryGenerator1D();
 
     void setWaypoints(std::vector<waypoint_t> &waypoints);
     void setSampleRate(unsigned sampleRate);
-    void setMaxSpeed(const double &maxSpeed);
-    void setMaxAccel(const double &maxAccel);
-    void setMaxDeccel(const double &maxDeccel);
+    void setMaxSpeed(double maxSpeed);
+    void setMaxAccel(double maxAccel);
+    void setMaxDeccel(double maxDeccel);
     void setWaypointsFilename(const std::string &waypointsFilename);
     void setPathFilename(const std::string &pathFilename);
 
@@ -51,8 +51,8 @@ public:
     //////////////////////////////////////////////////////////////////////
 	void setIsContinous(
 		bool isContinous,
-		const double &rangeMin,
-		const double &rangeMax);
+		double rangeMin,
+		double rangeMax);
 
     std::vector<finalPathPoint_t> getFinalPath() const;
 

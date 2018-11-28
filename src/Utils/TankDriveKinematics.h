@@ -9,10 +9,10 @@
 
 class TankDriveKinematics {
 public:
-    TankDriveKinematics(const double &wheelTrack);
+    TankDriveKinematics(double wheelTrack);
     ~TankDriveKinematics();
 
-    void setWheelTrack(const double &wheelTrack);
+    void setWheelTrack(double wheelTrack);
 
     //////////////////////////////////////////////////////////////////////
     // @brief calculate forward robot velocity and yaw rate from forward
@@ -23,8 +23,8 @@ public:
     // @param robotYawRate - robot yaw rate (deg/s)
     //////////////////////////////////////////////////////////////////////
     void forwardKinematics(
-        const double &leftWheelVel,
-        const double &rightWheelVel,
+        double leftWheelVel,
+        double rightWheelVel,
         double &robotVel,
         double &robotYawRate);
 
@@ -37,8 +37,8 @@ public:
     // @param rightWheelVel - right wheel velocity (in/s)
     //////////////////////////////////////////////////////////////////////
     void inverseKinematics(
-        const double &robotVel,
-        const double &robotYawRate,
+        double robotVel,
+        double robotYawRate,
         double &leftWheelVel,
         double &rightWheelVel);
 

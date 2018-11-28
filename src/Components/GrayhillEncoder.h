@@ -17,15 +17,15 @@ public:
     double getRevs() const;
     double getRevVelocity() const;
     double getAngle() const;
-    double getWheelDistance(const double &wheelRadius, const double &gearRatioEncoderToWheel) const;
-    double getWheelVelocity(const double &wheelRadius, const double &gearRatioEncoderToWheel) const;
-    double convertRevsToTicks(const double &revs) const;
-    double convertRevsToTickSetpoint(const double &revs) const;
-    double convertAngleToTicks(const double &angle) const;
-    double convertAngleToTickSetpoint(const double &angle) const;
-    double convertWheelDistanceToRevs(const double &wheelRadius,  const double &wheelDistance) const;
-    double convertWheelDistanceToTicks(const double &wheelRadius, const double &wheelDistance) const;
-    double convertWheelDistanceToTickSetpoint(const double &wheelRadius, const double &wheelDistance) const;
+    double getWheelDistance(double wheelRadius, double gearRatioEncoderToWheel) const;
+    double getWheelVelocity(double wheelRadius, double gearRatioEncoderToWheel) const;
+    double convertRevsToTicks(double revs) const;
+    double convertRevsToTickSetpoint(double revs) const;
+    double convertAngleToTicks(double angle) const;
+    double convertAngleToTickSetpoint(double angle) const;
+    double convertWheelDistanceToRevs(double wheelRadius,  double wheelDistance) const;
+    double convertWheelDistanceToTicks(double wheelRadius, double wheelDistance) const;
+    double convertWheelDistanceToTickSetpoint(double wheelRadius, double wheelDistance) const;
 
 private:
     TalonSRX* m_pTalon;

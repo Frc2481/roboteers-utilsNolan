@@ -12,8 +12,8 @@ class TankDrivePose {
 public:
     TankDrivePose(
         const Pose2D &pose,
-        const double &wheelTrack,
-        const double &cornerStiffCoeff);
+        double wheelTrack,
+        double cornerStiffCoeff);
     ~TankDrivePose();
 
     void reset(const Pose2D &pose, const Pose2D &poseDot);
@@ -30,12 +30,12 @@ public:
     // @param yawRateGyro - yaw rate gyro (deg/s)
     //////////////////////////////////////////////////////////////////////
     void update(
-        const double &deltaDistLeftWheel,
-        const double &deltaDistRightWheel,
-        const double &deltaYawGyro,
-        const double &velLeftWheel,
-        const double &velRightWheel,
-        const double &yawRateGyro);
+        double deltaDistLeftWheel,
+        double deltaDistRightWheel,
+        double deltaYawGyro,
+        double velLeftWheel,
+        double velRightWheel,
+        double yawRateGyro);
 
 private:
     Pose2D m_pose;

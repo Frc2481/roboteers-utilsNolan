@@ -9,13 +9,13 @@ public:
     MotorPositionController(
 		TalonSRX* pTalon,
         bool inverted,
-        const double &kp,
-		const double &ki,
-		const double &kd,
-		const double &kv,
-		const double &ka,
-        const double &iZone,
-        const double &iErrorLim,
+        double kp,
+		double ki,
+		double kd,
+		double kv,
+		double ka,
+        double iZone,
+        double iErrorLim,
         unsigned ticksPerRev);
     ~MotorPositionController();
 

@@ -9,15 +9,17 @@ public:
     MotorVelocityController(
 		TalonSRX* pTalon,
         bool inverted,
-        const double &kp,
-		const double &ki,
-		const double &kd,
-		const double &kv,
-		const double &ka,
-        const double &iZone,
-        const double &iErrorLim,
+        double kp,
+		double ki,
+		double kd,
+		double kv,
+		double ka,
+        double iZone,
+        double iErrorLim,
         unsigned ticksPerRev);
     ~MotorVelocityController();
+
+    void setTicksPerRev(unsigned ticksPerRev);
 
     //////////////////////////////////////////////////////////////////////
     // @brief update reference points of closed loop motor controller
@@ -30,7 +32,7 @@ public:
     // @brief update reference points of open loop motor controller
     // @param refPercent - percent reference point (-1 to 1)
     //////////////////////////////////////////////////////////////////////
-    void updateOpenLoopControl(const double &refPercent);
+    void updateOpenLoopControl(double refPercent);
 
 private:
     TalonSRX* m_pDriveMotor;

@@ -1,20 +1,20 @@
 #include "TankDriveKinematics.h"
 #include <math.h>
 
-TankDriveKinematics::TankDriveKinematics(const double &wheelTrack)
+TankDriveKinematics::TankDriveKinematics(double wheelTrack)
     : m_wheelTrack(wheelTrack) {
 }
 
 TankDriveKinematics::~TankDriveKinematics() {
 }
 
-void TankDriveKinematics::setWheelTrack(const double &wheelTrack) {
+void TankDriveKinematics::setWheelTrack(double wheelTrack) {
     m_wheelTrack = wheelTrack;
 }
 
 void TankDriveKinematics::forwardKinematics(
-        const double &leftWheelVel,
-        const double &rightWheelVel,
+        double leftWheelVel,
+        double rightWheelVel,
         double &robotVel,
         double &robotYawRate) {
     
@@ -23,8 +23,8 @@ void TankDriveKinematics::forwardKinematics(
 }
 
 void TankDriveKinematics::inverseKinematics(
-        const double &robotVel,
-        const double &robotYawRate,
+        double robotVel,
+        double robotYawRate,
         double &leftWheelVel,
         double &rightWheelVel) {
     

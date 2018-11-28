@@ -30,7 +30,7 @@ public:
 		// generate path
 		TankDrivePathGenerator pathGenerator(
 			waypoints,
-			1.0 / (double)RobotParameters::k_updateRate,
+			RobotParameters::k_updateRate,
 			RobotParameters::k_wheelTrack,
 			RobotParameters::k_maxSpeed,
 			RobotParameters::k_maxAccel,

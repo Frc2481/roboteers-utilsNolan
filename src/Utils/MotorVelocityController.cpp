@@ -1,18 +1,22 @@
 #include "MotorVelocityController.h"
 
-MotorVelocityController::MotorVelocityController() {
+MotorVelocityController::MotorVelocityController()
+	: m_pDriveMotor(nullptr),
+	m_kv(0),
+	m_ka(0),
+	m_ticksPerRev(0) {
 }
 
 MotorVelocityController::MotorVelocityController(
     TalonSRX* pTalon,
     bool inverted,
-    const double &kp,
-    const double &ki,
-    const double &kd,
-    const double &kv,
-    const double &ka,
-    const double &iZone,
-    const double &iErrorLim,
+    double kp,
+    double ki,
+    double kd,
+    double kv,
+    double ka,
+    double iZone,
+    double iErrorLim,
     unsigned ticksPerRev)
     
     : m_pDriveMotor(pTalon),
@@ -42,6 +46,10 @@ MotorVelocityController::MotorVelocityController(
 MotorVelocityController::~MotorVelocityController() {
 }
 
+void MotorVelocityController::setTicksPerRev(unsigned ticksPerRev) {
+	m_ticksPerRev = ticksPerRev;
+}
+
 void MotorVelocityController::updateClosedLoopControl(double refV, double refA) {
     refV = refV * m_ticksPerRev / 10.0; // convert to talon native units
     refA = refA * m_ticksPerRev / 10.0; // convert to talon native units
@@ -49,6 +57,6 @@ void MotorVelocityController::updateClosedLoopControl(double refV, double refA) 
     m_pDriveMotor->Set(ControlMode::Velocity, refA, DemandType::DemandType_ArbitraryFeedForward, feedforwardControl);
 }
 
-void MotorVelocityController::updateOpenLoopControl(const double &refPercent) {
+void MotorVelocityController::updateOpenLoopControl(double refPercent) {
     m_pDriveMotor->Set(ControlMode::PercentOutput, refPercent);
 }

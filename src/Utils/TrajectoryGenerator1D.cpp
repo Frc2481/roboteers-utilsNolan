@@ -10,10 +10,10 @@
 
 TrajectoryGenerator1D::TrajectoryGenerator1D(
     std::vector<waypoint_t> &waypoints,
-    const double &sampleRate,
-    const double &maxSpeed,
-    const double &maxAccel,
-    const double &maxDeccel)
+    double sampleRate,
+    double maxSpeed,
+    double maxAccel,
+    double maxDeccel)
 
     : m_tempPath(),
     m_comboPath(),
@@ -51,19 +51,19 @@ void TrajectoryGenerator1D::setSampleRate(unsigned sampleRate) {
     m_sampleRate = sampleRate;
 }
 
-void TrajectoryGenerator1D::setMaxSpeed(const double &maxSpeed) {
+void TrajectoryGenerator1D::setMaxSpeed(double maxSpeed) {
     if(maxSpeed != 0) {
         m_maxSpeed = abs(maxSpeed);
     }
 }
 
-void TrajectoryGenerator1D::setMaxAccel(const double &maxAccel) {
+void TrajectoryGenerator1D::setMaxAccel(double maxAccel) {
     if(maxAccel != 0) {
         m_maxAccel = abs(maxAccel);
     }
 }
 
-void TrajectoryGenerator1D::setMaxDeccel(const double &maxDeccel) {
+void TrajectoryGenerator1D::setMaxDeccel(double maxDeccel) {
     if(maxDeccel != 0) {
         m_maxDeccel = -abs(maxDeccel);
     }
@@ -71,8 +71,8 @@ void TrajectoryGenerator1D::setMaxDeccel(const double &maxDeccel) {
 
 void TrajectoryGenerator1D::setIsContinous(
     bool isContinous,
-    const double &rangeMin,
-    const double &rangeMax) {
+    double rangeMin,
+    double rangeMax) {
     
     if(!isContinous) {
         m_rangeMin = 0;
@@ -356,7 +356,6 @@ void TrajectoryGenerator1D::integratePath(std::vector<finalPathPoint_t> &integra
     // integrate path
     double accelSpeed;
     double pathSpeed;
-    bool isNewTempPoint = false;
     unsigned i;
     
     if(!isBackward) {

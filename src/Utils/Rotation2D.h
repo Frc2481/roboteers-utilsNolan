@@ -7,11 +7,11 @@
 class Rotation2D {
 public:
     Rotation2D();
-    Rotation2D(const double &cos, const double &sin);
+    Rotation2D(double cos, double sin);
     Rotation2D(const Rotation2D &other);
     ~Rotation2D();
-    static Rotation2D fromRadians(const double &angle);
-    static Rotation2D fromDegrees(const double &angle);
+    static Rotation2D fromRadians(double angle);
+    static Rotation2D fromDegrees(double angle);
 
     Rotation2D& operator=(const Rotation2D &rhs);
     Rotation2D& operator+=(const Rotation2D &rhs);
@@ -25,8 +25,8 @@ public:
     double getRadians() const;
     double getDegrees() const;
     
-    void setRadians(const double &angle);
-    void setDegrees(const double &angle);
+    void setRadians(double angle);
+    void setDegrees(double angle);
 
     //////////////////////////////////////////////////////////////////////
     // @brief rotate rotation by another rotation

@@ -7,7 +7,7 @@ Rotation2D::Rotation2D()
     m_sin(0) {
 }
 
-Rotation2D::Rotation2D(const double &cos, const double &sin)
+Rotation2D::Rotation2D(double cos, double sin)
     : m_cos(cos),
     m_sin(sin) {
 
@@ -23,11 +23,11 @@ Rotation2D::Rotation2D(const Rotation2D &other)
 Rotation2D::~Rotation2D() {
 }
 
-Rotation2D Rotation2D::fromRadians(const double &angle) {
+Rotation2D Rotation2D::fromRadians(double angle) {
     return Rotation2D(cos(angle), sin(angle));
 }
 
-Rotation2D Rotation2D::fromDegrees(const double &angle) {
+Rotation2D Rotation2D::fromDegrees(double angle) {
     return fromRadians(angle * M_PI / 180.0);
 }
 
@@ -87,12 +87,12 @@ double Rotation2D::getDegrees() const {
     return getRadians() * 180.0 / M_PI;
 }
 
-void Rotation2D::setRadians(const double &angle) {
+void Rotation2D::setRadians(double angle) {
     m_cos = cos(angle);
     m_sin = sin(angle);
 }
 
-void Rotation2D::setDegrees(const double &angle) {
+void Rotation2D::setDegrees(double angle) {
     m_cos = cos(angle * M_PI / 180.0);
     m_sin = sin(angle * M_PI / 180.0);
 }

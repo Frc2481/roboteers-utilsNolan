@@ -22,7 +22,7 @@ class TankDrivetrain : public Subsystem {
 public:
     TankDrivetrain();
     ~TankDrivetrain();
-//    virtual void InitDefaultCommand();
+    virtual void InitDefaultCommand();
     virtual void Periodic();
 
     //////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ public:
     // @param percentLeftDrive - left drive percent (-1 to 1)
     // @param percentRightDrive - right drive percent (-1 to 1)
     //////////////////////////////////////////////////////////////////////
-    void driveOpenLoopControl(const double &percentLeftDrive, const double &percentRightDrive);
+    void driveOpenLoopControl(double percentLeftDrive, double percentRightDrive);
 
     //////////////////////////////////////////////////////////////////////
     // @brief command robot to drive using closed loop control
@@ -44,6 +44,9 @@ public:
         double robotAccel);
     
     void stop();
+
+    void setShiftState(bool isHighGear);
+    bool getShiftState();
 
     Pose2D getPose();
     Pose2D getPoseDot();
@@ -59,17 +62,10 @@ private:
     GrayhillEncoder* m_pRightDriveEncoder;
     TalonSRX* m_pLeftDriveMotorSlave;
     TalonSRX* m_pRightDriveMotorSlave;
+    Solenoid* m_pShifter;
 //    AHRS* m_pChassisIMU;
-    double m_wheelRad; // wheel radius (in)
-    double m_wheelTrack; // wheel track (in)
     TankDriveKinematics m_kinematics;
-    double m_maxSpeed; // max speed (in/s)
-    double m_maxAccel; // max accel (in/s^2)
-    double m_maxDeccel; // max deccel (in/s^2)
-    double m_maxCentripAccel; // max centripetal accel (in/s^2)
-    double m_updateRate; // update rate (Hz)
     TankDrivePose m_tankDrivePose;
-    double m_driveEncoderGearRatio;
     double m_leftWheelDist;
     double m_rightWheelDist;
     double m_leftWheelVelCmd;

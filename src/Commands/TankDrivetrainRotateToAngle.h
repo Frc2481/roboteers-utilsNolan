@@ -17,7 +17,7 @@ public:
 		Requires(CommandBase::m_pTankDrivetrain.get());
 		SetInterruptible(true);
 
-		m_pRotateController = new PIDVAController(
+		m_pRotateController = std::make_unique<PIDVAController>(
 			RobotParameters::k_rotateToAngleControllerKp,
 			RobotParameters::k_rotateToAngleControllerKi,
 			RobotParameters::k_rotateToAngleControllerKd,
@@ -31,7 +31,7 @@ public:
 	~TankDrivetrainRotateToAngle() {
 	}
 
-	void Initialize(const double &refAngle) {
+	void Initialize(double refAngle) {
 		m_refAng = refAngle;
 		m_time = 0;
 		m_pRotateController->reset(m_time);
@@ -58,15 +58,12 @@ public:
 
 	void End() {
 		m_pTankDrivetrain->stop();
-
-		delete m_pTankDrivetrain;
-		m_pTankDrivetrain = nullptr;
 	}
 
 private:
 	double m_refAng;
 	double m_time;
-	PIDVAController* m_pRotateController;
+	std::unique_ptr<PIDVAController> m_pRotateController;
 };
 
 #endif // COMMANDS_TANK_DRIVETRAIN_ROTATE_TO_ANGLE_H

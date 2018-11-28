@@ -1,3 +1,6 @@
+#ifndef NORMALIZE_TO_RANGE_H
+#define NORMALIZE_TO_RANGE_H
+
 namespace normalizeToRange {
     //////////////////////////////////////////////////////////////////////
     // @brief normalize value to range
@@ -17,3 +20,5 @@ namespace normalizeToRange {
     //////////////////////////////////////////////////////////////////////
     double rangedDifference(double difference, double rangeMin, double rangeMax);
 }
+
+#endif // NORMALIZE_TO_RANGE_H

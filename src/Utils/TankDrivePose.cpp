@@ -3,8 +3,8 @@
 
 TankDrivePose::TankDrivePose(
     const Pose2D &pose,
-    const double &wheelTrack,
-    const double &cornerStiffCoeff)
+    double wheelTrack,
+    double cornerStiffCoeff)
     
     : m_pose(pose),
     m_poseDot(Translation2D(0, 0), Rotation2D::fromDegrees(0)),
@@ -29,12 +29,12 @@ Pose2D TankDrivePose::getPoseDot() {
 }
 
 void TankDrivePose::update(
-    const double &deltaDistLeftWheel,
-    const double &deltaDistRightWheel,
-    const double &deltaYawGyro,
-    const double &velLeftWheel,
-    const double &velRightWheel,
-    const double &yawRateGyro) {
+    double deltaDistLeftWheel,
+    double deltaDistRightWheel,
+    double deltaYawGyro,
+    double velLeftWheel,
+    double velRightWheel,
+    double yawRateGyro) {
     
     // wheel odometry measurement
     double robotDeltaDistWheelMeas;

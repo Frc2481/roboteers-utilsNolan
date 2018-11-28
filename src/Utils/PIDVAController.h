@@ -8,18 +8,18 @@ class PIDVAController {
 public:
 	PIDVAController();
 	PIDVAController(
-		const double &kp,
-		const double &ki,
-		const double &kd,
-		const double &kv,
-		const double &ka);
+		double kp,
+		double ki,
+		double kd,
+		double kv,
+		double ka);
 	~PIDVAController();
 	
-	void setKp(const double &kp);
-	void setKi(const double &ki);
-	void setKd(const double &kd);
-	void setKv(const double &kv);
-	void setKa(const double &ka);
+	void setKp(double kp);
+	void setKi(double ki);
+	void setKd(double kd);
+	void setKv(double kv);
+	void setKa(double ka);
 	
 	//////////////////////////////////////////////////////////////////////
     // @brief set to true if reference wraps around from rangeMax to
@@ -27,23 +27,23 @@ public:
     //////////////////////////////////////////////////////////////////////
 	void setIsContinous(
 		bool isContinous,
-		const double &rangeMin,
-		const double &rangeMax);
+		double rangeMin,
+		double rangeMax);
 	
 	//////////////////////////////////////////////////////////////////////
     // @brief integral term only takes effect when measurement is within
 	//        +/-iZone of reference to prevent integral windup
     //////////////////////////////////////////////////////////////////////
-	void setIZone(const double &iZone);
+	void setIZone(double iZone);
 	
 	//////////////////////////////////////////////////////////////////////
     // @brief integral error is limited to +/-iErrorLim to prevent integral
 	//        windup
     //////////////////////////////////////////////////////////////////////
-	void setIErrorLim(const double &iErrorLim);
+	void setIErrorLim(double iErrorLim);
 	
-	void setTargetZone(const double &targetZone);
-	void setTargetZoneDebounce(const double &targetZoneDebounce);
+	void setTargetZone(double targetZone);
+	void setTargetZoneDebounce(double targetZoneDebounce);
 
 	//////////////////////////////////////////////////////////////////////
     // @brief update control signal from controller.  must be called
@@ -51,11 +51,11 @@ public:
 	//        properly.
     //////////////////////////////////////////////////////////////////////
 	void update(
-		double &refP,
-		const double &refV,
-		const double &refA,
-		const double &measP,
-		const double &time,
+		double refP,
+		double refV,
+		double refA,
+		double measP,
+		double time,
 		double &cntrl);
 	
 	//////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ public:
 	//////////////////////////////////////////////////////////////////////
     // @brief reset error terms of controller
     //////////////////////////////////////////////////////////////////////
-	void reset(const double &time);
+	void reset(double time);
 	
 private:
 	double m_kp;					// feed-back proportional gain

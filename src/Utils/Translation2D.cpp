@@ -6,7 +6,7 @@ Translation2D::Translation2D()
     m_y(0) {
 }
 
-Translation2D::Translation2D(const double &x, const double &y)
+Translation2D::Translation2D(double x, double y)
 	: m_x(x),
     m_y(y) {
 }
@@ -54,11 +54,11 @@ double Translation2D::getY() const {
 	return m_y;
 }
 
-void Translation2D::setX(const double &x) {
+void Translation2D::setX(double x) {
 	m_x = x;
 }
 
-void Translation2D::setY(const double &y)
+void Translation2D::setY(double y)
 {
 	m_y = y;
 }
@@ -87,6 +87,6 @@ Translation2D Translation2D::rotateBy(const Rotation2D &rotation) const {
 	return Translation2D(m_x * rotation.getCos() - m_y * rotation.getSin(), m_x * rotation.getSin() + m_y * rotation.getCos());
 }
 
-Translation2D Translation2D::scaleBy(const double &scalar) const {
+Translation2D Translation2D::scaleBy(double scalar) const {
 	return Translation2D(m_x * scalar, m_y * scalar);
 }

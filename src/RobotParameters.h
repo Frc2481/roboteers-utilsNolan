@@ -2,7 +2,6 @@
 #define ROBOT_PARAMETERS_H
 
 namespace RobotParameters {
-//public:
 	static constexpr unsigned k_updateRate = 20; // Hz
 
     static constexpr double k_wheelRad = 3; // in
@@ -12,8 +11,9 @@ namespace RobotParameters {
     static constexpr double k_maxDeccel = -100; // in/s^2
     static constexpr double k_maxCentripAccel = 20; // in/s^2
     static constexpr double k_cornerStiffCoeff = 0;
-    static constexpr double k_driveGearRatio = 1; // gear ratio from motor to wheel
-    static constexpr double k_driveEncoderGearRatio = 3 * 20 / 12; // gear ratio from encoder to wheel
+    static constexpr double k_driveMotorToEncoderGearRatioLow = 1; // gear ratio from drive motor to encoder in low gear
+    static constexpr double k_driveMotorToEncoderGearRatioHigh = 1; // gear ratio from drive motor to encoder in high gear
+    static constexpr double k_driveEncoderToWheelGearRatio = 3 * 20 / 12; // gear ratio from drive encoder to wheel
     static constexpr double k_wheelSlipNoiseRatio = 1.2; // wheel encoder noise ratio used to detect wheel slip
 
     static constexpr double k_driveMotorControllerKp = 1;

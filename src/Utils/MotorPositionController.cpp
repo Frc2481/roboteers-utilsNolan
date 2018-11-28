@@ -1,18 +1,22 @@
 #include "MotorPositionController.h"
 
-MotorPositionController::MotorPositionController() {
+MotorPositionController::MotorPositionController()
+	: m_pDriveMotor(nullptr),
+	m_kv(0),
+	m_ka(0),
+	m_ticksPerRev(0) {
 }
 
 MotorPositionController::MotorPositionController(
     TalonSRX* pTalon,
     bool inverted,
-    const double &kp,
-    const double &ki,
-    const double &kd,
-    const double &kv,
-    const double &ka,
-    const double &iZone,
-    const double &iErrorLim,
+    double kp,
+    double ki,
+    double kd,
+    double kv,
+    double ka,
+    double iZone,
+    double iErrorLim,
     unsigned ticksPerRev)
     
     : m_pDriveMotor(pTalon),

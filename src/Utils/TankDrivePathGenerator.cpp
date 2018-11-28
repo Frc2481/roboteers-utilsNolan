@@ -11,12 +11,12 @@
 
 TankDrivePathGenerator::TankDrivePathGenerator(
     std::vector<waypoint_t> &waypoints,
-    const double &sampleRate,
-    const double &wheelTrack,
-    const double &maxSpeed,
-    const double &maxAccel,
-    const double &maxDeccel,
-    const double &maxCentripAccel)
+    double sampleRate,
+    double wheelTrack,
+    double maxSpeed,
+    double maxAccel,
+    double maxDeccel,
+    double maxCentripAccel)
 
     : m_tempPath(),
     m_comboPath(),
@@ -54,31 +54,31 @@ void TankDrivePathGenerator::setIsReverse(bool isReverse) {
     m_isReverse = isReverse;
 }
 
-void TankDrivePathGenerator::setWheelTrack(const double &wheelTrack) {
+void TankDrivePathGenerator::setWheelTrack(double wheelTrack) {
     if(wheelTrack != 0) {
         m_wheelTrack = abs(wheelTrack);
     }
 }
 
-void TankDrivePathGenerator::setMaxSpeed(const double &maxSpeed) {
+void TankDrivePathGenerator::setMaxSpeed(double maxSpeed) {
     if(maxSpeed != 0) {
         m_maxSpeed = abs(maxSpeed);
     }
 }
 
-void TankDrivePathGenerator::setMaxAccel(const double &maxAccel) {
+void TankDrivePathGenerator::setMaxAccel(double maxAccel) {
     if(maxAccel != 0) {
         m_maxAccel = abs(maxAccel);
     }
 }
 
-void TankDrivePathGenerator::setMaxDeccel(const double &maxDeccel) {
+void TankDrivePathGenerator::setMaxDeccel(double maxDeccel) {
     if(maxDeccel != 0) {
         m_maxDeccel = -abs(maxDeccel);
     }
 }
 
-void TankDrivePathGenerator::setMaxCentripAccel(const double &maxCentripAccel) {
+void TankDrivePathGenerator::setMaxCentripAccel(double maxCentripAccel) {
     if(maxCentripAccel != 0) {
         m_maxCentripAccel = abs(maxCentripAccel);
     }

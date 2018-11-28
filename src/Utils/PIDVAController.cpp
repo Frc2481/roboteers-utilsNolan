@@ -24,11 +24,11 @@ PIDVAController::PIDVAController()
 }
 
 PIDVAController::PIDVAController(
-		const double &kp,
-		const double &ki,
-		const double &kd,
-		const double &kv,
-		const double &ka) {
+		double kp,
+		double ki,
+		double kd,
+		double kv,
+		double ka) {
     m_kp = kp;
     m_ki = ki;
     m_kd = kd;
@@ -52,30 +52,30 @@ PIDVAController::PIDVAController(
 PIDVAController::~PIDVAController() {
 }
 
-void PIDVAController::setKp(const double &kp) {
+void PIDVAController::setKp(double kp) {
     m_kp = kp;
 }
 
-void PIDVAController::setKi(const double &ki) {
+void PIDVAController::setKi(double ki) {
     m_ki = ki;
 }
 
-void PIDVAController::setKd(const double &kd) {
+void PIDVAController::setKd(double kd) {
     m_kd = kd;
 }
 
-void PIDVAController::setKv(const double &kv) {
+void PIDVAController::setKv(double kv) {
     m_kv = kv;
 }
 
-void PIDVAController::setKa(const double &ka) {
+void PIDVAController::setKa(double ka) {
     m_ka = ka;
 }
 
 void PIDVAController::setIsContinous(
     bool isContinous,
-    const double &rangeMin,
-    const double &rangeMax) {
+    double rangeMin,
+    double rangeMax) {
     
     if(!isContinous) {
         m_rangeMin = 0;
@@ -92,28 +92,28 @@ void PIDVAController::setIsContinous(
     m_rangeMax = rangeMax;
 }
 
-void PIDVAController::setIZone(const double &iZone) {
+void PIDVAController::setIZone(double iZone) {
     m_iZone = fabs(iZone);
 }
 
-void PIDVAController::setIErrorLim(const double &iErrorLim) {
+void PIDVAController::setIErrorLim(double iErrorLim) {
     m_iErrorLim = fabs(iErrorLim);
 }
 
-void PIDVAController::setTargetZone(const double &targetZone) {
+void PIDVAController::setTargetZone(double targetZone) {
     m_targetZone = fabs(targetZone);
 }
 
-void PIDVAController::setTargetZoneDebounce(const double &targetZoneDebounce) {
+void PIDVAController::setTargetZoneDebounce(double targetZoneDebounce) {
     m_targetZoneDebounce = targetZoneDebounce;
 }
 
 void PIDVAController::update(
-    double &refP,
-    const double &refV,
-    const double &refA,
-    const double &measP,
-    const double &time,
+    double refP,
+    double refV,
+    double refA,
+    double measP,
+    double time,
     double &cntrl) {
 
     // skip update if time didn't change
@@ -191,7 +191,7 @@ bool PIDVAController::isOnTarget() const {
     return m_isOnTarget;
 }
 
-void PIDVAController::reset(const double &time) {
+void PIDVAController::reset(double time) {
 	m_timeOld = time;
 	m_errorOld = 0;
     m_iErrorOld = 0;

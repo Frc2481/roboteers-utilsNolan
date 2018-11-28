@@ -85,9 +85,9 @@ TankDrivetrain::~TankDrivetrain() {
 //    m_pChassisIMU = nullptr;
 }
 
-void TankDrivetrain::InitDefaultCommand() {
-	SetDefaultCommand(new TankDrivetrainJoystickDrive);
-}
+//void TankDrivetrain::InitDefaultCommand() {
+//	SetDefaultCommand(new TankDrivetrainJoystickDrive);
+//}
 
 void TankDrivetrain::Periodic() {
     // update shift state

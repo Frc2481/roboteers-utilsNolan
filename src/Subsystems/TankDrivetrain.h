@@ -22,7 +22,7 @@ class TankDrivetrain : public Subsystem {
 public:
     TankDrivetrain();
     ~TankDrivetrain();
-    virtual void InitDefaultCommand();
+//    virtual void InitDefaultCommand();
     virtual void Periodic();
 
     //////////////////////////////////////////////////////////////////////

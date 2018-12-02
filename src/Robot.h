@@ -15,7 +15,6 @@ public:
 	void TestPeriodic() override;
 
 private:
-	std::unique_ptr<Command> m_pAutonomousCommand;
 };
 
 #endif // ROBOT_H

@@ -11,7 +11,8 @@ public:
     CommandBase(const std::string &name);
     CommandBase();
 
-    static void init();
+    static void Init();
+    static void Periodic();
 	
     static std::unique_ptr<OI> m_pOI;
     static std::unique_ptr<TankDrivetrain> m_pTankDrivetrain;

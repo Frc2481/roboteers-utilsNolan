@@ -46,7 +46,7 @@ TankDrivetrain::TankDrivetrain()
     m_pRightDriveMotorSlave->Set(ControlMode::Follower, RIGHT_DRIVE_MOTOR_ID);
 
     m_pShifter = new Solenoid(DRIVE_XMSN_SHIFTER_ID);
-//    setShiftState(false);
+    setShiftState(false);
 
 //    m_pChassisIMU = new AHRS(SPI::kMXP);
 

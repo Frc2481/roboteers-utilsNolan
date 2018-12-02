@@ -3,17 +3,19 @@
 std::unique_ptr<OI> CommandBase::m_pOI;
 std::unique_ptr<TankDrivetrain> CommandBase::m_pTankDrivetrain;
 
-CommandBase::CommandBase(const std::string &name) : Command(name)
-{
+CommandBase::CommandBase(const std::string &name) : Command(name) {
 }
 
-CommandBase::CommandBase() : Command()
-{
+CommandBase::CommandBase() : Command() {
 }
 
-void CommandBase::init()
-{    
+void CommandBase::Init() {
+	m_pTankDrivetrain.reset(new TankDrivetrain());
+
     // reset OI must be last thing to execute
 	m_pOI.reset(new OI());
-	m_pTankDrivetrain.reset(new TankDrivetrain());
+}
+
+void CommandBase::Periodic() {
+	m_pTankDrivetrain->Periodic();
 }

@@ -9,8 +9,11 @@ public:
     OI();
     ~OI();
 
-    static std::unique_ptr<Joystick2481> m_pDriverStick;
-    static std::unique_ptr<Joystick2481> m_pOperatorStick;
+    Joystick2481* GetDriverStick();
+    Joystick2481* GetOperatorStick();
+
+    Joystick2481 *m_pDriverStick;
+    Joystick2481 *m_pOperatorStick;
 };
 
 #endif // OI_H

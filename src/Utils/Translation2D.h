@@ -15,11 +15,7 @@ public:
 
     Translation2D& operator=(const Translation2D &other);
     Translation2D& operator+=(const Translation2D &rhs);
-    Translation2D& operator+=(double rhs);
     Translation2D& operator-=(const Translation2D &rhs);
-    Translation2D& operator-=(double rhs);
-    Translation2D& operator*=(double rhs);
-    Translation2D& operator/=(double rhs);
 	Translation2D operator+(const Translation2D &other) const;
     Translation2D operator-(const Translation2D &other) const;
 

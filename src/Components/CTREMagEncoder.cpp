@@ -45,7 +45,7 @@ double CTREMagEncoder::getRevs() const {
 }
 
 double CTREMagEncoder::getAngle() const {
-    return normalizeToRange::normalizeToRange(std::fmod(getRevs(), 1) * 180.0 / M_PI, -180, 180, true);
+    return normalizeToRange::normalizeToRange(std::fmod(getRevs(), 1) * 360.0, -180, 180, true);
 }
 
 double CTREMagEncoder::getWheelDistance(double wheelRadius, double gearRatioEncoderToWheel) const {

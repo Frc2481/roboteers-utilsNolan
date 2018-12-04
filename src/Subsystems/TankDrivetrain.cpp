@@ -16,7 +16,7 @@ TankDrivetrain::TankDrivetrain()
     m_pLeftDriveMotor = new TalonSRX(LEFT_DRIVE_MOTOR_ID);
     m_pLeftDriveMotorController = new MotorVelocityController(
         m_pLeftDriveMotor,
-        false,
+		RobotParameters::k_isLeftInverted,
         RobotParameters::k_driveMotorControllerKp,
         RobotParameters::k_driveMotorControllerKi,
         RobotParameters::k_driveMotorControllerKd,
@@ -28,11 +28,12 @@ TankDrivetrain::TankDrivetrain()
     m_pLeftDriveEncoder = new GrayhillEncoder(m_pLeftDriveMotor, "LEFT_DRIVE_MOTOR_ENCODER");
     m_pLeftDriveMotorSlave = new TalonSRX(LEFT_DRIVE_MOTOR_SLAVE_ID);
     m_pLeftDriveMotorSlave->Set(ControlMode::Follower, LEFT_DRIVE_MOTOR_ID);
+    m_pLeftDriveMotorSlave->SetInverted(RobotParameters::k_isLeftInverted);
     
     m_pRightDriveMotor = new TalonSRX(RIGHT_DRIVE_MOTOR_ID);
     m_pRightDriveMotorController = new MotorVelocityController(
         m_pRightDriveMotor,
-        true,
+		!RobotParameters::k_isLeftInverted,
         RobotParameters::k_driveMotorControllerKp,
         RobotParameters::k_driveMotorControllerKi,
         RobotParameters::k_driveMotorControllerKd,
@@ -44,6 +45,7 @@ TankDrivetrain::TankDrivetrain()
     m_pRightDriveEncoder = new GrayhillEncoder(m_pRightDriveMotor, "RIGHT_DRIVE_MOTOR_ENCODER");
     m_pRightDriveMotorSlave = new TalonSRX(RIGHT_DRIVE_MOTOR_SLAVE_ID);
     m_pRightDriveMotorSlave->Set(ControlMode::Follower, RIGHT_DRIVE_MOTOR_ID);
+    m_pRightDriveMotorSlave->SetInverted(!RobotParameters::k_isLeftInverted);
 
     m_pShifter = new Solenoid(DRIVE_XMSN_SHIFTER_ID);
     setShiftState(false);
@@ -85,37 +87,20 @@ TankDrivetrain::~TankDrivetrain() {
 //    m_pChassisIMU = nullptr;
 }
 
-//void TankDrivetrain::InitDefaultCommand() {
-//	SetDefaultCommand(new TankDrivetrainJoystickDrive);
-//}
+void TankDrivetrain::InitDefaultCommand() {
+	SetDefaultCommand(new TankDrivetrainJoystickDrive());
+}
 
 void TankDrivetrain::Periodic() {
+	// update encoders
+	m_pLeftDriveEncoder->update();
+	m_pRightDriveEncoder->update();
+
     // update shift state
 //	getShiftState();
 
 	// update pose
 //    updatePose();
-
-	printf("left drive encoder ticks = %d\n", m_pLeftDriveEncoder->getTicks());
-	printf("right drive encoder ticks = %d\n", m_pRightDriveEncoder->getTicks());
-
-//	printf("left drive encoder tick vel = %d\n", m_pLeftDriveEncoder->getTickVelocity());
-//	printf("right drive encoder tick vel = %d\n", m_pRightDriveEncoder->getTickVelocity());
-
-//	printf("left drive encoder revs = %d\n", m_pLeftDriveEncoder->getRevs());
-//	printf("right drive encoder revs = %d\n", m_pRightDriveEncoder->getRevs());
-
-//	printf("left drive encoder rev velocity = %d\n", m_pLeftDriveEncoder->getRevVelocity());
-//	printf("right drive encoder rev velocity = %d\n", m_pRightDriveEncoder->getRevVelocity());
-
-//	printf("left drive encoder angle = %d\n", m_pLeftDriveEncoder->getAngle());
-//	printf("right drive encoder angle = %d\n", m_pRightDriveEncoder->getAngle());
-
-//	printf("left drive encoder wheel dist = %d\n", m_pLeftDriveEncoder->getWheelDistance());
-//	printf("right drive encoder wheel dist = %d\n", m_pRightDriveEncoder->getWheelDistance());
-
-//	printf("left drive encoder wheel vel = %d\n", m_pLeftDriveEncoder->getWheelVelocity());
-//	printf("right drive encoder wheel vel = %d\n", m_pRightDriveEncoder->getWheelVelocity());
 }
 
 void TankDrivetrain::driveOpenLoopControl(double percentLeftDrive, double percentRightDrive) {
@@ -261,10 +246,14 @@ void TankDrivetrain::updatePose() {
 
 void TankDrivetrain::resetPose(const Pose2D &pose, const Pose2D &poseDot) {
     m_tankDrivePose.reset(pose, poseDot);
-    m_pLeftDriveEncoder->zero();
+    zeroDriveEncoders();
     m_leftWheelDist = 0;
-    m_pRightDriveEncoder->zero();
     m_rightWheelDist = 0;
 //    m_pChassisIMU->ZeroYaw();
     m_gyroYaw = 0;
+}
+
+void TankDrivetrain::zeroDriveEncoders() {
+	m_pLeftDriveEncoder->zero();
+	m_pRightDriveEncoder->zero();
 }

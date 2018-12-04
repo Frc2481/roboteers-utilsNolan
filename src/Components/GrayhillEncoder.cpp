@@ -46,7 +46,7 @@ double GrayhillEncoder::getRevVelocity() const {
 }
 
 double GrayhillEncoder::getAngle() const {
-    return normalizeToRange::normalizeToRange(std::fmod(getRevs(), 1) * 180.0 / M_PI, -180, 180, true);
+    return normalizeToRange::normalizeToRange(std::fmod(getRevs(), 1) * 360.0, -180, 180, true);
 }
 
 double GrayhillEncoder::getWheelDistance(double wheelRadius, double gearRatioEncoderToWheel) const {

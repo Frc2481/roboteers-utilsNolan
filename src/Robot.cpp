@@ -8,6 +8,8 @@
 void Robot::RobotInit() {
 	SetPeriod(1.0 / RobotParameters::k_updateRate);
 	CommandBase::Init();
+
+	CommandBase::m_pTankDrivetrain->zeroDriveEncoders();
 }
 
 void Robot::AutonomousInit() {

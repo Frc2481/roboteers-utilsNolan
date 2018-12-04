@@ -22,7 +22,7 @@ class TankDrivetrain : public Subsystem {
 public:
     TankDrivetrain();
     ~TankDrivetrain();
-//    virtual void InitDefaultCommand();
+    virtual void InitDefaultCommand();
     virtual void Periodic();
 
     //////////////////////////////////////////////////////////////////////
@@ -52,6 +52,7 @@ public:
     Pose2D getPoseDot();
     void updatePose();
     void resetPose(const Pose2D &pose, const Pose2D &poseDot);
+    void zeroDriveEncoders();
 
 private:
     TalonSRX* m_pLeftDriveMotor;

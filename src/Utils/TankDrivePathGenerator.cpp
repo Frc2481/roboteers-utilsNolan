@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include "normalizeToRange.h"
 #include "Translation2D.h"
+#include "Sign.h"
 
 TankDrivePathGenerator::TankDrivePathGenerator(
     std::vector<waypoint_t> &waypoints,
@@ -179,7 +180,7 @@ void TankDrivePathGenerator::generatePath() {
 
             // generate points along arc
             double phiStep = (M_PI - theta) / NUM_PHI_STEPS;
-            double phi = sign(v21.cross(v23)) * (M_PI - theta) / 2.0;
+            double phi = Sign::sign(v21.cross(v23)) * (M_PI - theta) / 2.0;
             for(unsigned j = 1; j <= NUM_PHI_STEPS; j++) {
                 Translation2D p7 = p6 - v26.rotateBy(Rotation2D::fromRadians(phi)).scaleBy(arcRad / v26.norm());
                 tempPathGenPoint.xPos = p7.getX();
@@ -203,7 +204,7 @@ void TankDrivePathGenerator::generatePath() {
 
                 // add point to path gen points and increment phi
                 m_tempPath.push_back(tempPathGenPoint);
-                phi = phi - sign(v21.cross(v23)) * phiStep;
+                phi = phi - Sign::sign(v21.cross(v23)) * phiStep;
             }
         }
     }

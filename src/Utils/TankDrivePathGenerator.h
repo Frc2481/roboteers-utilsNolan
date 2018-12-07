@@ -8,10 +8,6 @@
 #define NUM_PHI_STEPS 21
 #define INTEGRATE_PATH_DIST_STEP 1 // (in)
 
-template <typename T> int sign(T val) {
-    return (T(0) < val) - (val < T(0));
-}
-
 class TankDrivePathGenerator {
 public:
     struct waypoint_t {

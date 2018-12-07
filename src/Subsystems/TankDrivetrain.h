@@ -7,16 +7,13 @@
 #include "Utils/Pose2D.h"
 #include "Utils/TankDrivePose.h"
 #include "Utils/MotorVelocityController.h"
+#include <AHRS.h>
 
 //class AHRS;
 
 // +x = robot right
 // +y = robot forward
 // +yaw = CCW, zero is robot forward
-
-template <typename T> int sign(T val) {
-    return (T(0) < val) - (val < T(0));
-}
 
 class TankDrivetrain : public Subsystem {
 public:
@@ -53,6 +50,7 @@ public:
     void updatePose();
     void resetPose(const Pose2D &pose, const Pose2D &poseDot);
     void zeroDriveEncoders();
+    void zeroGyroYaw();
 
 private:
     TalonSRX* m_pLeftDriveMotor;
@@ -64,7 +62,7 @@ private:
     TalonSRX* m_pLeftDriveMotorSlave;
     TalonSRX* m_pRightDriveMotorSlave;
     Solenoid* m_pShifter;
-//    AHRS* m_pChassisIMU;
+    AHRS* m_pChassisIMU;
     TankDriveKinematics m_kinematics;
     TankDrivePose m_tankDrivePose;
     double m_leftWheelDist;

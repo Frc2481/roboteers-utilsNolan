@@ -2,6 +2,7 @@
 #include "RobotMap.h"
 #include "RobotParameters.h"
 #include "Commands/TankDrivetrainJoystickDrive.h"
+#include "Utils/Sign.h"
 
 TankDrivetrain::TankDrivetrain()
     : Subsystem("TankDrivetrain"),
@@ -16,41 +17,45 @@ TankDrivetrain::TankDrivetrain()
     m_pLeftDriveMotor = new TalonSRX(LEFT_DRIVE_MOTOR_ID);
     m_pLeftDriveMotorController = new MotorVelocityController(
         m_pLeftDriveMotor,
-		RobotParameters::k_isLeftInverted,
+		RobotParameters::k_leftDriveMotorInverted,
         RobotParameters::k_driveMotorControllerKp,
         RobotParameters::k_driveMotorControllerKi,
         RobotParameters::k_driveMotorControllerKd,
         RobotParameters::k_driveMotorControllerKv,
         RobotParameters::k_driveMotorControllerKa,
+		RobotParameters::k_driveMotorControllerKsf,
+		RobotParameters::k_driveMotorControllerKvf,
         0,
         0,
         RobotParameters::k_grayhillEncoderTicksPerRev * RobotParameters::k_driveMotorToEncoderGearRatioLow);
     m_pLeftDriveEncoder = new GrayhillEncoder(m_pLeftDriveMotor, "LEFT_DRIVE_MOTOR_ENCODER");
     m_pLeftDriveMotorSlave = new TalonSRX(LEFT_DRIVE_MOTOR_SLAVE_ID);
     m_pLeftDriveMotorSlave->Set(ControlMode::Follower, LEFT_DRIVE_MOTOR_ID);
-    m_pLeftDriveMotorSlave->SetInverted(RobotParameters::k_isLeftInverted);
+    m_pLeftDriveMotorSlave->SetInverted(RobotParameters::k_leftDriveMotorInverted);
     
     m_pRightDriveMotor = new TalonSRX(RIGHT_DRIVE_MOTOR_ID);
     m_pRightDriveMotorController = new MotorVelocityController(
         m_pRightDriveMotor,
-		!RobotParameters::k_isLeftInverted,
+		!RobotParameters::k_leftDriveMotorInverted,
         RobotParameters::k_driveMotorControllerKp,
         RobotParameters::k_driveMotorControllerKi,
         RobotParameters::k_driveMotorControllerKd,
         RobotParameters::k_driveMotorControllerKv,
         RobotParameters::k_driveMotorControllerKa,
+		RobotParameters::k_driveMotorControllerKsf,
+		RobotParameters::k_driveMotorControllerKvf,
         0,
         0,
         RobotParameters::k_grayhillEncoderTicksPerRev * RobotParameters::k_driveMotorToEncoderGearRatioLow);
     m_pRightDriveEncoder = new GrayhillEncoder(m_pRightDriveMotor, "RIGHT_DRIVE_MOTOR_ENCODER");
     m_pRightDriveMotorSlave = new TalonSRX(RIGHT_DRIVE_MOTOR_SLAVE_ID);
     m_pRightDriveMotorSlave->Set(ControlMode::Follower, RIGHT_DRIVE_MOTOR_ID);
-    m_pRightDriveMotorSlave->SetInverted(!RobotParameters::k_isLeftInverted);
+    m_pRightDriveMotorSlave->SetInverted(!RobotParameters::k_leftDriveMotorInverted);
 
-    m_pShifter = new Solenoid(DRIVE_XMSN_SHIFTER_ID);
-    setShiftState(false);
+//    m_pShifter = new Solenoid(DRIVE_XMSN_SHIFTER_ID);
+//    setShiftState(false);
 
-//    m_pChassisIMU = new AHRS(SPI::kMXP);
+    m_pChassisIMU = new AHRS(SPI::kMXP);
 
     resetPose(Pose2D(Translation2D(0, 0), Rotation2D::fromDegrees(0)), Pose2D(Translation2D(0, 0), Rotation2D::fromDegrees(0)));
 }
@@ -83,8 +88,8 @@ TankDrivetrain::~TankDrivetrain() {
     delete m_pShifter;
     m_pShifter = nullptr;
 
-//    delete m_pChassisIMU;
-//    m_pChassisIMU = nullptr;
+    delete m_pChassisIMU;
+    m_pChassisIMU = nullptr;
 }
 
 void TankDrivetrain::InitDefaultCommand() {
@@ -97,10 +102,10 @@ void TankDrivetrain::Periodic() {
 	m_pRightDriveEncoder->update();
 
     // update shift state
-//	getShiftState();
+	getShiftState();
 
 	// update pose
-//    updatePose();
+    updatePose();
 }
 
 void TankDrivetrain::driveOpenLoopControl(double percentLeftDrive, double percentRightDrive) {
@@ -114,7 +119,7 @@ void TankDrivetrain::driveClosedLoopControl(
     double robotAccel) {
 
     // get sign of vel
-    int velSign = sign(robotVel);
+    int velSign = Sign::sign(robotVel);
     
     // limit robot vel
     if(robotVel > RobotParameters::k_maxSpeed) {
@@ -132,10 +137,10 @@ void TankDrivetrain::driveClosedLoopControl(
         robotAccel = RobotParameters::k_maxDeccel;
     }
 
-    // limit centrip accel
-    if(fabs(robotVel * robotYawRate * 180.0 / M_PI) > RobotParameters::k_maxCentripAccel) {
-        robotVel = velSign * RobotParameters::k_maxCentripAccel / fabs(robotYawRate * 180.0 / M_PI);
-    }
+//    // limit centrip accel
+//    if(fabs(robotVel * robotYawRate * 180.0 / M_PI) > RobotParameters::k_maxCentripAccel) {
+//        robotVel = velSign * RobotParameters::k_maxCentripAccel / fabs(robotYawRate * 180.0 / M_PI);
+//    }
 
     // convert robot vel to wheel vel
     m_kinematics.inverseKinematics(robotVel, robotYawRate, m_leftWheelVelCmd, m_rightWheelVelCmd);
@@ -166,13 +171,14 @@ void TankDrivetrain::driveClosedLoopControl(
 
     // convert wheel vel from translational to rotational
     double leftWheelAngVel = m_leftWheelVelCmd / RobotParameters::k_wheelRad * 180.0 / M_PI;
-    double righttWheelAngVel = m_rightWheelVelCmd / RobotParameters::k_wheelRad * 180.0 / M_PI;
+    double rightWheelAngVel = m_rightWheelVelCmd / RobotParameters::k_wheelRad * 180.0 / M_PI;
     double leftWheelAngAccel = robotAccel / RobotParameters::k_wheelRad * 180.0 / M_PI;
     double rightWheelAngAccel = robotAccel / RobotParameters::k_wheelRad * 180.0 / M_PI;
+    double measWheelAngVel = getPoseDot().getTranslation().getY() / RobotParameters::k_wheelRad * 180.0 / M_PI;
     
     // update motor vel controller
-    m_pLeftDriveMotorController->updateClosedLoopControl(leftWheelAngVel, leftWheelAngAccel);
-    m_pRightDriveMotorController->updateClosedLoopControl(righttWheelAngVel, rightWheelAngAccel);
+    m_pLeftDriveMotorController->updateClosedLoopControl(leftWheelAngVel, leftWheelAngAccel, measWheelAngVel);
+    m_pRightDriveMotorController->updateClosedLoopControl(rightWheelAngVel, rightWheelAngAccel, measWheelAngVel);
 }
 
 void TankDrivetrain::stop() {
@@ -180,11 +186,12 @@ void TankDrivetrain::stop() {
 }
 
 void TankDrivetrain::setShiftState(bool isHighGear) {
-	m_pShifter->Set(isHighGear);
+//	m_pShifter->Set(isHighGear);
 }
 
 bool TankDrivetrain::getShiftState() {
-	bool isHighGear = m_pShifter->Get();
+//	bool isHighGear = m_pShifter->Get();
+	bool isHighGear = false;
 
 	// set appropriate motor controller gear ratio
 	if(isHighGear) {
@@ -211,49 +218,62 @@ void TankDrivetrain::updatePose() {
     // read left wheel encoder
     double oldLeftWheelDist = m_leftWheelDist;
     m_leftWheelDist = m_pLeftDriveEncoder->getWheelDistance(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
+    SmartDashboard::PutNumber("leftWheelDist", m_leftWheelDist);
     double deltaDistLeftWheel = m_leftWheelDist - oldLeftWheelDist;
     double velLeftWheel = m_pLeftDriveEncoder->getWheelVelocity(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
+    SmartDashboard::PutNumber("velLeftWheel", velLeftWheel);
 
-    // check for wheel slip
-    if(fabs(velLeftWheel) > fabs(m_leftWheelVelCmd * RobotParameters::k_wheelSlipNoiseRatio)) {
-            // account for sample time and measurement noise
-        deltaDistLeftWheel = m_leftWheelVelCmd * 1.0 / (double)RobotParameters::k_updateRate;
-        velLeftWheel = m_leftWheelVelCmd;
-    }
+//    // check for wheel slip
+//    if(fabs(velLeftWheel) > fabs(m_leftWheelVelCmd * RobotParameters::k_wheelSlipNoiseRatio)) {
+//            // account for sample time and measurement noise
+//        deltaDistLeftWheel = m_leftWheelVelCmd * 1.0 / (double)RobotParameters::k_updateRate;
+//        velLeftWheel = m_leftWheelVelCmd;
+//    }
 
     // read right wheel encoder
     double oldRightWheelDist = m_rightWheelDist;
     m_rightWheelDist = m_pRightDriveEncoder->getWheelDistance(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
+    SmartDashboard::PutNumber("rightWheelDist", m_rightWheelDist);
     double deltaDistRightWheel = m_rightWheelDist - oldRightWheelDist;
     double velRightWheel = m_pRightDriveEncoder->getWheelVelocity(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
+    SmartDashboard::PutNumber("velRightWheel", velRightWheel);
 
-    // check for wheel slip
-    if(fabs(velRightWheel) > fabs(m_rightWheelVelCmd * RobotParameters::k_wheelSlipNoiseRatio)) {
-            // account for sample time and measurement noise
-        deltaDistRightWheel = m_rightWheelVelCmd * 1.0 / (double)RobotParameters::k_updateRate;
-        velRightWheel = m_rightWheelVelCmd;
-    }
+//    // check for wheel slip
+//    if(fabs(velRightWheel) > fabs(m_rightWheelVelCmd * RobotParameters::k_wheelSlipNoiseRatio)) {
+//            // account for sample time and measurement noise
+//        deltaDistRightWheel = m_rightWheelVelCmd * 1.0 / (double)RobotParameters::k_updateRate;
+//        velRightWheel = m_rightWheelVelCmd;
+//    }
 
     // read IMU
     double oldGyroYaw = m_gyroYaw;
-    m_gyroYaw = 0; // -m_pChassisIMU->GetYaw();
-    double deltaYawGyro = m_gyroYaw - oldGyroYaw;
-    double yawRateGyro = 0; // -m_pChassisIMU->GetRate();
+    m_gyroYaw = -m_pChassisIMU->GetYaw();
+    SmartDashboard::PutNumber("gyroYaw", m_gyroYaw);
+    double deltaGyroYaw = m_gyroYaw - oldGyroYaw;
+    double gyroYawRate = -m_pChassisIMU->GetRate();
+    SmartDashboard::PutNumber("yawRateGyro", gyroYawRate);
 
     // update pose
-    m_tankDrivePose.update(deltaDistLeftWheel, deltaDistRightWheel, deltaYawGyro, velLeftWheel, velRightWheel, yawRateGyro);
+    m_tankDrivePose.update(deltaDistLeftWheel, deltaDistRightWheel, deltaGyroYaw, velLeftWheel, velRightWheel, gyroYawRate);
+
+    SmartDashboard::PutNumber("x", m_tankDrivePose.getPose().getTranslation().getX());
+    SmartDashboard::PutNumber("y", m_tankDrivePose.getPose().getTranslation().getY());
+    SmartDashboard::PutNumber("yaw", m_tankDrivePose.getPose().getRotation().getDegrees());
+
+    SmartDashboard::PutNumber("xVel", m_tankDrivePose.getPoseDot().getTranslation().getX());
+    SmartDashboard::PutNumber("yVel", m_tankDrivePose.getPoseDot().getTranslation().getY());
+	SmartDashboard::PutNumber("yawRate", m_tankDrivePose.getPoseDot().getRotation().getDegrees());
 }
 
 void TankDrivetrain::resetPose(const Pose2D &pose, const Pose2D &poseDot) {
     m_tankDrivePose.reset(pose, poseDot);
-    zeroDriveEncoders();
-    m_leftWheelDist = 0;
-    m_rightWheelDist = 0;
-//    m_pChassisIMU->ZeroYaw();
-    m_gyroYaw = 0;
 }
 
 void TankDrivetrain::zeroDriveEncoders() {
 	m_pLeftDriveEncoder->zero();
 	m_pRightDriveEncoder->zero();
+}
+
+void TankDrivetrain::zeroGyroYaw() {
+	m_pChassisIMU->ZeroYaw();
 }

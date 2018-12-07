@@ -12,8 +12,11 @@ CommandBase::CommandBase() : Command() {
 void CommandBase::Init() {
 	m_pTankDrivetrain.reset(new TankDrivetrain());
 
-    // reset OI must be last thing to execute
-	m_pOI.reset(new OI());
+	m_pOI.reset(new OI()); // OI must be last subsystem to reset
+
+	Wait(1); // avoid race condition after constructing objects
+	CommandBase::m_pTankDrivetrain->zeroDriveEncoders();
+	CommandBase::m_pTankDrivetrain->zeroGyroYaw();
 }
 
 void CommandBase::Periodic() {

@@ -4,12 +4,22 @@
 #include <SmartDashboard/SmartDashboard.h>
 #include "CommandBase.h"
 #include "RobotParameters.h"
+#include "Commands/TankDrivetrainZeroPose.h"
+#include "Commands/TankDrivetrainFollowPath.h"
+#include "Commands/TankDrivetrainCalibrateFriction.h"
 
 void Robot::RobotInit() {
 	SetPeriod(1.0 / RobotParameters::k_updateRate);
 	CommandBase::Init();
 
-	CommandBase::m_pTankDrivetrain->zeroDriveEncoders();
+	SmartDashboard::PutData("TankDrivetrainZeroPose", new TankDrivetrainZeroPose());
+
+	std::vector<TankDrivePathGenerator::waypoint_t> waypoints;
+	waypoints.push_back(TankDrivePathGenerator::waypoint_t {0, 0, 0, 0});
+	waypoints.push_back(TankDrivePathGenerator::waypoint_t {0, 100, 0, 0});
+	SmartDashboard::PutData("TankDrivetrainFollowPath", new TankDrivetrainFollowPath(waypoints, false, 1));
+
+	SmartDashboard::PutData("TankDrivetrainCalibrateFriction", new TankDrivetrainCalibrateFriction());
 }
 
 void Robot::AutonomousInit() {

@@ -4,14 +4,17 @@
 #include <vector>
 #include <limits>
 #include "CommandBase.h"
+#include "WPILib.h"
 
 class TankDrivetrainCalibrateFriction : public CommandBase {
 public:
 	TankDrivetrainCalibrateFriction()
 		: CommandBase("TankDrivetrainCalibrateFriction") {
 		
+		double refV = 0;
 		Requires(CommandBase::m_pTankDrivetrain.get());
 		SetInterruptible(true);
+		SmartDashboard::PutNumber("refV", refV);
 	}
 
 	~TankDrivetrainCalibrateFriction() {
@@ -21,7 +24,8 @@ public:
 	}
 
 	void Execute() {
-		CommandBase::m_pTankDrivetrain->driveClosedLoopControl(0, 0, 0);
+		double refV = SmartDashboard::GetNumber("refV", 0);
+		CommandBase::m_pTankDrivetrain->driveClosedLoopControl(refV, 0, 0);
 	}
 
 	void Interrupted() {

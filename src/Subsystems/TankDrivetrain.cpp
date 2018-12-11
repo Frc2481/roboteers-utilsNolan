@@ -24,7 +24,6 @@ TankDrivetrain::TankDrivetrain()
         RobotParameters::k_driveMotorControllerKv,
         RobotParameters::k_driveMotorControllerKa,
 		RobotParameters::k_driveMotorControllerKsf,
-		RobotParameters::k_driveMotorControllerKvf,
         0,
         0,
         RobotParameters::k_grayhillEncoderTicksPerRev * RobotParameters::k_driveMotorToEncoderGearRatioLow);
@@ -43,7 +42,6 @@ TankDrivetrain::TankDrivetrain()
         RobotParameters::k_driveMotorControllerKv,
         RobotParameters::k_driveMotorControllerKa,
 		RobotParameters::k_driveMotorControllerKsf,
-		RobotParameters::k_driveMotorControllerKvf,
         0,
         0,
         RobotParameters::k_grayhillEncoderTicksPerRev * RobotParameters::k_driveMotorToEncoderGearRatioLow);
@@ -58,6 +56,12 @@ TankDrivetrain::TankDrivetrain()
     m_pChassisIMU = new AHRS(SPI::kMXP);
 
     resetPose(Pose2D(Translation2D(0, 0), Rotation2D::fromDegrees(0)), Pose2D(Translation2D(0, 0), Rotation2D::fromDegrees(0)));
+
+    double leftKsf;
+    double rightKsf;
+
+    SmartDashboard::PutNumber("leftKsf", leftKsf);
+    SmartDashboard::PutNumber("rightKsf", rightKsf);
 }
 
 TankDrivetrain::~TankDrivetrain() {
@@ -174,11 +178,10 @@ void TankDrivetrain::driveClosedLoopControl(
     double rightWheelAngVel = m_rightWheelVelCmd / RobotParameters::k_wheelRad * 180.0 / M_PI;
     double leftWheelAngAccel = robotAccel / RobotParameters::k_wheelRad * 180.0 / M_PI;
     double rightWheelAngAccel = robotAccel / RobotParameters::k_wheelRad * 180.0 / M_PI;
-    double measWheelAngVel = getPoseDot().getTranslation().getY() / RobotParameters::k_wheelRad * 180.0 / M_PI;
-    
+
     // update motor vel controller
-    m_pLeftDriveMotorController->updateClosedLoopControl(leftWheelAngVel, leftWheelAngAccel, measWheelAngVel);
-    m_pRightDriveMotorController->updateClosedLoopControl(rightWheelAngVel, rightWheelAngAccel, measWheelAngVel);
+    m_pLeftDriveMotorController->updateClosedLoopControl(leftWheelAngVel, leftWheelAngAccel, .09);
+    m_pRightDriveMotorController->updateClosedLoopControl(rightWheelAngVel, rightWheelAngAccel, .09);
 }
 
 void TankDrivetrain::stop() {
@@ -237,6 +240,12 @@ void TankDrivetrain::updatePose() {
     double deltaDistRightWheel = m_rightWheelDist - oldRightWheelDist;
     double velRightWheel = m_pRightDriveEncoder->getWheelVelocity(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
     SmartDashboard::PutNumber("velRightWheel", velRightWheel);
+
+    SmartDashboard::PutNumber("leftTalonVel", m_pLeftDriveEncoder->getTickVelocity() / 10);
+    SmartDashboard::PutNumber("rightTalonVel", m_pRightDriveEncoder->getTickVelocity() / 10);
+
+    SmartDashboard::PutNumber("talonVel", ((m_pLeftDriveEncoder->getTickVelocity() / 10) + (m_pRightDriveEncoder->getTickVelocity() / 10)) / 2);
+
 
 //    // check for wheel slip
 //    if(fabs(velRightWheel) > fabs(m_rightWheelVelCmd * RobotParameters::k_wheelSlipNoiseRatio)) {

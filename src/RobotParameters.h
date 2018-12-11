@@ -20,10 +20,9 @@ namespace RobotParameters {
     static constexpr double k_driveMotorControllerKp = 0;
     static constexpr double k_driveMotorControllerKi = 0;
     static constexpr double k_driveMotorControllerKd = 0;
-    static constexpr double k_driveMotorControllerKv = 0;
-    static constexpr double k_driveMotorControllerKa = 0;
-    static constexpr double k_driveMotorControllerKsf = 0; // static friction
-    static constexpr double k_driveMotorControllerKvf = 1; // viscous friction
+    static constexpr double k_driveMotorControllerKsf = 0.09;
+    static constexpr double k_driveMotorControllerKv = (1 - k_driveMotorControllerKsf) / 1500;
+    static constexpr double k_driveMotorControllerKa = 0.0;
 
     static constexpr double k_pathFollowerTimeoutAllowance = 0.5; // timeout path if takes longer than total path time plus this allowance (s)
     static constexpr double k_pathFollowerKpTurn = 1;

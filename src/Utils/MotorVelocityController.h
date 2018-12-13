@@ -27,7 +27,7 @@ public:
     // @param refV - angular velocity reference point (deg/s)
     // @param refA - angular acceleration reference point (deg/s^2)
     //////////////////////////////////////////////////////////////////////
-    void updateClosedLoopControl(double refV, double refA, double ksf);
+    void updateClosedLoopControl(double refV, double refA, double kvTrim);
 
     //////////////////////////////////////////////////////////////////////
     // @brief update reference points of open loop motor controller

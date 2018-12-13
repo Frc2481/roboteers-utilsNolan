@@ -6,7 +6,7 @@
 #include "RobotParameters.h"
 #include "Commands/TankDrivetrainZeroPose.h"
 #include "Commands/TankDrivetrainFollowPath.h"
-#include "Commands/TankDrivetrainCalibrateFriction.h"
+#include <Commands/TankDrivetrainCalibrate.h>
 
 void Robot::RobotInit() {
 	SetPeriod(1.0 / RobotParameters::k_updateRate);
@@ -19,7 +19,7 @@ void Robot::RobotInit() {
 	waypoints.push_back(TankDrivePathGenerator::waypoint_t {0, 100, 0, 0});
 	SmartDashboard::PutData("TankDrivetrainFollowPath", new TankDrivetrainFollowPath(waypoints, false, 1));
 
-	SmartDashboard::PutData("TankDrivetrainCalibrateFriction", new TankDrivetrainCalibrateFriction());
+	SmartDashboard::PutData("TankDrivetrainCalibrate", new TankDrivetrainCalibrate());
 }
 
 void Robot::AutonomousInit() {

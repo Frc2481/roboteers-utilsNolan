@@ -48,7 +48,9 @@ MotorVelocityController::MotorVelocityController(
 	m_pDriveMotor->SetSensorPhase(true);
 	m_pDriveMotor->SetInverted(inverted);
 
-	SmartDashboard::PutNumber("m_kv", m_kv);
+	SmartDashboard::PutNumber("kv", m_kv);
+	SmartDashboard::PutNumber("ka", m_ka);
+	SmartDashboard::PutNumber("kp", kp);
 }
 
 MotorVelocityController::~MotorVelocityController() {
@@ -58,13 +60,15 @@ void MotorVelocityController::setTicksPerRev(unsigned ticksPerRev) {
 	m_ticksPerRev = ticksPerRev;
 }
 
-void MotorVelocityController::updateClosedLoopControl(double refV, double refA, double ksf) {
-    m_kv = SmartDashboard::GetNumber("m_kv", 0);
-    m_ksf = ksf;
+void MotorVelocityController::updateClosedLoopControl(double refV, double refA, double kvTrim) {
+	m_kv = SmartDashboard::GetNumber("kv", 0) * kvTrim;
+	m_ka = SmartDashboard::GetNumber("ka", 0);
+	double kp = SmartDashboard::GetNumber("kp", 0);
+	m_pDriveMotor->Config_kP(0, kp, 0);
+
     refV = refV * m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
     refA = refA * m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
     double feedforwardControl = refV * m_kv + refA * m_ka + Sign::sign(refV) * m_ksf;
-    SmartDashboard::PutNumber("feedforwardControl", feedforwardControl);
     m_pDriveMotor->Set(ControlMode::Velocity, refV, DemandType::DemandType_ArbitraryFeedForward, feedforwardControl);
 }
 

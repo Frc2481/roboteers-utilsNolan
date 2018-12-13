@@ -7,7 +7,7 @@
 #include "Utils/Pose2D.h"
 #include "Utils/TankDrivePose.h"
 #include "Utils/MotorVelocityController.h"
-#include <AHRS.h>
+//#include <AHRS.h>
 
 //class AHRS;
 
@@ -62,7 +62,7 @@ private:
     TalonSRX* m_pLeftDriveMotorSlave;
     TalonSRX* m_pRightDriveMotorSlave;
     Solenoid* m_pShifter;
-    AHRS* m_pChassisIMU;
+//    AHRS* m_pChassisIMU;
     TankDriveKinematics m_kinematics;
     TankDrivePose m_tankDrivePose;
     double m_leftWheelDist;

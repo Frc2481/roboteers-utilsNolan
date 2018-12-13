@@ -21,7 +21,7 @@ namespace RobotParameters {
     static constexpr double k_driveMotorControllerKi = 0;
     static constexpr double k_driveMotorControllerKd = 0;
     static constexpr double k_driveMotorControllerKsf = 0.09;
-    static constexpr double k_driveMotorControllerKv = (1 - k_driveMotorControllerKsf) / 1500;
+    static constexpr double k_driveMotorControllerKv = 2 * 5e-4;
     static constexpr double k_driveMotorControllerKa = 0.0;
 
     static constexpr double k_pathFollowerTimeoutAllowance = 0.5; // timeout path if takes longer than total path time plus this allowance (s)

@@ -150,8 +150,8 @@ void TankDrivePathGenerator::generatePath() {
         else {
             // calculate arc between points
             double arcRad = maxDistThresh * sin(theta / 2.0) / (1 - sin(theta / 2.0));
-            if(arcRad < MIN_ARC_RAD) { // remove velocity spike at discontinuity
-                arcRad = MIN_ARC_RAD;
+            if(arcRad < (m_wheelTrack / 2.0)) { // remove velocity spike at discontinuity
+                arcRad = (m_wheelTrack / 2.0);
             }
             double arcHeight = arcRad * (1 - cos((M_PI - theta) / 2.0));
             double arcChordLen = 2 * arcRad * sin((M_PI - theta) / 2.0);

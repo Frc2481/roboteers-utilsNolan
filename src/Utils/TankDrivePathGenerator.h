@@ -4,8 +4,7 @@
 #include <vector>
 #include <string>
 
-#define MIN_ARC_RAD 10 // (in)
-#define NUM_PHI_STEPS 21
+#define NUM_PHI_STEPS 301 // must be odd
 #define INTEGRATE_PATH_DIST_STEP 1 // (in)
 
 class TankDrivePathGenerator {

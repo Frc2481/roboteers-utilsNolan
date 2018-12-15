@@ -21,8 +21,9 @@ TankDrivetrain::TankDrivetrain()
         RobotParameters::k_driveMotorControllerKp,
         RobotParameters::k_driveMotorControllerKi,
         RobotParameters::k_driveMotorControllerKd,
-        RobotParameters::k_driveMotorControllerKv,
-        RobotParameters::k_driveMotorControllerKa,
+        RobotParameters::k_driveMotorControllerKv * (0.5 + RobotParameters::k_drivetrainTrimKv),
+        RobotParameters::k_driveMotorControllerKap,
+		RobotParameters::k_driveMotorControllerKan,
 		RobotParameters::k_driveMotorControllerKsf,
         0,
         0,
@@ -39,8 +40,9 @@ TankDrivetrain::TankDrivetrain()
         RobotParameters::k_driveMotorControllerKp,
         RobotParameters::k_driveMotorControllerKi,
         RobotParameters::k_driveMotorControllerKd,
-        RobotParameters::k_driveMotorControllerKv,
-        RobotParameters::k_driveMotorControllerKa,
+        RobotParameters::k_driveMotorControllerKv * (0.5 - RobotParameters::k_drivetrainTrimKv),
+		RobotParameters::k_driveMotorControllerKap,
+		RobotParameters::k_driveMotorControllerKan,
 		RobotParameters::k_driveMotorControllerKsf,
         0,
         0,
@@ -53,11 +55,9 @@ TankDrivetrain::TankDrivetrain()
 //    m_pShifter = new Solenoid(DRIVE_XMSN_SHIFTER_ID);
 //    setShiftState(false);
 
-//    m_pChassisIMU = new AHRS(SPI::kMXP);
+    m_pChassisIMU = new AHRS(SPI::kMXP);
 
     resetPose(Pose2D(Translation2D(0, 0), Rotation2D::fromDegrees(0)), Pose2D(Translation2D(0, 0), Rotation2D::fromDegrees(0)));
-
-    SmartDashboard::PutNumber("kvTrim", 0);
 }
 
 TankDrivetrain::~TankDrivetrain() {
@@ -88,8 +88,8 @@ TankDrivetrain::~TankDrivetrain() {
     delete m_pShifter;
     m_pShifter = nullptr;
 
-//    delete m_pChassisIMU;
-//    m_pChassisIMU = nullptr;
+    delete m_pChassisIMU;
+    m_pChassisIMU = nullptr;
 }
 
 void TankDrivetrain::InitDefaultCommand() {
@@ -176,10 +176,8 @@ void TankDrivetrain::driveClosedLoopControl(
     double rightWheelAngAccel = robotAccel / RobotParameters::k_wheelRad * 180.0 / M_PI;
 
     // update motor vel controller
-    double kvTrim = SmartDashboard::GetNumber("kvTrim", 0);
-
-    m_pLeftDriveMotorController->updateClosedLoopControl(leftWheelAngVel, leftWheelAngAccel, kvTrim + 0.5);
-    m_pRightDriveMotorController->updateClosedLoopControl(rightWheelAngVel, rightWheelAngAccel, std::fabs(kvTrim - 0.5));
+    m_pLeftDriveMotorController->updateClosedLoopControl(leftWheelAngVel, leftWheelAngAccel);
+    m_pRightDriveMotorController->updateClosedLoopControl(rightWheelAngVel, rightWheelAngAccel);
 }
 
 void TankDrivetrain::stop() {
@@ -200,7 +198,7 @@ bool TankDrivetrain::getShiftState() {
 		m_pRightDriveMotorController->setTicksPerRev(RobotParameters::k_grayhillEncoderTicksPerRev * RobotParameters::k_driveMotorToEncoderGearRatioHigh);
 	}
 	else {
-		m_pLeftDriveMotorController->setTicksPerRev(RobotParameters::k_grayhillEncoderTicksPerRev * RobotParameters::k_driveMotorToEncoderGearRatioHigh);
+		m_pLeftDriveMotorController->setTicksPerRev(RobotParameters::k_grayhillEncoderTicksPerRev * RobotParameters::k_driveMotorToEncoderGearRatioLow);
 		m_pRightDriveMotorController->setTicksPerRev(RobotParameters::k_grayhillEncoderTicksPerRev * RobotParameters::k_driveMotorToEncoderGearRatioLow);
 	}
 
@@ -253,12 +251,12 @@ void TankDrivetrain::updatePose() {
 //    }
 
     // read IMU
-//    double oldGyroYaw = m_gyroYaw;
-//    m_gyroYaw = -m_pChassisIMU->GetYaw();
-//    SmartDashboard::PutNumber("gyroYaw", m_gyroYaw);
-    double deltaGyroYaw = 0; // m_gyroYaw - oldGyroYaw;
-    double gyroYawRate = 0; // -m_pChassisIMU->GetRate();
-//    SmartDashboard::PutNumber("yawRateGyro", gyroYawRate);
+    double oldGyroYaw = m_gyroYaw;
+    m_gyroYaw = -m_pChassisIMU->GetYaw();
+    SmartDashboard::PutNumber("gyroYaw", m_gyroYaw);
+    double deltaGyroYaw = m_gyroYaw - oldGyroYaw;
+    double gyroYawRate = -m_pChassisIMU->GetRate();
+    SmartDashboard::PutNumber("yawRateGyro", gyroYawRate);
 
     // update pose
     m_tankDrivePose.update(deltaDistLeftWheel, deltaDistRightWheel, deltaGyroYaw, velLeftWheel, velRightWheel, gyroYawRate);
@@ -282,5 +280,5 @@ void TankDrivetrain::zeroDriveEncoders() {
 }
 
 void TankDrivetrain::zeroGyroYaw() {
-//	m_pChassisIMU->ZeroYaw();
+	m_pChassisIMU->ZeroYaw();
 }

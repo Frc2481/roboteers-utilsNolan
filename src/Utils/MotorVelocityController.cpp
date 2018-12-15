@@ -5,7 +5,8 @@
 MotorVelocityController::MotorVelocityController()
 	: m_pDriveMotor(nullptr),
 	m_kv(0),
-	m_ka(0),
+	m_kap(0),
+	m_kan(0),
 	m_ksf(0),
 	m_ticksPerRev(0) {
 }
@@ -17,7 +18,8 @@ MotorVelocityController::MotorVelocityController(
     double ki,
     double kd,
     double kv,
-    double ka,
+    double kap,
+	double kan,
 	double ksf,
     double iZone,
     double iErrorLim,
@@ -25,7 +27,8 @@ MotorVelocityController::MotorVelocityController(
     
     : m_pDriveMotor(pTalon),
     m_kv(kv),
-    m_ka(ka),
+    m_kap(kap),
+	m_kan(kan),
 	m_ksf(ksf),
     m_ticksPerRev(ticksPerRev) {
 
@@ -47,10 +50,6 @@ MotorVelocityController::MotorVelocityController(
 	m_pDriveMotor->ConfigPeakOutputReverse(-1.0, 0.0);
 	m_pDriveMotor->SetSensorPhase(true);
 	m_pDriveMotor->SetInverted(inverted);
-
-	SmartDashboard::PutNumber("kv", m_kv);
-	SmartDashboard::PutNumber("ka", m_ka);
-	SmartDashboard::PutNumber("kp", kp);
 }
 
 MotorVelocityController::~MotorVelocityController() {
@@ -60,15 +59,18 @@ void MotorVelocityController::setTicksPerRev(unsigned ticksPerRev) {
 	m_ticksPerRev = ticksPerRev;
 }
 
-void MotorVelocityController::updateClosedLoopControl(double refV, double refA, double kvTrim) {
-	m_kv = SmartDashboard::GetNumber("kv", 0) * kvTrim;
-	m_ka = SmartDashboard::GetNumber("ka", 0);
-	double kp = SmartDashboard::GetNumber("kp", 0);
-	m_pDriveMotor->Config_kP(0, kp, 0);
-
+void MotorVelocityController::updateClosedLoopControl(double refV, double refA) {
     refV = refV * m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
     refA = refA * m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
-    double feedforwardControl = refV * m_kv + refA * m_ka + Sign::sign(refV) * m_ksf;
+
+    // use different ka if vel and accel have opposite direction
+    double ka = m_kap;
+	if((refV > 0) != (refA > 0)) {
+		ka = m_kan;
+	}
+
+    double feedforwardControl = refV * m_kv + refA * ka + Sign::sign(refV) * m_ksf;
+
     m_pDriveMotor->Set(ControlMode::Velocity, refV, DemandType::DemandType_ArbitraryFeedForward, feedforwardControl);
 }
 

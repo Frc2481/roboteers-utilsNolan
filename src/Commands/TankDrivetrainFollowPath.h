@@ -36,7 +36,7 @@ public:
 		pathGenerator.setIsReverse(isReverse);
 		pathGenerator.generatePath();
 		m_path = pathGenerator.getFinalPath();
-		m_path.erase(m_path.begin()); // fix this workaround of vel and accel zero at start
+		m_path.erase(m_path.begin()); // workaround of vel and accel zero at start
 
 		// ensure target zone is achievable
 		if(m_targetZone < 1)
@@ -63,7 +63,7 @@ public:
 			return;
 		}
 
-		Translation2D vectRobotToClosestPoint;
+		Translation2D vectClosestPointToRobot;
 		double distToClosestPoint = std::numeric_limits<double>::infinity();
 		std::vector<TankDrivePathGenerator::finalPathPoint_t>::iterator closestPointIt;
 		// could start search at last closest point for efficiency gain but decided not to in case
@@ -71,10 +71,10 @@ public:
 		// could end search after a few iterations for efficiency gain but decided not to in case
 		// pose jumps forward along path and want to start tracking path from new point on path.
 		for(std::vector<TankDrivePathGenerator::finalPathPoint_t>::iterator it = m_path.begin(); it != m_path.end(); ++it) {
-			Translation2D vectRobotToPoint = Translation2D(it->xPos, it->yPos) - pose.getTranslation();
-			double distToPoint = vectRobotToPoint.norm();
+			Translation2D vectPointToRobot = Translation2D(it->xPos, it->yPos) - pose.getTranslation();
+			double distToPoint = vectPointToRobot.norm();
 			if(distToPoint < distToClosestPoint) {
-				vectRobotToClosestPoint = vectRobotToPoint;
+				vectClosestPointToRobot = vectPointToRobot;
 				distToClosestPoint = distToPoint;
 				closestPointIt = it;
 			}
@@ -86,16 +86,23 @@ public:
 		}
 
 		// calculate distance to end of path
-		m_distToEnd = (Translation2D(m_path.back().xPos, m_path.back().yPos) - pose.getTranslation()).norm();
+		m_distToEnd = m_path.back().dist - closestPointIt->dist;
 
 		// control law
 		double robotVel = closestPointIt->vel;
 		double robotAccel = closestPointIt->accel;
 		double robotYawRate = closestPointIt->yawRate;
-		// need to get direction vector to determine if left or right of path
-		Translation2D vectClosestPointToNextPoint = Translation2D(1, 0).rotateBy(Rotation2D::fromDegrees(closestPointIt->yaw));
-		int leftRightOfPath = Sign::sign(vectClosestPointToNextPoint.cross(vectRobotToClosestPoint));
-		robotYawRate -= RobotParameters::k_pathFollowerKpTurn * leftRightOfPath * distToClosestPoint; // assume this is perpindicular distance to path if it is closest point on path
+		Translation2D vectPerpPath = Translation2D(1, 0).rotateBy(Rotation2D::fromDegrees(closestPointIt->yaw + 90));
+		Translation2D vectRobotToPath = vectClosestPointToRobot.scaleBy(vectClosestPointToRobot.dot(vectPerpPath));
+		robotYawRate -= RobotParameters::k_pathFollowerKpTurn * vectRobotToPath.norm(); // vector projection
+
+		SmartDashboard::PutNumber("robotYaw", closestPointIt->yaw);
+		SmartDashboard::PutNumber("robotVel", robotVel);
+		SmartDashboard::PutNumber("robotAccel", robotAccel);
+		SmartDashboard::PutNumber("robotYawRate", robotYawRate);
+		printf("yaw = %0.1f\n", closestPointIt->yaw);
+		printf("robotYawRate = %0.1f\n", robotYawRate);
+		SmartDashboard::PutNumber("distToClosestPoint", distToClosestPoint);
 
 		// update drive
 		m_pTankDrivetrain->driveClosedLoopControl(robotVel, robotYawRate, robotAccel);
@@ -106,6 +113,7 @@ public:
 	}
 
 	bool IsFinished() {
+		SmartDashboard::PutNumber("m_distToEnd", m_distToEnd);
 		return (std::fabs(m_distToEnd) < m_targetZone) || m_lastPointReached;
 	}
 

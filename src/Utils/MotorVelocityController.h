@@ -13,7 +13,8 @@ public:
 		double ki,
 		double kd,
 		double kv,
-		double ka,
+		double kap,
+		double kan,
 		double ksf,
         double iZone,
         double iErrorLim,
@@ -27,7 +28,7 @@ public:
     // @param refV - angular velocity reference point (deg/s)
     // @param refA - angular acceleration reference point (deg/s^2)
     //////////////////////////////////////////////////////////////////////
-    void updateClosedLoopControl(double refV, double refA, double kvTrim);
+    void updateClosedLoopControl(double refV, double refA);
 
     //////////////////////////////////////////////////////////////////////
     // @brief update reference points of open loop motor controller
@@ -38,7 +39,8 @@ public:
 private:
     TalonSRX* m_pDriveMotor;
     double m_kv;
-    double m_ka;
+    double m_kap;
+    double m_kan;
     double m_ksf;
     unsigned m_ticksPerRev;
 };

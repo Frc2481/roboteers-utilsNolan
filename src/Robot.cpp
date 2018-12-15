@@ -16,8 +16,9 @@ void Robot::RobotInit() {
 
 	std::vector<TankDrivePathGenerator::waypoint_t> waypoints;
 	waypoints.push_back(TankDrivePathGenerator::waypoint_t {0, 0, 0, 0});
-	waypoints.push_back(TankDrivePathGenerator::waypoint_t {0, 100, 0, 0});
-	SmartDashboard::PutData("TankDrivetrainFollowPath", new TankDrivetrainFollowPath(waypoints, false, 1));
+	waypoints.push_back(TankDrivePathGenerator::waypoint_t {0, 200, 1000, 1000});
+	waypoints.push_back(TankDrivePathGenerator::waypoint_t {50, 200, 0, 0});
+	SmartDashboard::PutData("TankDrivetrainFollowPath", new TankDrivetrainFollowPath(waypoints, false, 5));
 
 	SmartDashboard::PutData("TankDrivetrainCalibrate", new TankDrivetrainCalibrate());
 }

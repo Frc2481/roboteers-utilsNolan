@@ -88,20 +88,26 @@ public:
 		// calculate distance to end of path
 		m_distToEnd = m_path.back().dist - closestPointIt->dist;
 
-		// control law
+		// path follower control law
+		// feed forward
 		double robotVel = closestPointIt->vel;
 		double robotAccel = closestPointIt->accel;
 		double robotYawRate = closestPointIt->yawRate;
+
+		// lateral distance feedback
 		Translation2D vectPerpPath = Translation2D(1, 0).rotateBy(Rotation2D::fromDegrees(closestPointIt->yaw + 90));
 		Translation2D vectRobotToPath = vectClosestPointToRobot.scaleBy(vectClosestPointToRobot.dot(vectPerpPath));
-		robotYawRate -= RobotParameters::k_pathFollowerKpTurn * vectRobotToPath.norm(); // vector projection
+		if(robotVel != 0) {
+			robotYawRate -= RobotParameters::k_pathFollowerKpLatDist * vectRobotToPath.norm() / robotVel; // vector projection
+		}
+
+		// heading feedback
+		robotYawRate -= RobotParameters::k_pathFollowerKpYawRate * (pose.getRotation().getDegrees() - closestPointIt->yaw);
 
 		SmartDashboard::PutNumber("robotYaw", closestPointIt->yaw);
 		SmartDashboard::PutNumber("robotVel", robotVel);
 		SmartDashboard::PutNumber("robotAccel", robotAccel);
 		SmartDashboard::PutNumber("robotYawRate", robotYawRate);
-		printf("yaw = %0.1f\n", closestPointIt->yaw);
-		printf("robotYawRate = %0.1f\n", robotYawRate);
 		SmartDashboard::PutNumber("distToClosestPoint", distToClosestPoint);
 
 		// update drive

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
+#include <cmath>
 #include "normalizeToRange.h"
 #include "Translation2D.h"
 #include "Sign.h"
@@ -286,7 +287,10 @@ void TankDrivePathGenerator::generatePath() {
     tempFinalPathPoint.time = 0;
     tempFinalPathPoint.dist = 0;
     tempFinalPathPoint.vel = m_comboPath.front().vel;
-    tempFinalPathPoint.accel = 0;
+    tempFinalPathPoint.accel = m_maxAccel * (1 - fabs(tempFinalPathPoint.vel) / m_maxSpeed);
+	if(m_isReverse) {
+		tempFinalPathPoint.accel = -tempFinalPathPoint.accel;
+	}
     tempFinalPathPoint.xPos = m_tempPath.front().xPos;
     tempFinalPathPoint.yPos = m_tempPath.front().yPos;
     tempFinalPathPoint.yaw = 0;
@@ -294,7 +298,7 @@ void TankDrivePathGenerator::generatePath() {
     m_finalPath.push_back(tempFinalPathPoint);
     
     // calculate final path
-    while(tempFinalPathPoint.time <= (m_comboPath.back().time - (1 / (double)m_sampleRate))) {
+    while(tempFinalPathPoint.time <= m_comboPath.back().time) {
         tempFinalPathPoint.time += 1 / (double)m_sampleRate;
         tempFinalPathPoint.dist = interpolate::interp(comboPathTime, comboPathDist, tempFinalPathPoint.time, false);
         tempFinalPathPoint.vel = interpolate::interp(comboPathTime, comboPathVel, tempFinalPathPoint.time, false);
@@ -317,23 +321,6 @@ void TankDrivePathGenerator::generatePath() {
         tempFinalPathPoint.yawRate = (tempFinalPathPoint.yaw - m_finalPath.back().yaw) * m_sampleRate;
         m_finalPath.push_back(tempFinalPathPoint);
     }
-
-    // add final point to final path
-    tempFinalPathPoint.time = m_comboPath.back().time;
-    tempFinalPathPoint.dist = m_comboPath.back().dist;
-    tempFinalPathPoint.vel = m_comboPath.back().vel;
-    tempFinalPathPoint.accel = 0;
-    tempFinalPathPoint.xPos = m_tempPath.back().xPos;
-    tempFinalPathPoint.yPos = m_tempPath.back().yPos;
-    double dx = tempFinalPathPoint.xPos - m_finalPath.back().xPos;
-    double dy = tempFinalPathPoint.yPos - m_finalPath.back().yPos;
-    tempFinalPathPoint.yaw = atan2(dy, dx) * 180.0 / M_PI - 90.0;
-    if(m_isReverse) {
-        tempFinalPathPoint.yaw -= 180.0;  
-    }
-    tempFinalPathPoint.yaw = normalizeToRange::normalizeToRange(tempFinalPathPoint.yaw, -180, 180, true);
-    tempFinalPathPoint.yawRate = 0;
-    m_finalPath.push_back(tempFinalPathPoint);
 }
 
 void TankDrivePathGenerator::writePathToCSV() const {
@@ -536,7 +523,7 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
 
         // calculate acceleration speed
         if(!isBackward) {
-            accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) + 2.0 * m_maxAccel * INTEGRATE_PATH_DIST_STEP);
+            accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) + 2.0 * m_maxAccel * (1 - fabs(tempPathGenPoint.vel) / m_maxSpeed) * INTEGRATE_PATH_DIST_STEP);
         }
         else {
             accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) - 2.0 * m_maxDeccel * INTEGRATE_PATH_DIST_STEP);

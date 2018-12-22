@@ -2,7 +2,7 @@
 #define ROBOT_PARAMETERS_H
 
 namespace RobotParameters {
-	static constexpr unsigned k_updateRate = 50; // Hz
+	static constexpr unsigned k_updateRate = 20; // Hz
 
 	static constexpr bool   k_leftDriveMotorInverted = false;
     static constexpr double k_drivetrainTrimKv = 0.01; // range of -0.5 to 0.5
@@ -30,13 +30,11 @@ namespace RobotParameters {
     static constexpr double k_pathFollowerKpLatDist = 0;
     static constexpr double k_pathFollowerKpYawRate = 0;
 
-    static constexpr double k_rotateToAngleControllerKp = 1;
-    static constexpr double k_rotateToAngleControllerKi = 0;
-    static constexpr double k_rotateToAngleControllerKd = 0;
-    static constexpr double k_rotateToAngleControllerKv = 0;
-    static constexpr double k_rotateToAngleControllerKa = 0;
-    static constexpr double k_rotateToAngleControllerTargetZone = 1; // deg
-    static constexpr double k_rotateToAngleControllerTargetZoneDebounce = 1; // s
+    static constexpr double k_rotateToAngleTimeoutAllowance = 0.5; // timeout path if takes longer than total path time plus this allowance (s)
+    static constexpr double k_rotateToAngleMaxYawRate = 0;
+    static constexpr double k_rotateToAngleMaxAngAccel = 0;
+    static constexpr double k_rotateToAngleMaxAngDeccel = 0;
+    static constexpr double k_rotateToAngleTargetZone = 0;
 
     static constexpr unsigned k_ctreMagEncoderTicksPerRev = 4096;
     static constexpr unsigned k_grayhillEncoderTicksPerRev = 512;

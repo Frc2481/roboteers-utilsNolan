@@ -43,13 +43,14 @@ public:
 		{
 			m_targetZone = 1;
 		}
+
+		SetTimeout(m_path.end()->time + RobotParameters::k_pathFollowerTimeoutAllowance);
 	}
 
 	~TankDrivetrainFollowPath() {
 	}
 
 	void Initialize() {
-		SetTimeout(m_path.end()->time + RobotParameters::k_pathFollowerTimeoutAllowance);
 	}
 
 	void Execute() {
@@ -86,7 +87,7 @@ public:
 		}
 
 		// calculate distance to end of path
-		m_distToEnd = m_path.back().dist - closestPointIt->dist;
+		m_distToEnd = fabs(m_path.back().dist - closestPointIt->dist);
 
 		// path follower control law
 		// feed forward
@@ -120,7 +121,7 @@ public:
 
 	bool IsFinished() {
 		SmartDashboard::PutNumber("m_distToEnd", m_distToEnd);
-		return (std::fabs(m_distToEnd) < m_targetZone) || m_lastPointReached;
+		return (m_distToEnd < m_targetZone) || m_lastPointReached;
 	}
 
 	void End() {

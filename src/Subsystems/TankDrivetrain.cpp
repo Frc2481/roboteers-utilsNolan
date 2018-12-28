@@ -10,8 +10,6 @@ TankDrivetrain::TankDrivetrain()
     m_tankDrivePose(Pose2D(Translation2D(0, 0), Rotation2D::fromDegrees(0)), RobotParameters::k_wheelTrack, RobotParameters::k_cornerStiffCoeff),
     m_leftWheelDist(0),
     m_rightWheelDist(0),
-    m_leftWheelVelCmd(0),
-    m_rightWheelVelCmd(0),
     m_gyroYaw(0) {
     
     m_pLeftDriveMotor = new TalonSRX(LEFT_DRIVE_MOTOR_ID);
@@ -26,7 +24,7 @@ TankDrivetrain::TankDrivetrain()
 		RobotParameters::k_driveMotorControllerKan,
 		RobotParameters::k_driveMotorControllerKsf,
         0,
-        0,
+		0,
         RobotParameters::k_grayhillEncoderTicksPerRev * RobotParameters::k_driveMotorToEncoderGearRatioLow);
     m_pLeftDriveEncoder = new GrayhillEncoder(m_pLeftDriveMotor, "LEFT_DRIVE_MOTOR_ENCODER");
     m_pLeftDriveMotorSlave = new TalonSRX(LEFT_DRIVE_MOTOR_SLAVE_ID);
@@ -44,8 +42,8 @@ TankDrivetrain::TankDrivetrain()
 		RobotParameters::k_driveMotorControllerKap,
 		RobotParameters::k_driveMotorControllerKan,
 		RobotParameters::k_driveMotorControllerKsf,
-        0,
-        0,
+		0,
+		0,
         RobotParameters::k_grayhillEncoderTicksPerRev * RobotParameters::k_driveMotorToEncoderGearRatioLow);
     m_pRightDriveEncoder = new GrayhillEncoder(m_pRightDriveMotor, "RIGHT_DRIVE_MOTOR_ENCODER");
     m_pRightDriveMotorSlave = new TalonSRX(RIGHT_DRIVE_MOTOR_SLAVE_ID);
@@ -57,7 +55,7 @@ TankDrivetrain::TankDrivetrain()
 
     m_pChassisIMU = new AHRS(SPI::kMXP);
 
-    resetPose(Pose2D(Translation2D(0, 0), Rotation2D::fromDegrees(0)), Pose2D(Translation2D(0, 0), Rotation2D::fromDegrees(0)));
+    resetPose(Pose2D(Translation2D(0, 0), Rotation2D::fromDegrees(0)), PoseDot2D(0, 0, 0));
 }
 
 TankDrivetrain::~TankDrivetrain() {
@@ -118,9 +116,6 @@ void TankDrivetrain::driveClosedLoopControl(
     double robotYawRate,
     double robotAccel) {
 
-    // get sign of vel
-//    int velSign = Sign::sign(robotVel);
-    
     // limit robot vel
     if(robotVel > RobotParameters::k_maxSpeed) {
         robotVel = RobotParameters::k_maxSpeed;
@@ -139,39 +134,41 @@ void TankDrivetrain::driveClosedLoopControl(
 
 //    // limit centrip accel
 //    if(fabs(robotVel * robotYawRate * 180.0 / M_PI) > RobotParameters::k_maxCentripAccel) {
-//        robotVel = velSign * RobotParameters::k_maxCentripAccel / fabs(robotYawRate * 180.0 / M_PI);
+//        robotVel = Sign::sign(robotVel) * RobotParameters::k_maxCentripAccel / fabs(robotYawRate * 180.0 / M_PI);
 //    }
 
     // convert robot vel to wheel vel
-    m_kinematics.inverseKinematics(robotVel, robotYawRate, m_leftWheelVelCmd, m_rightWheelVelCmd);
+    double leftWheelVelCmd;
+	double rightWheelVelCmd;
+    m_kinematics.inverseKinematics(robotVel, robotYawRate, leftWheelVelCmd, rightWheelVelCmd);
 
     // limit wheel vel
-    if((fabs(m_leftWheelVelCmd) > RobotParameters::k_maxSpeed) || (fabs(m_rightWheelVelCmd) > RobotParameters::k_maxSpeed)) {
+    if((fabs(leftWheelVelCmd) > RobotParameters::k_maxSpeed) || (fabs(rightWheelVelCmd) > RobotParameters::k_maxSpeed)) {
         if(robotVel >= 0) { // moving forward
             if(robotYawRate >= 0) { // turning left
-                m_rightWheelVelCmd = RobotParameters::k_maxSpeed;
-                m_leftWheelVelCmd = m_rightWheelVelCmd - RobotParameters::k_wheelTrack * robotYawRate * 180.0 / M_PI;
+                rightWheelVelCmd = RobotParameters::k_maxSpeed;
+                leftWheelVelCmd = rightWheelVelCmd - RobotParameters::k_wheelTrack * robotYawRate * 180.0 / M_PI;
             }
             else { // turning right
-                m_leftWheelVelCmd = RobotParameters::k_maxSpeed;
-                m_rightWheelVelCmd = m_leftWheelVelCmd + RobotParameters::k_wheelTrack * robotYawRate * 180.0 / M_PI;
+                leftWheelVelCmd = RobotParameters::k_maxSpeed;
+                rightWheelVelCmd = leftWheelVelCmd + RobotParameters::k_wheelTrack * robotYawRate * 180.0 / M_PI;
             }
         }
         else { // moving backward
             if(robotYawRate <= 0) { // turning left
-                m_rightWheelVelCmd = -RobotParameters::k_maxSpeed;
-                m_leftWheelVelCmd = m_rightWheelVelCmd - RobotParameters::k_wheelTrack * robotYawRate * 180.0 / M_PI;
+                rightWheelVelCmd = -RobotParameters::k_maxSpeed;
+                leftWheelVelCmd = rightWheelVelCmd - RobotParameters::k_wheelTrack * robotYawRate * 180.0 / M_PI;
             }
             else { // turning right
-                m_leftWheelVelCmd = -RobotParameters::k_maxSpeed;
-                m_rightWheelVelCmd = m_leftWheelVelCmd + RobotParameters::k_wheelTrack * robotYawRate * 180.0 / M_PI;
+                leftWheelVelCmd = -RobotParameters::k_maxSpeed;
+                rightWheelVelCmd = leftWheelVelCmd + RobotParameters::k_wheelTrack * robotYawRate * 180.0 / M_PI;
             }
         }
     }
 
     // convert wheel vel from translational to rotational
-    double leftWheelAngVel = m_leftWheelVelCmd / RobotParameters::k_wheelRad * 180.0 / M_PI;
-    double rightWheelAngVel = m_rightWheelVelCmd / RobotParameters::k_wheelRad * 180.0 / M_PI;
+    double leftWheelAngVel = leftWheelVelCmd / RobotParameters::k_wheelRad * 180.0 / M_PI;
+    double rightWheelAngVel = rightWheelVelCmd / RobotParameters::k_wheelRad * 180.0 / M_PI;
     double leftWheelAngAccel = robotAccel / RobotParameters::k_wheelRad * 180.0 / M_PI;
     double rightWheelAngAccel = robotAccel / RobotParameters::k_wheelRad * 180.0 / M_PI;
 
@@ -209,7 +206,7 @@ Pose2D TankDrivetrain::getPose() {
     return m_tankDrivePose.getPose();
 }
 
-Pose2D TankDrivetrain::getPoseDot() {
+PoseDot2D TankDrivetrain::getPoseDot() {
     return m_tankDrivePose.getPoseDot();
 }
 
@@ -237,12 +234,6 @@ void TankDrivetrain::updatePose() {
     double velRightWheel = m_pRightDriveEncoder->getWheelVelocity(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
     SmartDashboard::PutNumber("velRightWheel", velRightWheel);
 
-    SmartDashboard::PutNumber("leftTalonVel", m_pLeftDriveEncoder->getTickVelocity() / 10);
-    SmartDashboard::PutNumber("rightTalonVel", m_pRightDriveEncoder->getTickVelocity() / 10);
-
-    SmartDashboard::PutNumber("talonVel", ((m_pLeftDriveEncoder->getTickVelocity() / 10) + (m_pRightDriveEncoder->getTickVelocity() / 10)) / 2);
-
-
 //    // check for wheel slip
 //    if(fabs(velRightWheel) > fabs(m_rightWheelVelCmd * RobotParameters::k_wheelSlipNoiseRatio)) {
 //            // account for sample time and measurement noise
@@ -253,9 +244,8 @@ void TankDrivetrain::updatePose() {
     // read IMU
     double oldGyroYaw = m_gyroYaw;
     m_gyroYaw = -m_pChassisIMU->GetYaw();
-    SmartDashboard::PutNumber("gyroYaw", m_gyroYaw);
     double deltaGyroYaw = m_gyroYaw - oldGyroYaw;
-    double gyroYawRate = -m_pChassisIMU->GetRate();
+    double gyroYawRate = -m_pChassisIMU->GetRate() * 180.0 / M_PI;
     SmartDashboard::PutNumber("yawRateGyro", gyroYawRate);
 
     // update pose
@@ -265,12 +255,12 @@ void TankDrivetrain::updatePose() {
     SmartDashboard::PutNumber("y", m_tankDrivePose.getPose().getTranslation().getY());
     SmartDashboard::PutNumber("yaw", m_tankDrivePose.getPose().getRotation().getDegrees());
 
-    SmartDashboard::PutNumber("xVel", m_tankDrivePose.getPoseDot().getTranslation().getX());
-    SmartDashboard::PutNumber("yVel", m_tankDrivePose.getPoseDot().getTranslation().getY());
-	SmartDashboard::PutNumber("yawRate", m_tankDrivePose.getPoseDot().getRotation().getDegrees());
+    SmartDashboard::PutNumber("xVel", m_tankDrivePose.getPoseDot().getXVel());
+    SmartDashboard::PutNumber("yVel", m_tankDrivePose.getPoseDot().getYVel());
+	SmartDashboard::PutNumber("yawRate", m_tankDrivePose.getPoseDot().getYawRateDegPerSec());
 }
 
-void TankDrivetrain::resetPose(const Pose2D &pose, const Pose2D &poseDot) {
+void TankDrivetrain::resetPose(const Pose2D &pose, const PoseDot2D &poseDot) {
     m_tankDrivePose.reset(pose, poseDot);
 }
 

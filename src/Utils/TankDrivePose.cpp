@@ -7,7 +7,7 @@ TankDrivePose::TankDrivePose(
     double cornerStiffCoeff)
     
     : m_pose(pose),
-    m_poseDot(Translation2D(0, 0), Rotation2D::fromDegrees(0)),
+    m_poseDot(0, 0, 0),
     m_kinematics(wheelTrack),
     m_cornerStiffCoeff(cornerStiffCoeff) {
 }
@@ -15,7 +15,7 @@ TankDrivePose::TankDrivePose(
 TankDrivePose::~TankDrivePose() {
 }
 
-void TankDrivePose::reset(const Pose2D &pose, const Pose2D &poseDot) {
+void TankDrivePose::reset(const Pose2D &pose, const PoseDot2D &poseDot) {
     m_pose = pose;
     m_poseDot = poseDot;
 }
@@ -24,7 +24,7 @@ Pose2D TankDrivePose::getPose() {
     return m_pose;
 }
 
-Pose2D TankDrivePose::getPoseDot() {
+PoseDot2D TankDrivePose::getPoseDot() {
     return m_poseDot;
 }
 
@@ -63,7 +63,7 @@ void TankDrivePose::update(
     double robotYawRateWheelMeas;
     m_kinematics.forwardKinematics(velLeftWheel, velRightWheel,
         robotVelWheelMeas, robotYawRateWheelMeas);
-    m_poseDot = Pose2D(Translation2D(0, robotVelWheelMeas), Rotation2D::fromDegrees(yawRateGyro));
+    m_poseDot = PoseDot2D(0, robotVelWheelMeas, yawRateGyro);
 
     // @TODO: potential improvements...
     // fuse multiple observations from different sensors (IMU, lidar, etc.)

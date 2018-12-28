@@ -2,6 +2,7 @@
 #define TANK_DRIVE_POSE_H
 
 #include "Utils/Pose2D.h"
+#include "Utils/PoseDot2D.h"
 #include "Utils/TankDriveKinematics.h"
 
 // +x = field right
@@ -16,9 +17,9 @@ public:
         double cornerStiffCoeff);
     ~TankDrivePose();
 
-    void reset(const Pose2D &pose, const Pose2D &poseDot);
+    void reset(const Pose2D &pose, const PoseDot2D &poseDot);
     Pose2D getPose();
-    Pose2D getPoseDot();
+    PoseDot2D getPoseDot();
 
     //////////////////////////////////////////////////////////////////////
     // @brief update pose estimate
@@ -39,7 +40,7 @@ public:
 
 private:
     Pose2D m_pose;
-    Pose2D m_poseDot;
+    PoseDot2D m_poseDot;
     TankDriveKinematics m_kinematics;
     double m_cornerStiffCoeff;
 };

@@ -5,6 +5,7 @@
 #include "ctre/Phoenix.h"
 #include "Components/GrayhillEncoder.h"
 #include "Utils/Pose2D.h"
+#include "Utils/PoseDot2D.h"
 #include "Utils/TankDrivePose.h"
 #include "Utils/MotorVelocityController.h"
 #include <AHRS.h>
@@ -46,9 +47,9 @@ public:
     bool getShiftState();
 
     Pose2D getPose();
-    Pose2D getPoseDot();
+    PoseDot2D getPoseDot();
     void updatePose();
-    void resetPose(const Pose2D &pose, const Pose2D &poseDot);
+    void resetPose(const Pose2D &pose, const PoseDot2D &poseDot);
     void zeroDriveEncoders();
     void zeroGyroYaw();
 
@@ -67,8 +68,6 @@ private:
     TankDrivePose m_tankDrivePose;
     double m_leftWheelDist;
     double m_rightWheelDist;
-    double m_leftWheelVelCmd;
-    double m_rightWheelVelCmd;
     double m_gyroYaw;
 };
 

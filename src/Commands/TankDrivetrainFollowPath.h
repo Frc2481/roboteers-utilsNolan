@@ -3,11 +3,13 @@
 
 #include <vector>
 #include <limits>
+#include <algorithm>
 #include "CommandBase.h"
 #include "Utils/TankDrivePathGenerator.h"
 #include "Utils/Translation2D.h"
 #include "RobotParameters.h"
 #include "Utils/Sign.h"
+#include "Utils/PIDVAController.h"
 
 class TankDrivetrainFollowPath : public CommandBase {
 public:
@@ -19,7 +21,9 @@ public:
 		: CommandBase("TankDrivetrainFollowPath"),
 		m_lastPointReached(false),
 		m_distToEnd(std::numeric_limits<double>::infinity()),
-		m_targetZone(targetZone) {
+		m_targetZone(targetZone),
+		m_time(0),
+		m_latDistController(2, 0, 0.001, 0, 0) {
 		
 		Requires(CommandBase::m_pTankDrivetrain.get());
 		SetInterruptible(true);
@@ -56,6 +60,7 @@ public:
 	void Execute() {
 		// update pose
 		Pose2D pose = m_pTankDrivetrain->getPose();
+		PoseDot2D poseDot = m_pTankDrivetrain->getPoseDot();
 
 		// find closest point on path
 		if(m_path.empty()) {
@@ -72,7 +77,7 @@ public:
 		// could end search after a few iterations for efficiency gain but decided not to in case
 		// pose jumps forward along path and want to start tracking path from new point on path.
 		for(std::vector<TankDrivePathGenerator::finalPathPoint_t>::iterator it = m_path.begin(); it != m_path.end(); ++it) {
-			Translation2D vectPointToRobot = Translation2D(it->xPos, it->yPos) - pose.getTranslation();
+			Translation2D vectPointToRobot = pose.getTranslation() - Translation2D(it->xPos, it->yPos);
 			double distToPoint = vectPointToRobot.norm();
 			if(distToPoint < distToClosestPoint) {
 				vectClosestPointToRobot = vectPointToRobot;
@@ -96,20 +101,24 @@ public:
 		double robotYawRate = closestPointIt->yawRate;
 
 		// lateral distance feedback
-		Translation2D vectPerpPath = Translation2D(1, 0).rotateBy(Rotation2D::fromDegrees(closestPointIt->yaw + 90));
-		Translation2D vectRobotToPath = vectClosestPointToRobot.scaleBy(vectClosestPointToRobot.dot(vectPerpPath));
-		if(robotVel != 0) {
-			robotYawRate -= RobotParameters::k_pathFollowerKpLatDist * vectRobotToPath.norm() / robotVel; // vector projection
-		}
+		double feedbackYawRate = 0;
+		m_time += 1.0 / RobotParameters::k_updateRate;
+		Translation2D vectPathToRobot = vectClosestPointToRobot.rotateBy(Rotation2D::fromDegrees(-closestPointIt->yaw));
 
-		// heading feedback
-		robotYawRate -= RobotParameters::k_pathFollowerKpYawRate * (pose.getRotation().getDegrees() - closestPointIt->yaw);
+		m_latDistController.update(0, 0, 0, vectPathToRobot.getX(), m_time, feedbackYawRate);
 
-		SmartDashboard::PutNumber("robotYaw", closestPointIt->yaw);
+//		if(robotVel != 0) {
+//			 feedbackYawRate = -RobotParameters::k_pathFollowerKpLatDist * vectPathToRobot.getX() / std::max(robotVel, 50.0);
+//		}
+
+		robotYawRate -= feedbackYawRate;
+
+		// yaw rate feedback
+		robotYawRate -= RobotParameters::k_pathFollowerKpYawRate * (poseDot.getYawRateDegPerSec() - closestPointIt->yawRate);
+
 		SmartDashboard::PutNumber("robotVel", robotVel);
-		SmartDashboard::PutNumber("robotAccel", robotAccel);
 		SmartDashboard::PutNumber("robotYawRate", robotYawRate);
-		SmartDashboard::PutNumber("distToClosestPoint", distToClosestPoint);
+		SmartDashboard::PutNumber("feedbackYawRate", feedbackYawRate);
 
 		// update drive
 		m_pTankDrivetrain->driveClosedLoopControl(robotVel, robotYawRate, robotAccel);
@@ -120,7 +129,6 @@ public:
 	}
 
 	bool IsFinished() {
-		SmartDashboard::PutNumber("m_distToEnd", m_distToEnd);
 		return (m_distToEnd < m_targetZone) || m_lastPointReached;
 	}
 
@@ -133,6 +141,8 @@ private:
 	bool m_lastPointReached;
 	double m_distToEnd;
 	double m_targetZone;
+	double m_time;
+	PIDVAController m_latDistController;
 };
 
 #endif // COMMANDS_TANK_DRIVETRAIN_FOLLOW_PATH_H

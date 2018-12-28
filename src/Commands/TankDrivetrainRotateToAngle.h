@@ -19,9 +19,9 @@ public:
 		SetInterruptible(true);
 
 		Pose2D pose = m_pTankDrivetrain->getPose();
-		Pose2D poseDot = m_pTankDrivetrain->getPoseDot();
+		PoseDot2D poseDot = m_pTankDrivetrain->getPoseDot();
 		std::vector<TrajectoryGenerator1D::waypoint_t> waypoints;
-		waypoints.push_back(TrajectoryGenerator1D::waypoint_t {pose.getRotation().getDegrees(), poseDot.getRotation().getDegrees()});
+		waypoints.push_back(TrajectoryGenerator1D::waypoint_t {pose.getRotation().getDegrees(), poseDot.getYawRateDegPerSec()});
 		waypoints.push_back(TrajectoryGenerator1D::waypoint_t {refAngle, 0});
 
 		TrajectoryGenerator1D trajectoryGenerator1D(

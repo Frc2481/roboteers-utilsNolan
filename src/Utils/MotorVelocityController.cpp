@@ -66,9 +66,7 @@ void MotorVelocityController::updateClosedLoopControl(double refV, double refA) 
     // use different ka if vel and accel have opposite direction
     double ka = m_kap;
 	if((refV > 0) != (refA > 0)) {
-		m_kan;
-		refV = 0;
-		refA = 0;
+		ka = m_kan;
 	}
 
     double feedforwardControl = refV * m_kv + refA * ka + Sign::sign(refV) * m_ksf;

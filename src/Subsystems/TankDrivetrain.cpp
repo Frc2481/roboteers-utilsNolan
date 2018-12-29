@@ -114,7 +114,8 @@ void TankDrivetrain::driveOpenLoopControl(double percentLeftDrive, double percen
 void TankDrivetrain::driveClosedLoopControl(
     double robotVel,
     double robotYawRate,
-    double robotAccel) {
+    double robotAccel,
+	double robotYawAccel) {
 
     // limit robot vel
     if(robotVel > RobotParameters::k_maxSpeed) {
@@ -132,6 +133,22 @@ void TankDrivetrain::driveClosedLoopControl(
         robotAccel = RobotParameters::k_maxDeccel;
     }
 
+    // limit robot yaw rate
+    if(robotYawRate > (RobotParameters::k_maxSpeed / (RobotParameters::k_wheelTrack / 2.0) * 180.0 / M_PI)) {
+    	robotYawRate = (RobotParameters::k_maxSpeed / (RobotParameters::k_wheelTrack / 2.0) * 180.0 / M_PI);
+	}
+	else if(robotYawRate < -(RobotParameters::k_maxSpeed / (RobotParameters::k_wheelTrack / 2.0) * 180.0 / M_PI)) {
+		robotYawRate = -(RobotParameters::k_maxSpeed / (RobotParameters::k_wheelTrack / 2.0) * 180.0 / M_PI);
+	}
+
+    // limit robot yaw accel
+    if(robotYawAccel > (RobotParameters::k_maxAccel / (RobotParameters::k_wheelTrack / 2.0) * 180.0 / M_PI)) {
+		robotYawAccel = (RobotParameters::k_maxAccel / (RobotParameters::k_wheelTrack / 2.0) * 180.0 / M_PI);
+	}
+	else if(robotYawAccel < -(RobotParameters::k_maxDeccel / (RobotParameters::k_wheelTrack / 2.0) * 180.0 / M_PI)) {
+		robotYawAccel = -(RobotParameters::k_maxDeccel / (RobotParameters::k_wheelTrack / 2.0) * 180.0 / M_PI);
+	}
+
 //    // limit centrip accel
 //    if(fabs(robotVel * robotYawRate * 180.0 / M_PI) > RobotParameters::k_maxCentripAccel) {
 //        robotVel = Sign::sign(robotVel) * RobotParameters::k_maxCentripAccel / fabs(robotYawRate * 180.0 / M_PI);
@@ -147,24 +164,53 @@ void TankDrivetrain::driveClosedLoopControl(
         if(robotVel >= 0) { // moving forward
             if(robotYawRate >= 0) { // turning left
                 rightWheelVelCmd = RobotParameters::k_maxSpeed;
-                leftWheelVelCmd = rightWheelVelCmd - RobotParameters::k_wheelTrack * robotYawRate * 180.0 / M_PI;
+                leftWheelVelCmd = rightWheelVelCmd - RobotParameters::k_wheelTrack * robotYawRate * M_PI / 180.0;
             }
             else { // turning right
                 leftWheelVelCmd = RobotParameters::k_maxSpeed;
-                rightWheelVelCmd = leftWheelVelCmd + RobotParameters::k_wheelTrack * robotYawRate * 180.0 / M_PI;
+                rightWheelVelCmd = leftWheelVelCmd + RobotParameters::k_wheelTrack * robotYawRate * M_PI / 180.0;
             }
         }
         else { // moving backward
             if(robotYawRate <= 0) { // turning left
                 rightWheelVelCmd = -RobotParameters::k_maxSpeed;
-                leftWheelVelCmd = rightWheelVelCmd - RobotParameters::k_wheelTrack * robotYawRate * 180.0 / M_PI;
+                leftWheelVelCmd = rightWheelVelCmd - RobotParameters::k_wheelTrack * robotYawRate * M_PI / 180.0;
             }
             else { // turning right
                 leftWheelVelCmd = -RobotParameters::k_maxSpeed;
-                rightWheelVelCmd = leftWheelVelCmd + RobotParameters::k_wheelTrack * robotYawRate * 180.0 / M_PI;
+                rightWheelVelCmd = leftWheelVelCmd + RobotParameters::k_wheelTrack * robotYawRate * M_PI / 180.0;
             }
         }
     }
+
+    // convert robot accel to wheel accel
+	double leftWheelAccelCmd;
+	double rightWheelAccelCmd;
+	m_kinematics.inverseKinematics(robotAccel, robotYawAccel, leftWheelAccelCmd, rightWheelAccelCmd);
+
+	// limit wheel accel
+	if((fabs(leftWheelAccelCmd) > RobotParameters::k_maxAccel) || (fabs(rightWheelAccelCmd) > RobotParameters::k_maxAccel)) {
+		if(robotAccel >= 0) { // accel forward
+			if(robotYawAccel >= 0) { // accel left
+				rightWheelAccelCmd = RobotParameters::k_maxAccel;
+				leftWheelAccelCmd = rightWheelAccelCmd - RobotParameters::k_wheelTrack * robotYawAccel * M_PI / 180.0;
+			}
+			else { // accel right
+				leftWheelAccelCmd = RobotParameters::k_maxAccel;
+				rightWheelAccelCmd = leftWheelAccelCmd + RobotParameters::k_wheelTrack * robotYawAccel * M_PI / 180.0;
+			}
+		}
+		else { // accel backward
+			if(robotYawAccel <= 0) { // accel left
+				rightWheelAccelCmd = -RobotParameters::k_maxAccel;
+				leftWheelAccelCmd = rightWheelAccelCmd - RobotParameters::k_wheelTrack * robotYawAccel * M_PI / 180.0;
+			}
+			else { // accel right
+				leftWheelAccelCmd = -RobotParameters::k_maxAccel;
+				rightWheelAccelCmd = leftWheelAccelCmd + RobotParameters::k_wheelTrack * robotYawAccel * M_PI / 180.0;
+			}
+		}
+	}
 
     // convert wheel vel from translational to rotational
     double leftWheelAngVel = leftWheelVelCmd / RobotParameters::k_wheelRad * 180.0 / M_PI;

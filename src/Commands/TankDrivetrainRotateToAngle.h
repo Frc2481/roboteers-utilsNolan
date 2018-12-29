@@ -80,9 +80,10 @@ public:
 		// path follower control law
 		// feed forward
 		double robotYawRate = closestPointIt->vel;
+		double robotYawAccel = closestPointIt->accel;
 
 		// update drive
-		m_pTankDrivetrain->driveClosedLoopControl(0, robotYawRate, 0);
+		m_pTankDrivetrain->driveClosedLoopControl(0, robotYawRate, 0, robotYawAccel);
 	}
 
 	void Interrupted() {

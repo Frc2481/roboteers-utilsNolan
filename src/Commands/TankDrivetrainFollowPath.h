@@ -129,7 +129,7 @@ public:
 		SmartDashboard::PutNumber("robotYawRate", robotYawRate);
 
 		// update drive
-		m_pTankDrivetrain->driveClosedLoopControl(robotVel, robotYawRate, robotAccel);
+		m_pTankDrivetrain->driveClosedLoopControl(robotVel, robotYawRate, robotAccel, 0);
 	}
 
 	void Interrupted() {

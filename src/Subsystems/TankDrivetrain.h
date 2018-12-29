@@ -35,11 +35,13 @@ public:
     // @param robotVel - forward velocity of robot (in/s)
     // @param robotYawRate - yaw rate of robot (deg/s)
     // @param robotAccel - forward acceleration of robot (in/s^2)
+    // @param robotYawAccel - yaw accel of robot (deg/s^2)
     //////////////////////////////////////////////////////////////////////
     void driveClosedLoopControl(
         double robotVel,
         double robotYawRate,
-        double robotAccel);
+        double robotAccel,
+		double robotYawAccel);
     
     void stop();
 

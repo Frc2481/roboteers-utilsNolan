@@ -7,7 +7,7 @@
 class PoseDot2D {
 public:
 	PoseDot2D();
-	PoseDot2D(double xVel, double yVel, double yawRateDegPerSec);
+	PoseDot2D(double xVel, double yVel, double yawRate);
 	PoseDot2D(const PoseDot2D &other);
     ~PoseDot2D();
 
@@ -15,12 +15,12 @@ public:
 
     double getXVel();
     double getYVel();
-	double getYawRateDegPerSec();
+	double getYawRate();
 
 private:
     double m_xVel;
     double m_yVel;
-    double m_yawRateDegPerSec;
+    double m_yawRate; // deg/s
 };
 
 #endif // POSE_DOT_2D_H

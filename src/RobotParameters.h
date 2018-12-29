@@ -27,13 +27,17 @@ namespace RobotParameters {
     static constexpr double k_driveMotorControllerKan = 0.00005;
 
     static constexpr double k_pathFollowerTimeoutAllowance = 0.5; // timeout path if takes longer than total path time plus this allowance (s)
-    static constexpr double k_pathFollowerKpLatDist = 500;
-    static constexpr double k_pathFollowerKpYawRate = 5;
+    static constexpr double k_pathFollowerLatDistKp = 0;
+    static constexpr double k_pathFollowerLatDistKi = 0;
+    static constexpr double k_pathFollowerLatDistKd = 0;
+    static constexpr double k_pathFollowerYawRateKp = 0;
+    static constexpr double k_pathFollowerYawRateKi = 0;
+    static constexpr double k_pathFollowerYawRateKd = 0;
 
     static constexpr double k_rotateToAngleTimeoutAllowance = 0.5; // timeout path if takes longer than total path time plus this allowance (s)
-    static constexpr double k_rotateToAngleMaxYawRate = 480;
-    static constexpr double k_rotateToAngleMaxAngAccel = 300;
-    static constexpr double k_rotateToAngleMaxAngDeccel = -300;
+    static constexpr double k_rotateToAngleMaxYawRate = 0;
+    static constexpr double k_rotateToAngleMaxAngAccel = 0;
+    static constexpr double k_rotateToAngleMaxAngDeccel = 0;
     static constexpr double k_rotateToAngleTargetZone = 5;
 
     static constexpr unsigned k_ctreMagEncoderTicksPerRev = 4096;

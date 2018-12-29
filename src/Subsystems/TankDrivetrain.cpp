@@ -257,7 +257,7 @@ void TankDrivetrain::updatePose() {
 
     SmartDashboard::PutNumber("xVel", m_tankDrivePose.getPoseDot().getXVel());
     SmartDashboard::PutNumber("yVel", m_tankDrivePose.getPoseDot().getYVel());
-	SmartDashboard::PutNumber("yawRate", m_tankDrivePose.getPoseDot().getYawRateDegPerSec());
+	SmartDashboard::PutNumber("yawRate", m_tankDrivePose.getPoseDot().getYawRate());
 }
 
 void TankDrivetrain::resetPose(const Pose2D &pose, const PoseDot2D &poseDot) {

@@ -23,7 +23,19 @@ public:
 		m_distToEnd(std::numeric_limits<double>::infinity()),
 		m_targetZone(targetZone),
 		m_time(0),
-		m_latDistController(2, 0, 0.001, 0, 0) {
+		m_latDistController(
+			RobotParameters::k_pathFollowerLatDistKp,
+			RobotParameters::k_pathFollowerLatDistKi,
+			RobotParameters::k_pathFollowerLatDistKd,
+			0,
+			0),
+		m_yawRateController(
+			RobotParameters::k_pathFollowerYawRateKp,
+			RobotParameters::k_pathFollowerYawRateKi,
+			RobotParameters::k_pathFollowerYawRateKd,
+			0,
+			0)
+		{
 		
 		Requires(CommandBase::m_pTankDrivetrain.get());
 		SetInterruptible(true);
@@ -101,24 +113,20 @@ public:
 		double robotYawRate = closestPointIt->yawRate;
 
 		// lateral distance feedback
-		double feedbackYawRate = 0;
+		double latDistCntrl = 0;
 		m_time += 1.0 / RobotParameters::k_updateRate;
 		Translation2D vectPathToRobot = vectClosestPointToRobot.rotateBy(Rotation2D::fromDegrees(-closestPointIt->yaw));
-
-		m_latDistController.update(0, 0, 0, vectPathToRobot.getX(), m_time, feedbackYawRate);
-
-//		if(robotVel != 0) {
-//			 feedbackYawRate = -RobotParameters::k_pathFollowerKpLatDist * vectPathToRobot.getX() / std::max(robotVel, 50.0);
-//		}
-
-		robotYawRate -= feedbackYawRate;
+		m_latDistController.update(0, 0, 0, vectPathToRobot.getX(), m_time, latDistCntrl);
+		robotYawRate -= latDistCntrl;
 
 		// yaw rate feedback
-		robotYawRate -= RobotParameters::k_pathFollowerKpYawRate * (poseDot.getYawRateDegPerSec() - closestPointIt->yawRate);
+		double yawRateCntrl = 0;
+		m_yawRateController.update(closestPointIt->yawRate, 0, 0, poseDot.getYawRate(), m_time, yawRateCntrl);
+		robotYawRate -= yawRateCntrl;
 
 		SmartDashboard::PutNumber("robotVel", robotVel);
+		SmartDashboard::PutNumber("robotAccel", robotAccel);
 		SmartDashboard::PutNumber("robotYawRate", robotYawRate);
-		SmartDashboard::PutNumber("feedbackYawRate", feedbackYawRate);
 
 		// update drive
 		m_pTankDrivetrain->driveClosedLoopControl(robotVel, robotYawRate, robotAccel);
@@ -143,6 +151,7 @@ private:
 	double m_targetZone;
 	double m_time;
 	PIDVAController m_latDistController;
+	PIDVAController m_yawRateController;
 };
 
 #endif // COMMANDS_TANK_DRIVETRAIN_FOLLOW_PATH_H

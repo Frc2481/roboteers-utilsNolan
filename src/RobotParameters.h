@@ -6,8 +6,8 @@ namespace RobotParameters {
 
 	static constexpr bool   k_leftDriveMotorInverted = false;
     static constexpr double k_drivetrainTrimKv = 0.01; // range of -0.5 to 0.5
-    static constexpr double k_wheelRad = 3; // in
-    static constexpr double k_wheelTrack = 19.5 * 1.2; // in
+    static constexpr double k_wheelRad = 2.9; // in
+    static constexpr double k_wheelTrack = 20; // in
     static constexpr double k_maxSpeed = 110; // in/s
     static constexpr double k_maxAccel = 100; // in/s^2
     static constexpr double k_maxDeccel = -50; // in/s^2
@@ -35,9 +35,9 @@ namespace RobotParameters {
     static constexpr double k_pathFollowerYawRateKd = 0;
 
     static constexpr double k_rotateToAngleTimeoutAllowance = 0.5; // timeout path if takes longer than total path time plus this allowance (s)
-    static constexpr double k_rotateToAngleMaxYawRate = 0;
-    static constexpr double k_rotateToAngleMaxAngAccel = 0;
-    static constexpr double k_rotateToAngleMaxAngDeccel = 0;
+    static constexpr double k_rotateToAngleMaxYawRate = 350;
+    static constexpr double k_rotateToAngleMaxAngAccel = 100;
+    static constexpr double k_rotateToAngleMaxAngDeccel = -100;
     static constexpr double k_rotateToAngleTargetZone = 5;
 
     static constexpr unsigned k_ctreMagEncoderTicksPerRev = 4096;

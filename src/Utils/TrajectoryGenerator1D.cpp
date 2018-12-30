@@ -25,8 +25,8 @@ TrajectoryGenerator1D::TrajectoryGenerator1D(
     m_rangeMin(0),
 	m_rangeMax(0),
 	m_isContinous(false),
-    m_waypointsFilename("tempWaypoints.csv"),
-    m_pathFilename("tempFinalPath.csv") {
+	m_waypointsFilename("TrajectoryGenerator1DWaypoints.csv"),
+	m_pathFilename("TrajectoryGenerator1DFinalPath.csv") {
 
     setWaypoints(waypoints);
 }

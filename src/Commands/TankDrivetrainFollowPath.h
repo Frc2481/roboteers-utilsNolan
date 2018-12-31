@@ -124,10 +124,6 @@ public:
 		m_yawRateController.update(closestPointIt->yawRate, 0, 0, poseDot.getYawRate(), m_time, yawRateCntrl);
 		robotYawRate -= yawRateCntrl;
 
-		SmartDashboard::PutNumber("robotVel", robotVel);
-		SmartDashboard::PutNumber("robotAccel", robotAccel);
-		SmartDashboard::PutNumber("robotYawRate", robotYawRate);
-
 		// update drive
 		m_pTankDrivetrain->driveClosedLoopControl(robotVel, robotYawRate, robotAccel, 0);
 	}
@@ -137,7 +133,7 @@ public:
 	}
 
 	bool IsFinished() {
-		return (m_distToEnd < m_targetZone) || m_lastPointReached;
+		return IsTimedOut() || (m_distToEnd < m_targetZone) || m_lastPointReached;
 	}
 
 	void End() {

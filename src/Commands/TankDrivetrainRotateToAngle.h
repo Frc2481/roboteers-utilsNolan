@@ -9,7 +9,7 @@
 
 class TankDrivetrainRotateToAngle : public CommandBase {
 public:
-	TankDrivetrainRotateToAngle(double refAngle)
+	TankDrivetrainRotateToAngle(double refAngle, double maxYawRate, double maxAngAccel, double maxYawDeccel)
 
 		: CommandBase("TankDrivetrainRotateToAngle"),
 		m_lastPointReached(false),
@@ -28,8 +28,8 @@ public:
 			waypoints,
 			RobotParameters::k_updateRate,
 			RobotParameters::k_rotateToAngleMaxYawRate,
-			RobotParameters::k_rotateToAngleMaxAngAccel,
-			RobotParameters::k_rotateToAngleMaxAngDeccel);
+			RobotParameters::k_rotateToAngleMaxYawAccel,
+			RobotParameters::k_rotateToAngleMaxYawDeccel);
 		trajectoryGenerator1D.setIsContinous(true, -180, 180);
 		trajectoryGenerator1D.generatePath();
 		m_path = trajectoryGenerator1D.getFinalPath();
@@ -91,7 +91,7 @@ public:
 	}
 
 	bool IsFinished() {
-		return (m_distToEnd < RobotParameters::k_rotateToAngleTargetZone) || m_lastPointReached;
+		return IsTimedOut() || (m_distToEnd < RobotParameters::k_rotateToAngleTargetZone) || m_lastPointReached;
 	}
 
 	void End() {

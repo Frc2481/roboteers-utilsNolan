@@ -13,11 +13,6 @@ public:
 		
 		Requires(CommandBase::m_pTankDrivetrain.get());
 		SetInterruptible(true);
-
-		SmartDashboard::PutNumber("refV", 0);
-		SmartDashboard::PutNumber("refYawRate", 0);
-		SmartDashboard::PutNumber("refA", 0);
-		SmartDashboard::PutNumber("refYawAccel", 0);
 	}
 
 	~TankDrivetrainCalibrate() {
@@ -27,11 +22,11 @@ public:
 	}
 
 	void Execute() {
-		double refV = SmartDashboard::GetNumber("refV", 0);
+		double refVel = SmartDashboard::GetNumber("refVel", 0);
 		double refYawRate = SmartDashboard::GetNumber("refYawRate", 0);
-		double refA = SmartDashboard::GetNumber("refA", 0);
+		double refAccel = SmartDashboard::GetNumber("refAccel", 0);
 		double refYawAccel = SmartDashboard::GetNumber("refYawAccel", 0);
-		CommandBase::m_pTankDrivetrain->driveClosedLoopControl(refV, refYawRate, refA, refYawAccel);
+		CommandBase::m_pTankDrivetrain->driveClosedLoopControl(refVel, refYawRate, refAccel, refYawAccel);
 	}
 
 	void Interrupted() {

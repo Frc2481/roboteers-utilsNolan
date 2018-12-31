@@ -36,8 +36,8 @@ namespace RobotParameters {
 
     static constexpr double k_rotateToAngleTimeoutAllowance = 0.5; // timeout path if takes longer than total path time plus this allowance (s)
     static constexpr double k_rotateToAngleMaxYawRate = 350;
-    static constexpr double k_rotateToAngleMaxAngAccel = 100;
-    static constexpr double k_rotateToAngleMaxAngDeccel = -100;
+    static constexpr double k_rotateToAngleMaxYawAccel = 100;
+    static constexpr double k_rotateToAngleMaxYawDeccel = -100;
     static constexpr double k_rotateToAngleTargetZone = 5;
 
     static constexpr unsigned k_ctreMagEncoderTicksPerRev = 4096;

@@ -1,6 +1,7 @@
 #include "MotorVelocityController.h"
 #include "Utils/Sign.h"
 #include "WPILib.h"
+#include "RobotParameters.h"
 
 MotorVelocityController::MotorVelocityController()
 	: m_pDriveMotor(nullptr),
@@ -60,6 +61,18 @@ void MotorVelocityController::setTicksPerRev(unsigned ticksPerRev) {
 }
 
 void MotorVelocityController::updateClosedLoopControl(double refV, double refA) {
+	double kp = SmartDashboard::GetNumber("k_driveMotorControllerKp", RobotParameters::k_driveMotorControllerKp);
+	double ki = SmartDashboard::GetNumber("k_driveMotorControllerKi", RobotParameters::k_driveMotorControllerKi);
+	double kd = SmartDashboard::GetNumber("k_driveMotorControllerKd", RobotParameters::k_driveMotorControllerKd);
+	double m_kv = SmartDashboard::GetNumber("k_driveMotorControllerKv", RobotParameters::k_driveMotorControllerKv);
+	double m_kap = SmartDashboard::GetNumber("k_driveMotorControllerKap", RobotParameters::k_driveMotorControllerKap);
+	double m_kan = SmartDashboard::GetNumber("k_driveMotorControllerKan", RobotParameters::k_driveMotorControllerKan);
+	double m_ksf = SmartDashboard::GetNumber("k_driveMotorControllerKsf", RobotParameters::k_driveMotorControllerKsf);
+
+	m_pDriveMotor->Config_kP(0, kp, 0);
+	m_pDriveMotor->Config_kI(0, ki, 0);
+	m_pDriveMotor->Config_kD(0, kd, 0);
+
     refV = refV * m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
     refA = refA * m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
 

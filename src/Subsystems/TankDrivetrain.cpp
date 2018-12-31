@@ -262,8 +262,8 @@ void TankDrivetrain::updatePose() {
     m_leftWheelDist = m_pLeftDriveEncoder->getWheelDistance(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
     SmartDashboard::PutNumber("leftWheelDist", m_leftWheelDist);
     double deltaDistLeftWheel = m_leftWheelDist - oldLeftWheelDist;
-    double velLeftWheel = m_pLeftDriveEncoder->getWheelVelocity(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
-    SmartDashboard::PutNumber("velLeftWheel", velLeftWheel);
+    double leftWheelVel = m_pLeftDriveEncoder->getWheelVelocity(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
+    SmartDashboard::PutNumber("leftWheelVel", leftWheelVel);
 
 //    // check for wheel slip
 //    if(fabs(velLeftWheel) > fabs(m_leftWheelVelCmd * RobotParameters::k_wheelSlipNoiseRatio)) {
@@ -277,8 +277,8 @@ void TankDrivetrain::updatePose() {
     m_rightWheelDist = m_pRightDriveEncoder->getWheelDistance(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
     SmartDashboard::PutNumber("rightWheelDist", m_rightWheelDist);
     double deltaDistRightWheel = m_rightWheelDist - oldRightWheelDist;
-    double velRightWheel = m_pRightDriveEncoder->getWheelVelocity(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
-    SmartDashboard::PutNumber("velRightWheel", velRightWheel);
+    double rightWheelVel = m_pRightDriveEncoder->getWheelVelocity(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
+    SmartDashboard::PutNumber("rightWheelVel", rightWheelVel);
 
 //    // check for wheel slip
 //    if(fabs(velRightWheel) > fabs(m_rightWheelVelCmd * RobotParameters::k_wheelSlipNoiseRatio)) {
@@ -295,7 +295,7 @@ void TankDrivetrain::updatePose() {
     SmartDashboard::PutNumber("yawRateGyro", gyroYawRate);
 
     // update pose
-    m_tankDrivePose.update(deltaDistLeftWheel, deltaDistRightWheel, deltaGyroYaw, velLeftWheel, velRightWheel, gyroYawRate);
+    m_tankDrivePose.update(deltaDistLeftWheel, deltaDistRightWheel, deltaGyroYaw, leftWheelVel, rightWheelVel, gyroYawRate);
 
     SmartDashboard::PutNumber("x", m_tankDrivePose.getPose().getTranslation().getX());
     SmartDashboard::PutNumber("y", m_tankDrivePose.getPose().getTranslation().getY());

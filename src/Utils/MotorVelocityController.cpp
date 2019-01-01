@@ -51,6 +51,15 @@ MotorVelocityController::MotorVelocityController(
 	m_pDriveMotor->ConfigPeakOutputReverse(-1.0, 0.0);
 	m_pDriveMotor->SetSensorPhase(true);
 	m_pDriveMotor->SetInverted(inverted);
+
+	SmartDashboard::PutNumber("k_driveMotorControllerKp", RobotParameters::k_driveMotorControllerKp);
+	SmartDashboard::PutNumber("k_driveMotorControllerKi", RobotParameters::k_driveMotorControllerKi);
+	SmartDashboard::PutNumber("k_driveMotorControllerKd", RobotParameters::k_driveMotorControllerKd);
+	SmartDashboard::PutNumber("k_driveMotorControllerKv", RobotParameters::k_driveMotorControllerKv);
+	SmartDashboard::PutNumber("k_driveMotorControllerKap", RobotParameters::k_driveMotorControllerKap);
+	SmartDashboard::PutNumber("k_driveMotorControllerKan", RobotParameters::k_driveMotorControllerKan);
+	SmartDashboard::PutNumber("k_driveMotorControllerKsf", RobotParameters::k_driveMotorControllerKsf);
+	SmartDashboard::PutNumber("feedforwardControl", 0);
 }
 
 MotorVelocityController::~MotorVelocityController() {
@@ -61,13 +70,13 @@ void MotorVelocityController::setTicksPerRev(unsigned ticksPerRev) {
 }
 
 void MotorVelocityController::updateClosedLoopControl(double refV, double refA) {
-	double kp = SmartDashboard::GetNumber("k_driveMotorControllerKp", RobotParameters::k_driveMotorControllerKp);
-	double ki = SmartDashboard::GetNumber("k_driveMotorControllerKi", RobotParameters::k_driveMotorControllerKi);
-	double kd = SmartDashboard::GetNumber("k_driveMotorControllerKd", RobotParameters::k_driveMotorControllerKd);
-	double m_kv = SmartDashboard::GetNumber("k_driveMotorControllerKv", RobotParameters::k_driveMotorControllerKv);
-	double m_kap = SmartDashboard::GetNumber("k_driveMotorControllerKap", RobotParameters::k_driveMotorControllerKap);
-	double m_kan = SmartDashboard::GetNumber("k_driveMotorControllerKan", RobotParameters::k_driveMotorControllerKan);
-	double m_ksf = SmartDashboard::GetNumber("k_driveMotorControllerKsf", RobotParameters::k_driveMotorControllerKsf);
+	double kp = SmartDashboard::GetNumber("k_driveMotorControllerKp", 0);
+	double ki = SmartDashboard::GetNumber("k_driveMotorControllerKi", 0);
+	double kd = SmartDashboard::GetNumber("k_driveMotorControllerKd", 0);
+	m_kv = SmartDashboard::GetNumber("k_driveMotorControllerKv", 0);
+	m_kap = SmartDashboard::GetNumber("k_driveMotorControllerKap", 0);
+	m_kan = SmartDashboard::GetNumber("k_driveMotorControllerKan", 0);
+	m_ksf = SmartDashboard::GetNumber("k_driveMotorControllerKsf", 0);
 
 	m_pDriveMotor->Config_kP(0, kp, 0);
 	m_pDriveMotor->Config_kI(0, ki, 0);
@@ -83,6 +92,10 @@ void MotorVelocityController::updateClosedLoopControl(double refV, double refA) 
 	}
 
     double feedforwardControl = refV * m_kv + refA * ka + Sign::sign(refV) * m_ksf;
+    printf("1 = %0.1f\n", refV * m_kv);
+    printf("2 = %0.1f\n", refA * ka);
+    printf("3 = %0.1f\n", Sign::sign(refV) * m_ksf);
+    SmartDashboard::PutNumber("feedforwardControl", feedforwardControl);
 
     m_pDriveMotor->Set(ControlMode::Velocity, refV, DemandType::DemandType_ArbitraryFeedForward, feedforwardControl);
 }

@@ -9,7 +9,7 @@
 
 class TankDrivetrainRotateToAngle : public CommandBase {
 public:
-	TankDrivetrainRotateToAngle(double refAngle, double maxYawRate, double maxAngAccel, double maxYawDeccel)
+	TankDrivetrainRotateToAngle(double refAngle)
 
 		: CommandBase("TankDrivetrainRotateToAngle"),
 		m_lastPointReached(false),

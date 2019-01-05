@@ -8,21 +8,19 @@ namespace normalizeToRange {
             std::swap(rangeMin, rangeMax);
         }
 
-        value = std::fmod(value + rangeMax, rangeMax - rangeMin);
-        if(value > 0) {
-            value += rangeMin;
-        }
-        else if(value < 0) {
+        value -= rangeMin;
+        rangeMax -= rangeMin;
+
+        value = std::fmod(value, rangeMax);
+
+        if(value < 0) {
             value += rangeMax;
         }
-        else if(includeMax) {
+        else if(includeMax || (value == 0)) {
             value = rangeMax;
         }
-        else {
-            value = rangeMin;
-        }
 
-        return value;
+        return value + rangeMin;
     }
 
     double rangedDifference(double difference, double rangeMin, double rangeMax) {

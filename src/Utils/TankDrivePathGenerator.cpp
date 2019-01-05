@@ -473,6 +473,11 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
         tempPathGenPoint.dist = m_totalPathDist;
         tempPathGenPoint.vel = m_tempPath.back().vel;
     }
+
+	if(m_isReverse) {
+		tempPathGenPoint.vel *= -1;
+	}
+
     integratedPath.push_back(tempPathGenPoint);
 
     // integrate path
@@ -552,15 +557,14 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
         limitWheelSpeed = m_maxSpeed / (1 + (1 / radiusCurve) * (m_wheelTrack / 2.0));
 
         // use minimum speed from all constraints
-        double speed = std::min(std::min(std::min(std::min(accelSpeed, pathSpeed), latSlipSpeed), limitWheelSpeed), m_maxSpeed);
+        tempPathGenPoint.vel = std::min(std::min(std::min(std::min(accelSpeed, pathSpeed), latSlipSpeed), limitWheelSpeed), m_maxSpeed);
 
         // reverse path direction if needed
         if(m_isReverse) {
-            speed = -speed;
+        	tempPathGenPoint.vel *= -1;
         }
 
-        // add speed to point and add to path
-        tempPathGenPoint.vel = speed;
+        // add to path
         integratedPath.push_back(tempPathGenPoint);
     }
     

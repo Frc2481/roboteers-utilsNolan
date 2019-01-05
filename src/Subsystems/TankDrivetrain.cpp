@@ -263,7 +263,7 @@ void TankDrivetrain::updatePose() {
     SmartDashboard::PutNumber("leftWheelDist", m_leftWheelDist);
     double deltaDistLeftWheel = m_leftWheelDist - oldLeftWheelDist;
     double leftWheelVel = m_pLeftDriveEncoder->getWheelVelocity(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
-    SmartDashboard::PutNumber("leftWheelVel", leftWheelVel);
+    SmartDashboard::PutNumber("leftWheelVel", m_pLeftDriveEncoder->getTickVelocity());
 
 //    // check for wheel slip
 //    if(fabs(velLeftWheel) > fabs(m_leftWheelVelCmd * RobotParameters::k_wheelSlipNoiseRatio)) {
@@ -278,7 +278,7 @@ void TankDrivetrain::updatePose() {
     SmartDashboard::PutNumber("rightWheelDist", m_rightWheelDist);
     double deltaDistRightWheel = m_rightWheelDist - oldRightWheelDist;
     double rightWheelVel = m_pRightDriveEncoder->getWheelVelocity(RobotParameters::k_wheelRad, RobotParameters::k_driveEncoderToWheelGearRatio);
-    SmartDashboard::PutNumber("rightWheelVel", rightWheelVel);
+    SmartDashboard::PutNumber("rightWheelVel", m_pRightDriveEncoder->getTickVelocity());
 
 //    // check for wheel slip
 //    if(fabs(velRightWheel) > fabs(m_rightWheelVelCmd * RobotParameters::k_wheelSlipNoiseRatio)) {

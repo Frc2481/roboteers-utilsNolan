@@ -13,6 +13,11 @@ public:
 		
 		Requires(CommandBase::m_pTankDrivetrain.get());
 		SetInterruptible(true);
+
+		SmartDashboard::PutNumber("refVel", 0);
+		SmartDashboard::PutNumber("refYawRate", 0);
+		SmartDashboard::PutNumber("refAccel", 0);
+		SmartDashboard::PutNumber("refYawAccel", 0);
 	}
 
 	~TankDrivetrainCalibrate() {

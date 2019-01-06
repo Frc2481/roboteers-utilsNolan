@@ -13,7 +13,8 @@ public:
 		double ki,
 		double kd,
 		double kv,
-		double ka,
+		double kap,
+		double kan,
         double iZone,
         double iErrorLim,
         unsigned ticksPerRev);
@@ -30,7 +31,8 @@ public:
 private:
     TalonSRX* m_pDriveMotor;
     double m_kv;
-    double m_ka;
+    double m_kap;
+    double m_kan;
     unsigned m_ticksPerRev;
 };
 

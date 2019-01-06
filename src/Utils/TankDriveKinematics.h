@@ -12,8 +12,6 @@ public:
     TankDriveKinematics(double wheelTrack);
     ~TankDriveKinematics();
 
-    void setWheelTrack(double wheelTrack);
-
     //////////////////////////////////////////////////////////////////////
     // @brief calculate forward robot velocity and yaw rate from forward
     //        wheel velocities

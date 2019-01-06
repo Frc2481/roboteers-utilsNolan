@@ -14,14 +14,16 @@ MotorPositionController::MotorPositionController(
     double ki,
     double kd,
     double kv,
-    double ka,
+    double kap,
+	double kan,
     double iZone,
     double iErrorLim,
     unsigned ticksPerRev)
     
     : m_pDriveMotor(pTalon),
-    m_kv(kv),
-    m_ka(ka),
+	m_kv(kv),
+	m_kap(kap),
+	m_kan(kan),
     m_ticksPerRev(ticksPerRev) {
     
     m_pDriveMotor->SelectProfileSlot(0, 0);
@@ -49,6 +51,13 @@ MotorPositionController::~MotorPositionController() {
 void MotorPositionController::update(double refP, double refV, double refA) {
     refV = refV * m_ticksPerRev / 10.0; // convert to talon native units
     refA = refA * m_ticksPerRev / 10.0; // convert to talon native units
-    double feedforwardControl = refV * m_kv + refA * m_ka;
+
+    // use different ka if vel and accel have opposite direction
+	double ka = m_kap;
+	if((refV > 0) != (refA > 0)) {
+		ka = m_kan;
+	}
+
+    double feedforwardControl = refV * m_kv + refA * ka;
     m_pDriveMotor->Set(ControlMode::Position, refP, DemandType::DemandType_ArbitraryFeedForward, feedforwardControl);
 }

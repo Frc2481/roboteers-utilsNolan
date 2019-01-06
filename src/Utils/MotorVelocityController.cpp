@@ -82,8 +82,8 @@ void MotorVelocityController::updateClosedLoopControl(double refV, double refA) 
 	m_pDriveMotor->Config_kI(0, ki, 0);
 	m_pDriveMotor->Config_kD(0, kd, 0);
 
-    refV = refV * m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
-    refA = refA * m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
+    refV *= m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
+    refA *= m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
 
     // use different ka if vel and accel have opposite direction
     double ka = m_kap;

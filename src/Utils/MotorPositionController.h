@@ -22,11 +22,11 @@ public:
 
     //////////////////////////////////////////////////////////////////////
     // @brief update reference points of motor controller
-    // @param refP - position reference point (ticks)
+    // @param refP - position reference point (deg)
     // @param refV - angular velocity reference point (deg/s)
     // @param refA - angular acceleration reference point (deg/s^2)
     //////////////////////////////////////////////////////////////////////
-    void update(double refP, const double refV, double refA);
+    void update(double refP, double refV, double refA);
 
 private:
     TalonSRX* m_pDriveMotor;

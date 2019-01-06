@@ -3,12 +3,13 @@
 MotorPositionController::MotorPositionController()
 	: m_pDriveMotor(nullptr),
 	m_kv(0),
-	m_ka(0),
+	m_kap(0),
+	m_kan(0),
 	m_ticksPerRev(0) {
 }
 
 MotorPositionController::MotorPositionController(
-    TalonSRX* pTalon,
+	TalonSRX* pTalon,
     bool inverted,
     double kp,
     double ki,
@@ -49,8 +50,9 @@ MotorPositionController::~MotorPositionController() {
 }
 
 void MotorPositionController::update(double refP, double refV, double refA) {
-    refV = refV * m_ticksPerRev / 10.0; // convert to talon native units
-    refA = refA * m_ticksPerRev / 10.0; // convert to talon native units
+	refP *= m_ticksPerRev / 360.0;
+    refV *= m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
+    refA *= m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
 
     // use different ka if vel and accel have opposite direction
 	double ka = m_kap;

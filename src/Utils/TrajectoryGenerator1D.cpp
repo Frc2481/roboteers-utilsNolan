@@ -365,21 +365,21 @@ void TrajectoryGenerator1D::integratePath(std::vector<finalPathPoint_t> &integra
         i = m_tempPath.size() - 2;
     }
     
-    while(((integratedPath.back().dist < (m_totalPathDist - INTEGRATE_PATH_DIST_STEP_1D)) && !isBackward)
-          || ((integratedPath.back().dist > INTEGRATE_PATH_DIST_STEP_1D) && isBackward)) {
+    while(((integratedPath.back().dist < (m_totalPathDist - ONED_INTEGRATE_PATH_DIST_STEP)) && !isBackward)
+          || ((integratedPath.back().dist > ONED_INTEGRATE_PATH_DIST_STEP) && isBackward)) {
         // increment distance traveled and add to point
         if(!isBackward) {
-            tempPathGenPoint.dist += INTEGRATE_PATH_DIST_STEP_1D;
+            tempPathGenPoint.dist += ONED_INTEGRATE_PATH_DIST_STEP;
         }
         else {
-            tempPathGenPoint.dist -= INTEGRATE_PATH_DIST_STEP_1D;
+            tempPathGenPoint.dist -= ONED_INTEGRATE_PATH_DIST_STEP;
         }
 
         // get path speed
         // assume that sample rate is high enough so that temp path points do not need skipped
         pathSpeed = std::numeric_limits<double>::infinity();
         if(!isBackward) {
-            if((tempPathGenPoint.dist + INTEGRATE_PATH_DIST_STEP_1D) >= m_tempPath[i].dist) {
+            if((tempPathGenPoint.dist + ONED_INTEGRATE_PATH_DIST_STEP) >= m_tempPath[i].dist) {
                 pathSpeed = m_tempPath[i].vel;
                 i++;
             }
@@ -388,7 +388,7 @@ void TrajectoryGenerator1D::integratePath(std::vector<finalPathPoint_t> &integra
             }
         }
         else {
-            if((tempPathGenPoint.dist - INTEGRATE_PATH_DIST_STEP_1D) <= m_tempPath[i].dist) {
+            if((tempPathGenPoint.dist - ONED_INTEGRATE_PATH_DIST_STEP) <= m_tempPath[i].dist) {
                 pathSpeed = m_tempPath[i].vel;
                 i--;
             }
@@ -399,10 +399,10 @@ void TrajectoryGenerator1D::integratePath(std::vector<finalPathPoint_t> &integra
 
         // calculate acceleration speed
         if(!isBackward) {
-            accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) + 2 * m_maxAccel * INTEGRATE_PATH_DIST_STEP_1D);
+            accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) + 2 * m_maxAccel * ONED_INTEGRATE_PATH_DIST_STEP);
         }
         else {
-            accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) - 2 * m_maxDeccel * INTEGRATE_PATH_DIST_STEP_1D);
+            accelSpeed = sqrt(pow(tempPathGenPoint.vel, 2) - 2 * m_maxDeccel * ONED_INTEGRATE_PATH_DIST_STEP);
         }
 
         // use minimum speed from all constraints

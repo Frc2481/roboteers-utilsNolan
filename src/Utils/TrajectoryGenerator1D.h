@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-#define INTEGRATE_PATH_DIST_STEP_1D 0.01 // (units)
+#define ONED_INTEGRATE_PATH_DIST_STEP 0.01 // (units)
 
 template <typename T> int sign(T val) {
     return (T(0) < val) - (val < T(0));

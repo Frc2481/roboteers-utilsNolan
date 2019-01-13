@@ -5,6 +5,7 @@
 
 class Robot : public frc::TimedRobot {
 public:
+	Robot();
 	void RobotInit() override;
 	void DisabledInit() override;
 	void DisabledPeriodic() override;

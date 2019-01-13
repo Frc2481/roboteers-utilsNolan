@@ -6,8 +6,10 @@
 #include "Commands/TankDrivetrainCalibrate.h"
 #include "Commands/TankDrivetrainRotateToAngle.h"
 
+Robot::Robot() : TimedRobot(1.0 / RobotParameters::k_updateRate) {
+}
+
 void Robot::RobotInit() {
-	// m_period = 1.0 / RobotParameters::k_updateRate;
 	CommandBase::Init();
 
 	SmartDashboard::PutData("TankDrivetrainZeroPose", new TankDrivetrainZeroPose());
@@ -33,20 +35,19 @@ void Robot::TeleopInit() {
 }
 
 void Robot::AutonomousPeriodic() {
-	// Scheduler::GetInstance()->Run();
+	CommandBase::Periodic();
 }
 
 void Robot::TeleopPeriodic() {
-	// Scheduler::GetInstance()->Run();
 	CommandBase::Periodic();
 }
 
 void Robot::DisabledPeriodic() {
-	// Scheduler::GetInstance()->Run();
+	CommandBase::Periodic();
 }
 
 void Robot::TestPeriodic() {
-	// Scheduler::GetInstance()->Run();
+	CommandBase::Periodic();
 }
 
 #ifndef RUNNING_FRC_TESTS

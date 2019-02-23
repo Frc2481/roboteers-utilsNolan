@@ -3,9 +3,9 @@
 
 #include <vector>
 #include <limits>
-#include "../CommandBase.h"
-#include "../RobotParameters.h"
-#include "../Utils/TrajectoryGenerator1D.h"
+#include "CommandBase.h"
+#include "RobotParameters.h"
+#include "Utils/TrajectoryGenerator1D.h"
 
 class TankDrivetrainRotateToAngle : public CommandBase {
 public:

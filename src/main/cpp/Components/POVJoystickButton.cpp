@@ -1,4 +1,4 @@
-#include "POVJoystickButton.h"
+#include "Components/POVJoystickButton.h"
 
 POVJoystickButton::POVJoystickButton(frc::GenericHID *joystick, uint32_t povNumber, int angle)
 	: m_pJoystick(joystick),

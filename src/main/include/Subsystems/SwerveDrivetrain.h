@@ -4,13 +4,13 @@
 // #include <frc/WPILib.h>
 // #include "ctre/Phoenix.h"
 // #include "AHRS.h"
-// #include "../Components/GrayhillEncoder.h"
-// #include "../Components/CTREMagEncoder.h"
-// #include "../Utils/Pose2D.h"
-// #include "../Utils/PoseDot2D.h"
-// #include "../Utils/SwerveDrivePose.h"
-// #include "../Utils/MotorPositionController.h"
-// #include "../Utils/MotorVelocityController.h"
+// #include "Components/GrayhillEncoder.h"
+// #include "Components/CTREMagEncoder.h"
+// #include "Utils/Pose2D.h"
+// #include "Utils/PoseDot2D.h"
+// #include "Utils/SwerveDrivePose.h"
+// #include "Utils/MotorPositionController.h"
+// #include "Utils/MotorVelocityController.h"
 
 // // +x = robot right
 // // +y = robot forward
@@ -58,6 +58,7 @@
 //     void zeroDriveEncoders();
 //     void zeroSteerEncoders();
 //     void zeroGyroYaw();
+//     void setIsOpenLoopFieldFrame(bool isOpenLoopFieldFrame);
 
 // private:
 //     TalonSRX* m_pFRDriveMotor;
@@ -93,6 +94,7 @@
 //     double m_blWheelDist;
 //     double m_flWheelDist;
 //     double m_gyroYaw;
+//     bool m_isOpenLoopFieldFrame;
 // };
 
 // #endif // SWERVE_DRIVETRAIN_H

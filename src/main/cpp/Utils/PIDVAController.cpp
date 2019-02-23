@@ -1,6 +1,6 @@
-#include "PIDVAController.h"
+#include "Utils/PIDVAController.h"
 #include <cmath>
-#include "NormalizeToRange.h"
+#include "Utils/NormalizeToRange.h"
 
 PIDVAController::PIDVAController()
     : m_kp(0),

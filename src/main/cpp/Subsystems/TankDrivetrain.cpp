@@ -1,9 +1,9 @@
-#include "TankDrivetrain.h"
-#include "../RobotMap.h"
-#include "../RobotParameters.h"
-#include "../Commands/TankDrivetrainJoystickDrive.h"
-#include "../Utils/Sign.h"
-#include "../Utils/MathConstants.h"
+#include "Subsystems/TankDrivetrain.h"
+#include "RobotMap.h"
+#include "RobotParameters.h"
+#include "Commands/TankDrivetrainJoystickDrive.h"
+#include "Utils/Sign.h"
+#include "Utils/MathConstants.h"
 
 TankDrivetrain::TankDrivetrain()
     : Subsystem("TankDrivetrain"),
@@ -16,6 +16,7 @@ TankDrivetrain::TankDrivetrain()
     m_pLeftDriveMotor = new TalonSRX(LEFT_DRIVE_MOTOR_ID);
     m_pLeftDriveMotorController = new MotorVelocityController(
         m_pLeftDriveMotor,
+        false,
 		RobotParameters::k_leftDriveMotorInverted,
         RobotParameters::k_driveMotorControllerKp,
         RobotParameters::k_driveMotorControllerKi,
@@ -35,6 +36,7 @@ TankDrivetrain::TankDrivetrain()
     m_pRightDriveMotor = new TalonSRX(RIGHT_DRIVE_MOTOR_ID);
     m_pRightDriveMotorController = new MotorVelocityController(
         m_pRightDriveMotor,
+        false,
 		!RobotParameters::k_leftDriveMotorInverted,
         RobotParameters::k_driveMotorControllerKp,
         RobotParameters::k_driveMotorControllerKi,

@@ -1,4 +1,4 @@
-#include "AnalogJoystickButton.h"
+#include "Components/AnalogJoystickButton.h"
 
 AnalogJoystickButton::AnalogJoystickButton(frc::GenericHID *joystick, uint32_t axisNumber, double threshold)
 	: m_threshold(threshold),

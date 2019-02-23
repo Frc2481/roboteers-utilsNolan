@@ -1,7 +1,7 @@
-#include "Rotation2D.h"
+#include "Utils/Rotation2D.h"
 #include <cmath>
 #include <limits>
-#include "MathConstants.h"
+#include "Utils/MathConstants.h"
 
 Rotation2D::Rotation2D()
     : m_cos(1),

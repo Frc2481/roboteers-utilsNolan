@@ -57,6 +57,7 @@
     "typeinfo": "cpp",
     "utility": "cpp",
     "cstdarg": "cpp",
-    "iomanip": "cpp"
+    "iomanip": "cpp",
+    "algorithm": "cpp"
   }
 }

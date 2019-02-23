@@ -1,4 +1,4 @@
-#include "ComboJoystickButton.h"
+#include "Components/ComboJoystickButton.h"
 
 ComboJoystickButton::ComboJoystickButton(frc::Button *primaryButton, frc::Button *secondaryButton, bool secondaryPressed)
 	: m_pPrimaryButton(primaryButton),

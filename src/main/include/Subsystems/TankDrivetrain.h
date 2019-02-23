@@ -4,11 +4,11 @@
 #include <frc/WPILib.h>
 #include "ctre/Phoenix.h"
 #include "AHRS.h"
-#include "../Components/GrayhillEncoder.h"
-#include "../Utils/Pose2D.h"
-#include "../Utils/PoseDot2D.h"
-#include "../Utils/TankDrivePose.h"
-#include "../Utils/MotorVelocityController.h"
+#include "Components/GrayhillEncoder.h"
+#include "Utils/Pose2D.h"
+#include "Utils/PoseDot2D.h"
+#include "Utils/TankDrivePose.h"
+#include "Utils/MotorVelocityController.h"
 
 // +x = robot right
 // +y = robot forward

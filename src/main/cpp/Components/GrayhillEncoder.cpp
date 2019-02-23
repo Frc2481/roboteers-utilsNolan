@@ -1,8 +1,8 @@
-#include "GrayhillEncoder.h"
+#include "Components/GrayhillEncoder.h"
 #include <frc/WPILib.h>
-#include "../RobotParameters.h"
-#include "../Utils/MathConstants.h"
-#include "../Utils/NormalizeToRange.h"
+#include "RobotParameters.h"
+#include "Utils/MathConstants.h"
+#include "Utils/NormalizeToRange.h"
 
 GrayhillEncoder::GrayhillEncoder(TalonSRX* pTalon, const std::string &name)
 	: m_pTalon(pTalon),

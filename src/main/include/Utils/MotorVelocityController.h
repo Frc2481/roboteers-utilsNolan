@@ -7,7 +7,8 @@ class MotorVelocityController {
 public:
     MotorVelocityController();
     MotorVelocityController(
-		TalonSRX* pTalon,
+		BaseMotorController* pController,
+        bool phase,
         bool inverted,
         double kp,
 		double ki,
@@ -37,7 +38,7 @@ public:
     void updateOpenLoopControl(double refPercent);
 
 private:
-    TalonSRX* m_pDriveMotor;
+    BaseMotorController* m_pDriveMotor;
     double m_kv;
     double m_kap;
     double m_kan;

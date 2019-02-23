@@ -1,7 +1,7 @@
-#include "MotorVelocityController.h"
+#include "Utils/MotorVelocityController.h"
 #include "frc/WPILib.h"
-#include "../RobotParameters.h"
-#include "Sign.h"
+#include "RobotParameters.h"
+#include "Utils/Sign.h"
 
 MotorVelocityController::MotorVelocityController()
 	: m_pDriveMotor(nullptr),
@@ -13,8 +13,9 @@ MotorVelocityController::MotorVelocityController()
 }
 
 MotorVelocityController::MotorVelocityController(
-    TalonSRX* pTalon,
-    bool inverted,
+    BaseMotorController* pController,
+    bool phase,
+	bool inverted,
     double kp,
     double ki,
     double kd,
@@ -26,13 +27,14 @@ MotorVelocityController::MotorVelocityController(
     double iErrorLim,
     unsigned ticksPerRev)
     
-    : m_pDriveMotor(pTalon),
+    : m_pDriveMotor(pController),
     m_kv(kv),
     m_kap(kap),
 	m_kan(kan),
 	m_ksf(ksf),
     m_ticksPerRev(ticksPerRev) {
 
+	m_pDriveMotor->ConfigFactoryDefault();
     m_pDriveMotor->SelectProfileSlot(0, 0);
 	m_pDriveMotor->Set(ControlMode::PercentOutput, 0);
 	m_pDriveMotor->Config_kP(0, kp, 0);
@@ -49,17 +51,8 @@ MotorVelocityController::MotorVelocityController(
 	m_pDriveMotor->ConfigNominalOutputReverse(0.0, 0.0);
 	m_pDriveMotor->ConfigPeakOutputForward(1.0, 0.0);
 	m_pDriveMotor->ConfigPeakOutputReverse(-1.0, 0.0);
-	m_pDriveMotor->SetSensorPhase(true);
+	m_pDriveMotor->SetSensorPhase(phase);
 	m_pDriveMotor->SetInverted(inverted);
-
-	frc::SmartDashboard::PutNumber("k_driveMotorControllerKp", RobotParameters::k_driveMotorControllerKp);
-	frc::SmartDashboard::PutNumber("k_driveMotorControllerKi", RobotParameters::k_driveMotorControllerKi);
-	frc::SmartDashboard::PutNumber("k_driveMotorControllerKd", RobotParameters::k_driveMotorControllerKd);
-	frc::SmartDashboard::PutNumber("k_driveMotorControllerKv", RobotParameters::k_driveMotorControllerKv);
-	frc::SmartDashboard::PutNumber("k_driveMotorControllerKap", RobotParameters::k_driveMotorControllerKap);
-	frc::SmartDashboard::PutNumber("k_driveMotorControllerKan", RobotParameters::k_driveMotorControllerKan);
-	frc::SmartDashboard::PutNumber("k_driveMotorControllerKsf", RobotParameters::k_driveMotorControllerKsf);
-	frc::SmartDashboard::PutNumber("feedforwardControl", 0);
 }
 
 MotorVelocityController::~MotorVelocityController() {
@@ -70,18 +63,6 @@ void MotorVelocityController::setTicksPerRev(unsigned ticksPerRev) {
 }
 
 void MotorVelocityController::updateClosedLoopControl(double refV, double refA) {
-	double kp = frc::SmartDashboard::GetNumber("k_driveMotorControllerKp", 0);
-	double ki = frc::SmartDashboard::GetNumber("k_driveMotorControllerKi", 0);
-	double kd = frc::SmartDashboard::GetNumber("k_driveMotorControllerKd", 0);
-	m_kv = frc::SmartDashboard::GetNumber("k_driveMotorControllerKv", 0);
-	m_kap = frc::SmartDashboard::GetNumber("k_driveMotorControllerKap", 0);
-	m_kan = frc::SmartDashboard::GetNumber("k_driveMotorControllerKan", 0);
-	m_ksf = frc::SmartDashboard::GetNumber("k_driveMotorControllerKsf", 0);
-
-	m_pDriveMotor->Config_kP(0, kp, 0);
-	m_pDriveMotor->Config_kI(0, ki, 0);
-	m_pDriveMotor->Config_kD(0, kd, 0);
-
     refV *= m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
     refA *= m_ticksPerRev / 360.0 / 10.0; // convert to talon native units
 
@@ -91,11 +72,7 @@ void MotorVelocityController::updateClosedLoopControl(double refV, double refA) 
 		ka = m_kan;
 	}
 
-    double feedforwardControl = refV * m_kv + refA * ka + Sign::sign(refV) * m_ksf;
-    printf("1 = %0.1f\n", refV * m_kv);
-    printf("2 = %0.1f\n", refA * ka);
-    printf("3 = %0.1f\n", Sign::sign(refV) * m_ksf);
-    frc::SmartDashboard::PutNumber("feedforwardControl", feedforwardControl);
+    double feedforwardControl = refV * m_kv + refA * ka + Sign::Sign(refV) * m_ksf;
 
     m_pDriveMotor->Set(ControlMode::Velocity, refV, DemandType::DemandType_ArbitraryFeedForward, feedforwardControl);
 }

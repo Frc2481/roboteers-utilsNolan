@@ -4,7 +4,7 @@
 #include <vector>
 #include <limits>
 #include "frc/WPILib.h"
-#include "../CommandBase.h"
+#include "CommandBase.h"
 
 class TankDrivetrainCalibrate : public CommandBase {
 public:

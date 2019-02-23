@@ -1,9 +1,9 @@
-// #include "SwerveDrivetrain.h"
-// #include "../RobotMap.h"
-// #include "../RobotParameters.h"
-// #include "../Commands/SwerveDrivetrainJoystickDrive.h"
-// #include "../Utils/Sign.h"
-// #include "../Utils/MathConstants.h"
+// #include "Subsystems/SwerveDrivetrain.h"
+// #include "RobotMap.h"
+// #include "RobotParameters.h"
+// #include "Commands/SwerveDrivetrainJoystickDrive.h"
+// #include "Utils/Sign.h"
+// #include "Utils/MathConstants.h"
 
 // SwerveDrivetrain::SwerveDrivetrain()
 //     : Subsystem("SwerveDrivetrain"),
@@ -21,11 +21,13 @@
 //     m_brWheelDist(0),
 //     m_blWheelDist(0),
 //     m_flWheelDist(0),
-//     m_gyroYaw(0) {
+//     m_gyroYaw(0),
+//     m_isOpenLoopFieldFrame(false), {
     
 // 	m_pFRDriveMotor = new TalonSRX(FR_DRIVE_MOTOR_ID);
 // 	m_pFRDriveMotorController = new MotorVelocityController(
 // 		m_pFRDriveMotor,
+//         false,
 // 		false,
 //         RobotParameters::k_driveMotorControllerKp,
 //         RobotParameters::k_driveMotorControllerKi,
@@ -43,6 +45,7 @@
 // 	m_pBRDriveMotorController = new MotorVelocityController(
 // 		m_pBRDriveMotor,
 // 		false,
+//         false,
 // 		RobotParameters::k_driveMotorControllerKp,
 // 		RobotParameters::k_driveMotorControllerKi,
 // 		RobotParameters::k_driveMotorControllerKd,
@@ -59,6 +62,7 @@
 // 	m_pBLDriveMotorController = new MotorVelocityController(
 // 		m_pBLDriveMotor,
 // 		false,
+//         false,
 // 		RobotParameters::k_driveMotorControllerKp,
 // 		RobotParameters::k_driveMotorControllerKi,
 // 		RobotParameters::k_driveMotorControllerKd,
@@ -75,6 +79,7 @@
 // 	m_pFLDriveMotorController = new MotorVelocityController(
 // 		m_pFLDriveMotor,
 // 		false,
+//         false,
 // 		RobotParameters::k_driveMotorControllerKp,
 // 		RobotParameters::k_driveMotorControllerKi,
 // 		RobotParameters::k_driveMotorControllerKd,
@@ -91,6 +96,7 @@
 // 	m_pFRSteerMotorController = new MotorPositionController(
 // 		m_pFRSteerMotor,
 // 		false,
+//         false,
 // 		RobotParameters::k_steerMotorControllerKp,
 // 		RobotParameters::k_steerMotorControllerKi,
 // 		RobotParameters::k_steerMotorControllerKd,
@@ -107,6 +113,7 @@
 // 	m_pBRSteerMotorController = new MotorPositionController(
 // 		m_pBRSteerMotor,
 // 		false,
+//         false,
 // 		RobotParameters::k_steerMotorControllerKp,
 // 		RobotParameters::k_steerMotorControllerKi,
 // 		RobotParameters::k_steerMotorControllerKd,
@@ -123,6 +130,7 @@
 // 	m_pBLSteerMotorController = new MotorPositionController(
 // 		m_pBLSteerMotor,
 // 		false,
+//         false,
 // 		RobotParameters::k_steerMotorControllerKp,
 // 		RobotParameters::k_steerMotorControllerKi,
 // 		RobotParameters::k_steerMotorControllerKd,
@@ -139,6 +147,7 @@
 // 	m_pFLSteerMotorController = new MotorPositionController(
 // 		m_pFLSteerMotor,
 // 		false,
+//         false,
 // 		RobotParameters::k_steerMotorControllerKp,
 // 		RobotParameters::k_steerMotorControllerKi,
 // 		RobotParameters::k_steerMotorControllerKd,
@@ -262,54 +271,85 @@
 // }
 
 // void SwerveDrivetrain::driveOpenLoopControl(double percentVelX, double percentVelY, double percentYawRate) {
-// 	// convert percent to physical units
-// 	double robotVelX = RobotParameters::k_maxSpeed * percentVelX;
-// 	double robotVelY = RobotParameters::k_maxSpeed * percentVelY;
-// 	double robotYawRate = (RobotParameters::k_maxSpeed / pow(pow(RobotParameters::k_wheelTrack / 2.0, 2) + pow(RobotParameters::k_wheelBase / 2.0, 2), 0.5)) * 180.0 / MATH_CONSTANTS_PI * percentYawRate;
+// 	// format yaw rate for inverse kinematics
+// 	Translation2D percentVel = Translation2D(percentVelX, percentVelY);
+// 	percentYawRate *= (1.0 / pow(pow(RobotParameters::k_wheelTrack / 2.0, 2) + pow(RobotParameters::k_wheelBase / 2.0, 2), 0.5)) * 180.0 / MATH_CONSTANTS_PI;
+	
+// 	// limit open loop steer for controllability
+// 	percentYawRate *= RobotParameters::k_openLoopSteerLimitPercent;
 
-// 	Translation2D frWheelVel;
-// 	Translation2D brWheelVel;
-// 	Translation2D blWheelVel;
-// 	Translation2D flWheelVel;
+// 	// field reference frame driving
+// 	if(m_isOpenLoopFieldFrame) {
+// 		Rotation2D gyroYaw = Rotation2D::fromDegrees(m_gyroYaw);
+// 		percentVel = percentVel.rotateBy(gyroYaw.inverse());
+// 	}
+
+// 	Translation2D frWheelPercent;
+// 	Translation2D brWheelPercent;
+// 	Translation2D blWheelPercent;
+// 	Translation2D flWheelPercent;
 // 	m_kinematics.inverseKinematics(
-// 		Translation2D(robotVelX, robotVelY),
-// 		robotYawRate,
-// 		frWheelVel,
-// 		brWheelVel,
-// 		blWheelVel,
-// 		flWheelVel);
+// 		percentVel,
+// 		percentYawRate,
+// 		frWheelPercent,
+// 		brWheelPercent,
+// 		blWheelPercent,
+// 		flWheelPercent);
 
-// 	// convert physical units to percent
-// 	frWheelVel.scaleBy(1 / RobotParameters::k_maxSpeed);
-// 	brWheelVel.scaleBy(1 / RobotParameters::k_maxSpeed);
-// 	blWheelVel.scaleBy(1 / RobotParameters::k_maxSpeed);
-// 	flWheelVel.scaleBy(1 / RobotParameters::k_maxSpeed);
-
-// 	// limit wheel vel
-// 	double maxWheelSpeed = std::max(frWheelVel.norm(), std::max(brWheelVel.norm(), std::max(blWheelVel.norm(), flWheelVel.norm())));
+// 	// limit wheel percent
+// 	double maxWheelSpeed = std::max(frWheelPercent.norm(), std::max(brWheelPercent.norm(), std::max(blWheelPercent.norm(), flWheelPercent.norm())));
 // 	if(maxWheelSpeed > 1) {
-// 		frWheelVel.scaleBy(1.0 / maxWheelSpeed);
-// 		brWheelVel.scaleBy(1.0 / maxWheelSpeed);
-// 		blWheelVel.scaleBy(1.0 / maxWheelSpeed);
-// 		flWheelVel.scaleBy(1.0 / maxWheelSpeed);
+// 		frWheelPercent.scaleBy(1.0 / maxWheelSpeed);
+// 		brWheelPercent.scaleBy(1.0 / maxWheelSpeed);
+// 		blWheelPercent.scaleBy(1.0 / maxWheelSpeed);
+// 		flWheelPercent.scaleBy(1.0 / maxWheelSpeed);
+// 	}
+
+// 	// steer optimization
+// 	Rotation2D steerError;
+// 	int frInvertDrive = 1;
+// 	Rotation2D frWheelYaw = Rotation2D(frWheelPercent.getX(), frWheelPercent.getY()).rotateBy(Rotation2D::fromDegrees(-90));
+// 	steerError = frWheelYaw - Rotation2D::fromDegrees(m_pFRSteerEncoder->getAngle());
+// 	if((steerError.getDegrees() > 90) || (steerError.getDegrees() < -90)) {
+// 		frWheelYaw = frWheelYaw.rotateBy(Rotation2D::fromDegrees(180));
+// 		frInvertDrive = -1;
+// 	}
+
+// 	int brInvertDrive = 1;
+// 	Rotation2D brWheelYaw = Rotation2D(brWheelPercent.getX(), brWheelPercent.getY()).rotateBy(Rotation2D::fromDegrees(-90));
+// 	steerError = brWheelYaw - Rotation2D::fromDegrees(m_pBRSteerEncoder->getAngle());
+// 	if((steerError.getDegrees() > 90) || (steerError.getDegrees() < -90)) {
+// 		brWheelYaw = brWheelYaw.rotateBy(Rotation2D::fromDegrees(180));
+// 		brInvertDrive = -1;
+// 	}
+
+// 	int blInvertDrive = 1;
+// 	Rotation2D blWheelYaw = Rotation2D(blWheelPercent.getX(), blWheelPercent.getY()).rotateBy(Rotation2D::fromDegrees(-90));
+// 	steerError = blWheelYaw - Rotation2D::fromDegrees(m_pBLSteerEncoder->getAngle());
+// 	if((steerError.getDegrees() > 90) || (steerError.getDegrees() < -90)) {
+// 		blWheelYaw = blWheelYaw.rotateBy(Rotation2D::fromDegrees(180));
+// 		blInvertDrive = -1;
+// 	}
+
+// 	int flInvertDrive = 1;
+// 	Rotation2D flWheelYaw = Rotation2D(flWheelPercent.getX(), flWheelPercent.getY()).rotateBy(Rotation2D::fromDegrees(-90));
+// 	steerError = flWheelYaw - Rotation2D::fromDegrees(m_pFLSteerEncoder->getAngle());
+// 	if((steerError.getDegrees() > 90) || (steerError.getDegrees() < -90)) {
+// 		flWheelYaw = flWheelYaw.rotateBy(Rotation2D::fromDegrees(180));
+// 		flInvertDrive = -1;
 // 	}
 
 // 	// update steer motors
-// 	Rotation2D frWheelYaw = Rotation2D(frWheelVel.getX(), frWheelVel.getY()).rotateBy(Rotation2D::fromDegrees(-90));
-// 	Rotation2D brWheelYaw = Rotation2D(brWheelVel.getX(), brWheelVel.getY()).rotateBy(Rotation2D::fromDegrees(-90));
-// 	Rotation2D blWheelYaw = Rotation2D(blWheelVel.getX(), blWheelVel.getY()).rotateBy(Rotation2D::fromDegrees(-90));
-// 	Rotation2D flWheelYaw = Rotation2D(flWheelVel.getX(), flWheelVel.getY()).rotateBy(Rotation2D::fromDegrees(-90));
-
-// 	m_pFRSteerMotorController->update(frWheelYaw.getDegrees(), 0, 0);
-// 	m_pBRSteerMotorController->update(brWheelYaw.getDegrees(), 0, 0);
-// 	m_pBLSteerMotorController->update(blWheelYaw.getDegrees(), 0, 0);
-// 	m_pFLSteerMotorController->update(flWheelYaw.getDegrees(), 0, 0);
+// 	m_pFRSteerMotorController->updateAngular(frWheelYaw.getDegrees(), 0, 0);
+// 	m_pBRSteerMotorController->updateAngular(brWheelYaw.getDegrees(), 0, 0);
+// 	m_pBLSteerMotorController->updateAngular(blWheelYaw.getDegrees(), 0, 0);
+// 	m_pFLSteerMotorController->updateAngular(flWheelYaw.getDegrees(), 0, 0);
 
 // 	// update drive motors
-// 	m_pFRDriveMotorController->updateOpenLoopControl(frWheelVel.rotateBy(frWheelYaw.inverse()).getY());
-// 	m_pBRDriveMotorController->updateOpenLoopControl(brWheelVel.rotateBy(brWheelYaw.inverse()).getY());
-// 	m_pBLDriveMotorController->updateOpenLoopControl(blWheelVel.rotateBy(blWheelYaw.inverse()).getY());
-// 	m_pFLDriveMotorController->updateOpenLoopControl(flWheelVel.rotateBy(flWheelYaw.inverse()).getY());
+// 	m_pFRDriveMotorController->updateOpenLoopControl(frInvertDrive * frWheelPercent.norm());
+// 	m_pBRDriveMotorController->updateOpenLoopControl(brInvertDrive * brWheelPercent.norm());
+// 	m_pBLDriveMotorController->updateOpenLoopControl(blInvertDrive * blWheelPercent.norm());
+// 	m_pFLDriveMotorController->updateOpenLoopControl(flInvertDrive * flWheelPercent.norm());
 // }
 
 // void SwerveDrivetrain::driveClosedLoopControl(
@@ -542,4 +582,13 @@
 
 // void SwerveDrivetrain::zeroGyroYaw() {
 // 	m_pChassisIMU->ZeroYaw();
+// }
+
+// void SwerveDrivetrain::setIsOpenLoopFieldFrame(bool isOpenLoopFieldFrame) {
+// 	// zero gyro yaw if changed state
+// 	if(m_isOpenLoopFieldFrame != isOpenLoopFieldFrame) {
+// 		zeroGyroYaw();
+// 	}
+	
+// 	m_isOpenLoopFieldFrame = isOpenLoopFieldFrame;
 // }

@@ -4,12 +4,12 @@
 #include <vector>
 #include <limits>
 #include <algorithm>
-#include "../CommandBase.h"
-#include "../RobotParameters.h"
-#include "../Utils/TankDrivePathGenerator.h"
-#include "../Utils/Translation2D.h"
-#include "../Utils/Sign.h"
-#include "../Utils/PIDVAController.h"
+#include "CommandBase.h"
+#include "RobotParameters.h"
+#include "Utils/TankDrivePathGenerator.h"
+#include "Utils/Translation2D.h"
+#include "Utils/Sign.h"
+#include "Utils/PIDVAController.h"
 
 class TankDrivetrainFollowPath : public CommandBase {
 public:

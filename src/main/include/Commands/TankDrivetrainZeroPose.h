@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <limits>
-#include "../CommandBase.h"
+#include "CommandBase.h"
 
 class TankDrivetrainZeroPose : public CommandBase {
 public:

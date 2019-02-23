@@ -1,8 +1,8 @@
 #ifndef POSE_2D_H
 #define POSE_2D_H
 
-#include "Rotation2D.h"
-#include "Translation2D.h"
+#include "Utils/Rotation2D.h"
+#include "Utils/Translation2D.h"
 
 class Pose2D {
 public:

@@ -1,9 +1,9 @@
 #ifndef SWERVE_DRIVE_POSE_H
 #define SWERVE_DRIVE_POSE_H
 
-#include "Pose2D.h"
-#include "PoseDot2D.h"
-#include "SwerveDriveKinematics.h"
+#include "Utils/Pose2D.h"
+#include "Utils/PoseDot2D.h"
+#include "Utils/SwerveDriveKinematics.h"
 
 // +x = field right
 // +y = field forward

@@ -1,4 +1,4 @@
-#include "Interpolate.h"
+#include "Utils/Interpolate.h"
 
 double interpolate::interp(
     const std::vector<double> &xData,

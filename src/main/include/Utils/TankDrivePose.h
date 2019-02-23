@@ -1,9 +1,9 @@
 #ifndef TANK_DRIVE_POSE_H
 #define TANK_DRIVE_POSE_H
 
-#include "Pose2D.h"
-#include "PoseDot2D.h"
-#include "TankDriveKinematics.h"
+#include "Utils/Pose2D.h"
+#include "Utils/PoseDot2D.h"
+#include "Utils/TankDriveKinematics.h"
 
 // +x = field right
 // +y = field forward

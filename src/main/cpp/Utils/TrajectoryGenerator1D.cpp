@@ -1,12 +1,12 @@
-#include "TrajectoryGenerator1D.h"
+#include "Utils/TrajectoryGenerator1D.h"
 #include <math.h>
 #include <limits>
 #include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
-#include "Interpolate.h"
-#include "NormalizeToRange.h"
+#include "Utils/Interpolate.h"
+#include "Utils/NormalizeToRange.h"
 
 TrajectoryGenerator1D::TrajectoryGenerator1D(
     std::vector<waypoint_t> &waypoints,

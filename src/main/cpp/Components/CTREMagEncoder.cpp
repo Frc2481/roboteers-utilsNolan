@@ -1,9 +1,9 @@
-#include "CTREMagEncoder.h"
+#include "Components/CTREMagEncoder.h"
 #include <sstream>
 #include <frc/WPILib.h>
-#include "../RobotParameters.h"
-#include "../Utils/MathConstants.h"
-#include "../Utils/NormalizeToRange.h"
+#include "RobotParameters.h"
+#include "Utils/MathConstants.h"
+#include "Utils/NormalizeToRange.h"
 
 CTREMagEncoder::CTREMagEncoder(TalonSRX* pTalon, const std::string &name)
 	: m_pTalon(pTalon),

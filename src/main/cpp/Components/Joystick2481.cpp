@@ -1,4 +1,4 @@
-#include "Joystick2481.h"
+#include "Components/Joystick2481.h"
 #include <math.h>
 #include <frc/Joystick.h>
 

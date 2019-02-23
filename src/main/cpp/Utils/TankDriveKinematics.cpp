@@ -1,5 +1,5 @@
-#include "TankDriveKinematics.h"
-#include "MathConstants.h"
+#include "Utils/TankDriveKinematics.h"
+#include "Utils/MathConstants.h"
 
 TankDriveKinematics::TankDriveKinematics(double wheelTrack)
     : m_wheelTrack(wheelTrack) {

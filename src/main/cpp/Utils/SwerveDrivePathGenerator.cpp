@@ -213,7 +213,7 @@ void SwerveDrivePathGenerator::generatePath() {
                     tempPathGenPoint.yaw = yaw;
                 }
                 else {
-                    tempPathGenPoint.vel = std::numeric_limits<double>::infinity();
+                    tempPathGenPoint.vel = std::max(speed, m_waypoints[i].speed);
                     tempPathGenPoint.yaw = std::numeric_limits<double>::infinity();
                 }
 
@@ -570,7 +570,7 @@ void SwerveDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integr
         pathSpeed = std::numeric_limits<double>::infinity();
         if(!isBackward) {
             if((tempPathGenPoint.dist + SWERVE_INTEGRATE_PATH_DIST_STEP) > m_tempPath[i].dist) {
-                pathSpeed = m_tempPath[i].vel;
+                std::max(m_tempPath[i].vel, m_tempPath[i - 1].vel);
 				
 				if(m_tempPath[i].yaw != std::numeric_limits<double>::infinity()) {
 					j = i + 1;
@@ -590,12 +590,12 @@ void SwerveDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integr
                 i++;
             }
             else if(tempPathGenPoint.dist >= m_tempPath[i].dist) {
-                pathSpeed = m_tempPath[i].vel;
+                std::max(m_tempPath[i].vel, m_tempPath[i - 1].vel);
             }
         }
         else {
             if((tempPathGenPoint.dist - SWERVE_INTEGRATE_PATH_DIST_STEP) < m_tempPath[i].dist) {
-                pathSpeed = m_tempPath[i].vel;
+                std::max(m_tempPath[i].vel, m_tempPath[i + 1].vel);
 				
 				if(m_tempPath[i].yaw != std::numeric_limits<double>::infinity()) {
 					j = i - 1;
@@ -615,7 +615,7 @@ void SwerveDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integr
                 i--;
             }
             else if(tempPathGenPoint.dist <= m_tempPath[i].dist) {
-                pathSpeed = m_tempPath[i].vel;
+                std::max(m_tempPath[i].vel, m_tempPath[i + 1].vel);
             }
         }
 

@@ -200,7 +200,7 @@ void TankDrivePathGenerator::generatePath() {
                     tempPathGenPoint.vel = speed;
                 }
                 else {
-                    tempPathGenPoint.vel = std::numeric_limits<double>::infinity();
+                    tempPathGenPoint.vel = std::max(speed, m_waypoints[i].speed);
                 }
 
                 // add point to path gen points and increment phi
@@ -510,20 +510,20 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
         pathSpeed = std::numeric_limits<double>::infinity();
         if(!isBackward) {
             if((tempPathGenPoint.dist + TANK_INTEGRATE_PATH_DIST_STEP) > m_tempPath[i].dist) {
-                pathSpeed = m_tempPath[i].vel;
+                pathSpeed = std::max(m_tempPath[i].vel, m_tempPath[i - 1].vel);
                 i++;
             }
             else if(tempPathGenPoint.dist >= m_tempPath[i].dist) {
-                pathSpeed = m_tempPath[i].vel;
+                pathSpeed = std::max(m_tempPath[i].vel, m_tempPath[i - 1].vel);
             }
         }
         else {
             if((tempPathGenPoint.dist - TANK_INTEGRATE_PATH_DIST_STEP) < m_tempPath[i].dist) {
-                pathSpeed = m_tempPath[i].vel;
+                pathSpeed = std::max(m_tempPath[i].vel, m_tempPath[i + 1].vel);
                 i--;
             }
             else if(tempPathGenPoint.dist <= m_tempPath[i].dist) {
-                pathSpeed = m_tempPath[i].vel;
+                pathSpeed = std::max(m_tempPath[i].vel, m_tempPath[i + 1].vel);
             }
         }
 

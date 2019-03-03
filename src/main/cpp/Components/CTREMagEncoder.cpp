@@ -15,8 +15,9 @@ CTREMagEncoder::CTREMagEncoder(TalonSRX* pTalon, const std::string &name)
 	m_calibrationKey = ss.str();
     m_encoderTicksZero = frc::Preferences::GetInstance()->GetDouble(m_calibrationKey);
 
-    m_pTalon->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute, 0, 0);
-    m_pTalon->SetStatusFramePeriod(Status_2_Feedback0, 10, 0);
+    m_pTalon->ConfigFactoryDefault();
+    m_pTalon->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute, 0, 10);
+    m_pTalon->SetStatusFramePeriod(Status_2_Feedback0, 10, 10);
 }
 
 CTREMagEncoder::~CTREMagEncoder() {

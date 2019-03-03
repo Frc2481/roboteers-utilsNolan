@@ -35,22 +35,21 @@ MotorPositionController::MotorPositionController(
     m_ticksPerRev(ticksPerRev),
     m_enableMotionMagic(false) {
     
-    m_pDriveMotor->ConfigFactoryDefault();
     m_pDriveMotor->SelectProfileSlot(0, 0);
 	m_pDriveMotor->Set(ControlMode::Position, 0);
-	m_pDriveMotor->Config_kP(0, kp, 0);
-	m_pDriveMotor->Config_kI(0, ki, 0);
-	m_pDriveMotor->Config_kD(0, kd, 0);
-    m_pDriveMotor->Config_IntegralZone(0, iZone, 0);
-    m_pDriveMotor->ConfigMaxIntegralAccumulator (0, iErrorLim, 0);
+	m_pDriveMotor->Config_kP(0, kp, 10);
+	m_pDriveMotor->Config_kI(0, ki, 10);
+	m_pDriveMotor->Config_kD(0, kd, 10);
+    m_pDriveMotor->Config_IntegralZone(0, iZone, 10);
+    m_pDriveMotor->ConfigMaxIntegralAccumulator (0, iErrorLim, 10);
     m_pDriveMotor->SetNeutralMode(NeutralMode::Brake);
     m_pDriveMotor->EnableVoltageCompensation(true);
-    m_pDriveMotor->ConfigVoltageCompSaturation(12.0, 0);
-    m_pDriveMotor->ConfigNeutralDeadband(0.04, 0);
-    m_pDriveMotor->ConfigNominalOutputForward(0.0, 0.0);
-	m_pDriveMotor->ConfigNominalOutputReverse(0.0, 0.0);
-	m_pDriveMotor->ConfigPeakOutputForward(1.0, 0.0);
-	m_pDriveMotor->ConfigPeakOutputReverse(-1.0, 0.0);
+    m_pDriveMotor->ConfigVoltageCompSaturation(12, 10);
+    m_pDriveMotor->ConfigNeutralDeadband(0.04, 10);
+    m_pDriveMotor->ConfigNominalOutputForward(0, 10);
+	m_pDriveMotor->ConfigNominalOutputReverse(0, 10);
+	m_pDriveMotor->ConfigPeakOutputForward(1, 10);
+	m_pDriveMotor->ConfigPeakOutputReverse(-1, 10);
 	m_pDriveMotor->SetSensorPhase(phase);
 	m_pDriveMotor->SetInverted(inverted);
 }
@@ -66,7 +65,7 @@ void MotorPositionController::setMotionMagicAngular(
     uint16_t curveStrength) {
     
     m_enableMotionMagic = isEnabled;
-    m_pDriveMotor->SetStatusFramePeriod(Status_10_MotionMagic, 10, 0);
+    m_pDriveMotor->SetStatusFramePeriod(Status_10_MotionMagic, 10, 10);
 
     maxVel = m_pEncoder->convertAngleToTicks(maxVel) / 10.0; // convert to talon native units
     m_pDriveMotor->ConfigMotionCruiseVelocity(maxVel, 0);
@@ -87,7 +86,7 @@ void MotorPositionController::setMotionMagicLinear(
     double wheelRadius) {
     
     m_enableMotionMagic = isEnabled;
-    m_pDriveMotor->SetStatusFramePeriod(Status_10_MotionMagic, 10, 0);
+    m_pDriveMotor->SetStatusFramePeriod(Status_10_MotionMagic, 10, 10);
 
     maxVel = m_pEncoder->convertWheelDistanceToTicks(wheelRadius, maxVel) / 10.0; // convert to talon native units
     m_pDriveMotor->ConfigMotionCruiseVelocity(maxVel, 0);

@@ -327,7 +327,7 @@ void TankDrivePathGenerator::writePathToCSV() const {
     std::remove(m_pathFilename.c_str());
     
     std::ofstream myFile;
-    myFile.open(m_pathFilename);
+    myFile.open(m_pathFilename.c_str()));
     myFile << "time (s), xPos (in), yPos (in), yaw (deg), dist (in), vel (in/s), accel (in/s^2), yawRate (deg/s)\n";
     
     for(unsigned i = 0; i < m_finalPath.size(); ++i) {
@@ -394,7 +394,7 @@ void TankDrivePathGenerator::readWaypointsFromCSV() {
 
     // open file
     std::ifstream myFile;
-    myFile.open(m_waypointsFilename, std::ifstream::in);
+    myFile.open(m_waypointsFilename.c_str()), std::ifstream::in);
 
     // read config
     unsigned sampleRate;
@@ -507,23 +507,16 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
         
         // get path speed
         // assume that sample rate is high enough so that temp path points do not need skipped
-        pathSpeed = std::numeric_limits<double>::infinity();
         if(!isBackward) {
+            pathSpeed = std::max(m_tempPath[i].vel, m_tempPath[i - 1].vel);
             if((tempPathGenPoint.dist + TANK_INTEGRATE_PATH_DIST_STEP) > m_tempPath[i].dist) {
-                pathSpeed = std::max(m_tempPath[i].vel, m_tempPath[i - 1].vel);
                 i++;
-            }
-            else if(tempPathGenPoint.dist >= m_tempPath[i].dist) {
-                pathSpeed = std::max(m_tempPath[i].vel, m_tempPath[i - 1].vel);
             }
         }
         else {
+            pathSpeed = std::max(m_tempPath[i].vel, m_tempPath[i + 1].vel);
             if((tempPathGenPoint.dist - TANK_INTEGRATE_PATH_DIST_STEP) < m_tempPath[i].dist) {
-                pathSpeed = std::max(m_tempPath[i].vel, m_tempPath[i + 1].vel);
                 i--;
-            }
-            else if(tempPathGenPoint.dist <= m_tempPath[i].dist) {
-                pathSpeed = std::max(m_tempPath[i].vel, m_tempPath[i + 1].vel);
             }
         }
 

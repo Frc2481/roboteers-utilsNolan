@@ -34,7 +34,7 @@ SwerveDrivePathGenerator::SwerveDrivePathGenerator(
     m_maxCentripAccel(maxCentripAccel),
     m_waypointsFilename("PathGeneratorWaypoints.csv"),
     m_pathFilename("PathGeneratorFinalPath.csv") {
-    
+
     setWaypoints(waypoints);
 }
 
@@ -124,8 +124,8 @@ void SwerveDrivePathGenerator::generatePath() {
     tempPathGenPoint.dist = 0;
     tempPathGenPoint.yaw = m_waypoints.front().yaw;
     m_tempPath.push_back(tempPathGenPoint);
-    
-    // generate path trajectory    
+
+    // generate path trajectory
     for(unsigned i = 0; i < (m_waypoints.size() - 2); ++i) {
         // get waypoint max distance threshold and speed
         double maxDistThresh = m_waypoints[i + 1].maxDistThresh;
@@ -186,7 +186,7 @@ void SwerveDrivePathGenerator::generatePath() {
             Translation2D v25 = v23.scaleBy(1 / (v23.norm() * straightDist));
             Translation2D p4 = p2 + v24;
             Translation2D p5 = p2 + v25;
-            
+
             // calculate center point of arc
             Translation2D v26 = (v21.scaleBy(1 / v21.norm()) + v23.scaleBy(1 / v23.norm())).scaleBy(0.5);
             Translation2D p6 = p2 + v26.scaleBy((maxDistThresh + arcRad) / v26.norm()); // center point of arc
@@ -263,7 +263,7 @@ void SwerveDrivePathGenerator::generatePath() {
     // integrate path backward
     std::vector<pathGenPoint_t> bwdPath;
     integratePath(bwdPath, true);
-    
+
     // combine forward and backward paths with min speed
     for(unsigned i = 0; i < fwdPath.size(); ++i) {
         tempComboPathPoint.dist = fwdPath[i].dist;
@@ -276,7 +276,7 @@ void SwerveDrivePathGenerator::generatePath() {
 
         m_comboPath.push_back(tempComboPathPoint);
     }
-    
+
     // calculate path with respect to time
     std::vector<double> comboPathTime;
     std::vector<double> comboPathDist;
@@ -301,6 +301,16 @@ void SwerveDrivePathGenerator::generatePath() {
         comboPathVel.push_back(m_comboPath[i].vel);
     }
 
+    // calculate path using only valid yaw points
+    std::vector<double> tempPathYawValidDist;
+    std::vector<double> tempPathYawValidYaw;
+    for(unsigned i = 1; i < m_tempPath.size(); ++i) {
+        if(m_tempPath[i].yaw != std::numeric_limits<double>::infinity()) {
+            tempPathYawValidDist.push_back(m_tempPath[i].dist);
+            tempPathYawValidYaw.push_back(m_tempPath[i].yaw);
+        }
+    }
+
     // add first point to final path
     tempFinalPathPoint.time = 0;
     tempFinalPathPoint.dist = 0;
@@ -315,7 +325,7 @@ void SwerveDrivePathGenerator::generatePath() {
     tempFinalPathPoint.yawRate = 0;
     m_finalPath.push_back(tempFinalPathPoint);
 	double prevVel = firstVel;
-    
+
     // calculate final path
     while(tempFinalPathPoint.time <= m_comboPath.back().time) {
         tempFinalPathPoint.time += 1 / (double)m_sampleRate;
@@ -332,7 +342,7 @@ void SwerveDrivePathGenerator::generatePath() {
 		tempFinalPathPoint.yVel = vel * dyPerc;
 		tempFinalPathPoint.xAccel = accel * dxPerc;
 		tempFinalPathPoint.yAccel = accel * dyPerc;
-        tempFinalPathPoint.yaw = interpolate::interp(tempPathDist, tempPathYaw, tempFinalPathPoint.dist, true);
+        tempFinalPathPoint.yaw = interpolate::interp(tempPathYawValidDist, tempPathYawValidYaw, tempFinalPathPoint.dist, false);
         tempFinalPathPoint.yaw = normalizeToRange::normalizeToRange(tempFinalPathPoint.yaw, -180, 180, true);
 
         // add vel and accel to first point in final path
@@ -351,11 +361,11 @@ void SwerveDrivePathGenerator::generatePath() {
 
 void SwerveDrivePathGenerator::writePathToCSV() const {
     std::remove(m_pathFilename.c_str());
-    
+
     std::ofstream myFile;
-    myFile.open(m_pathFilename);
+    myFile.open(m_pathFilename.c_str());
     myFile << "time (s), xPos (in), yPos (in), yaw (deg), dist (in), xVel (in/s), yVel (in/s), xAccel (in/s^2), yAccel (in/s^2), yawRate (deg/s)\n";
-    
+
     for(unsigned i = 0; i < m_finalPath.size(); ++i) {
         myFile << m_finalPath[i].time << ",";
         myFile << m_finalPath[i].xPos << ",";
@@ -375,11 +385,11 @@ void SwerveDrivePathGenerator::writePathToCSV() const {
 
 void SwerveDrivePathGenerator::writeTempPathToCSV() const {
     std::remove("tempPath.csv");
-    
+
     std::ofstream myFile;
     myFile.open("tempPath.csv");
     myFile << "xPos (in), yPos (in), yaw (deg), vel (in/s), radCurve (in), dist (in)\n";
-    
+
     for(unsigned i = 0; i < m_tempPath.size(); ++i) {
         myFile << m_tempPath[i].xPos << ",";
         myFile << m_tempPath[i].yPos << ",";
@@ -395,11 +405,11 @@ void SwerveDrivePathGenerator::writeTempPathToCSV() const {
 
 void SwerveDrivePathGenerator::writeComboPathToCSV() const {
     std::remove("tempComboPath.csv");
-    
+
     std::ofstream myFile;
     myFile.open("tempComboPath.csv");
     myFile << "time (s), xPos (in), yPos (in), yaw (deg), dist (in), vel (in/s), accel (in/s^2), yawRate (deg/s)\n";
-    
+
     for(unsigned i = 0; i < m_comboPath.size(); ++i) {
         myFile << m_comboPath[i].time << ",";
         myFile << m_comboPath[i].xPos << ",";
@@ -423,7 +433,7 @@ void SwerveDrivePathGenerator::readWaypointsFromCSV() {
 
     // open file
     std::ifstream myFile;
-    myFile.open(m_waypointsFilename, std::ifstream::in);
+    myFile.open(m_waypointsFilename.c_str(), std::ifstream::in);
 
     // read config
     unsigned sampleRate;
@@ -431,47 +441,47 @@ void SwerveDrivePathGenerator::readWaypointsFromCSV() {
     myFile >> sampleRate;
     getline(myFile, header); // skip extra delimeters
     setSampleRate(sampleRate);
-        
+
     bool isReverse;
     getline(myFile, header, ',');
     myFile >> isReverse;
     getline(myFile, header); // skip extra delimeters
     setIsReverse(isReverse);
-    
+
     double wheelTrack;
     getline(myFile, header, ',');
     myFile >> wheelTrack;
     getline(myFile, header); // skip extra delimeters
     setWheelTrack(wheelTrack);
-        
+
     double maxSpeed;
     getline(myFile, header, ',');
     myFile >> maxSpeed;
     getline(myFile, header); // skip extra delimeters
     setMaxSpeed(maxSpeed);
-    
+
     double maxAccel;
     getline(myFile, header, ',');
     myFile >> maxAccel;
     getline(myFile, header); // skip extra delimeters
     setMaxAccel(maxAccel);
-    
+
     double maxDeccel;
     getline(myFile, header, ',');
     myFile >> maxDeccel;
     getline(myFile, header); // skip extra delimeters
     setMaxDeccel(maxDeccel);
-    
+
     double maxCentripAccel;
     getline(myFile, header, ',');
     myFile >> maxCentripAccel;
     getline(myFile, header); // skip extra delimeters
     setMaxCentripAccel(maxCentripAccel);
-    
+
     // read data
     getline(myFile, header); // skip blank line
     getline(myFile, header); // skip headers
-    
+
     while(myFile >> tempWaypoint.xPos >> delim
                 >> tempWaypoint.yPos >> delim
                 >> tempWaypoint.speed >> delim
@@ -480,10 +490,10 @@ void SwerveDrivePathGenerator::readWaypointsFromCSV() {
         waypoints.push_back(tempWaypoint);
         getline(myFile, header); // skip extra delimeters
     }
-    
+
     // close file
     myFile.close();
-    
+
     // set waypoints
     setWaypoints(waypoints);
 }
@@ -521,40 +531,48 @@ void SwerveDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integr
 	double deltaDist;
 	double deltaYaw;
 	double leverArm;
-    
+
     if(!isBackward) {
         i = 1;
-		
-		j = i;
-		while(true) {
+		j = 1;
+        while(true) {
 			if(m_tempPath[j].yaw != std::numeric_limits<double>::infinity()) {
 				break;
 			}
 			j++;
 		}
-		
+
 		deltaDist = fabs(m_tempPath[j].dist - m_tempPath.front().dist);
 		deltaYaw = fabs(normalizeToRange::rangedDifference(m_tempPath[j].yaw - m_tempPath.front().yaw, -180.0, 180.0) * MATH_CONSTANTS_PI / 180.0);
 		leverArm = sqrt(pow(m_wheelTrack / 2.0, 2) + pow(m_wheelBase / 2.0, 2));
-		limitWheelSpeed = fabs(deltaDist * m_maxSpeed / (deltaDist + deltaYaw * leverArm));
+		if((deltaDist + deltaYaw * leverArm) != 0) {
+		    limitWheelSpeed = fabs(deltaDist * m_maxSpeed / (deltaDist + deltaYaw * leverArm));
+        }
+        else {
+            limitWheelSpeed = std::numeric_limits<double>::infinity();
+        }
     }
     else {
         i = m_tempPath.size() - 2;
-		
 		j = i;
-		while(true) {
+        while(true) {
 			if(m_tempPath[j].yaw != std::numeric_limits<double>::infinity()) {
 				break;
 			}
 			j--;
 		}
-		
+
 		deltaDist = fabs(m_tempPath[j].dist - m_tempPath.back().dist);
 		deltaYaw = fabs(normalizeToRange::rangedDifference(m_tempPath[j].yaw - m_tempPath.back().yaw, -180.0, 180.0) * MATH_CONSTANTS_PI / 180.0);
 		leverArm = sqrt(pow(m_wheelTrack / 2.0, 2) + pow(m_wheelBase / 2.0, 2));
-		limitWheelSpeed = fabs(deltaDist * m_maxSpeed / (deltaDist + deltaYaw * leverArm));
+        if((deltaDist + deltaYaw * leverArm) != 0) {
+		    limitWheelSpeed = fabs(deltaDist * m_maxSpeed / (deltaDist + deltaYaw * leverArm));
+        }
+        else {
+            limitWheelSpeed = std::numeric_limits<double>::infinity();
+        }
     }
-    
+
     while(((integratedPath.back().dist <= (m_totalPathDist - SWERVE_INTEGRATE_PATH_DIST_STEP)) && !isBackward)
           || ((integratedPath.back().dist >= SWERVE_INTEGRATE_PATH_DIST_STEP) && isBackward)) {
         // increment distance traveled and add to point
@@ -564,39 +582,17 @@ void SwerveDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integr
         else {
             tempPathGenPoint.dist -= SWERVE_INTEGRATE_PATH_DIST_STEP;
         }
-		
+
         // get path speed and limit individual wheel speed
         // assume that sample rate is high enough so that temp path points do not need skipped
-        pathSpeed = std::numeric_limits<double>::infinity();
         if(!isBackward) {
+            pathSpeed = std::max(m_tempPath[i].vel, m_tempPath[i - 1].vel);
             if((tempPathGenPoint.dist + SWERVE_INTEGRATE_PATH_DIST_STEP) > m_tempPath[i].dist) {
-                std::max(m_tempPath[i].vel, m_tempPath[i - 1].vel);
-				
-				if(m_tempPath[i].yaw != std::numeric_limits<double>::infinity()) {
-					j = i + 1;
-					while(true) {
-						if(m_tempPath[j].yaw != std::numeric_limits<double>::infinity()) {
-							break;
-						}
-						j++;
-					}
-					
-					deltaDist = fabs(m_tempPath[j].dist - m_tempPath[i].dist);
-					deltaYaw = fabs(normalizeToRange::rangedDifference(m_tempPath[j].yaw - m_tempPath[i].yaw, -180.0, 180.0) * MATH_CONSTANTS_PI / 180.0);
-					leverArm = sqrt(pow(m_wheelTrack / 2.0, 2) + pow(m_wheelBase / 2.0, 2));
-					limitWheelSpeed = fabs(deltaDist * m_maxSpeed / (deltaDist + deltaYaw * leverArm));
-				}
-				
                 i++;
-            }
-            else if(tempPathGenPoint.dist >= m_tempPath[i].dist) {
-                std::max(m_tempPath[i].vel, m_tempPath[i - 1].vel);
-            }
-        }
-        else {
-            if((tempPathGenPoint.dist - SWERVE_INTEGRATE_PATH_DIST_STEP) < m_tempPath[i].dist) {
-                std::max(m_tempPath[i].vel, m_tempPath[i + 1].vel);
-				
+                if(i >= m_tempPath.size()) {
+                    i = m_tempPath.size() - 1;
+                }
+
 				if(m_tempPath[i].yaw != std::numeric_limits<double>::infinity()) {
 					j = i - 1;
 					while(true) {
@@ -605,17 +601,46 @@ void SwerveDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integr
 						}
 						j--;
 					}
-					
+
 					deltaDist = fabs(m_tempPath[j].dist - m_tempPath[i].dist);
 					deltaYaw = fabs(normalizeToRange::rangedDifference(m_tempPath[j].yaw - m_tempPath[i].yaw, -180.0, 180.0) * MATH_CONSTANTS_PI / 180.0);
 					leverArm = sqrt(pow(m_wheelTrack / 2.0, 2) + pow(m_wheelBase / 2.0, 2));
-					limitWheelSpeed = fabs(deltaDist * m_maxSpeed / (deltaDist + deltaYaw * leverArm));
+					if((deltaDist + deltaYaw * leverArm) != 0) {
+		                limitWheelSpeed = fabs(deltaDist * m_maxSpeed / (deltaDist + deltaYaw * leverArm));
+                    }
+                    else {
+                        limitWheelSpeed = std::numeric_limits<double>::infinity();
+                    }
 				}
-				
-                i--;
             }
-            else if(tempPathGenPoint.dist <= m_tempPath[i].dist) {
-                std::max(m_tempPath[i].vel, m_tempPath[i + 1].vel);
+        }
+        else {
+            pathSpeed = std::max(m_tempPath[i].vel, m_tempPath[i + 1].vel);
+            if((tempPathGenPoint.dist - SWERVE_INTEGRATE_PATH_DIST_STEP) < m_tempPath[i].dist) {
+                i--;
+                if(i < 0) {
+                    i = 0;
+                }
+
+				if(m_tempPath[i].yaw != std::numeric_limits<double>::infinity()) {
+					j = i + 1;
+					while(true) {
+						if(m_tempPath[j].yaw != std::numeric_limits<double>::infinity()) {
+							break;
+						}
+						j++;
+					}
+
+					deltaDist = fabs(m_tempPath[j].dist - m_tempPath[i].dist);
+					deltaYaw = fabs(normalizeToRange::rangedDifference(m_tempPath[j].yaw - m_tempPath[i].yaw, -180.0, 180.0) * MATH_CONSTANTS_PI / 180.0);
+					leverArm = sqrt(pow(m_wheelTrack / 2.0, 2) + pow(m_wheelBase / 2.0, 2));
+					if((deltaDist + deltaYaw * leverArm) != 0) {
+		                limitWheelSpeed = fabs(deltaDist * m_maxSpeed / (deltaDist + deltaYaw * leverArm));
+                    }
+                    else {
+                        limitWheelSpeed = std::numeric_limits<double>::infinity();
+                    }
+				}
             }
         }
 
@@ -659,7 +684,7 @@ void SwerveDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integr
         // add to path
         integratedPath.push_back(tempPathGenPoint);
     }
-    
+
     if(isBackward) {
         std::reverse(integratedPath.begin(), integratedPath.end());
     }
@@ -672,6 +697,6 @@ double SwerveDrivePathGenerator::safeACos(double val) const {
     else if (val < -1) {
         val = -1;
     }
-    
+
     return acos(val);
 }

@@ -37,13 +37,13 @@ public:
 
     TankDrivePathGenerator(
         std::vector<waypoint_t> &waypoints,
-        double sampleRate,
+        unsigned sampleRate,
         double wheelTrack,
         double maxSpeed,
         double maxAccel,
         double maxDeccel,
         double maxCentripAccel);
-        
+
     ~TankDrivePathGenerator();
 
     void setWaypoints(std::vector<waypoint_t> &waypoints);
@@ -63,22 +63,22 @@ public:
     // @brief generate path from waypoints for tank drive robot to follow
     //////////////////////////////////////////////////////////////////////
     void generatePath();
-    
+
     //////////////////////////////////////////////////////////////////////
     // @brief write output path to csv file
     //////////////////////////////////////////////////////////////////////
     void writePathToCSV() const;
-    
+
     //////////////////////////////////////////////////////////////////////
     // @brief write temp path to csv file
     //////////////////////////////////////////////////////////////////////
     void writeTempPathToCSV() const;
-    
+
     //////////////////////////////////////////////////////////////////////
     // @brief write combo path to csv file
     //////////////////////////////////////////////////////////////////////
     void writeComboPathToCSV() const;
-    
+
     //////////////////////////////////////////////////////////////////////
     // @brief read waypoints from csv file
     //////////////////////////////////////////////////////////////////////
@@ -99,13 +99,13 @@ private:
     double m_totalPathDist; // total path distance (in)
     std::string m_waypointsFilename;    // waypoints input CSV filename
     std::string m_pathFilename; // path output CSV filename
-    
+
     //////////////////////////////////////////////////////////////////////
     // @brief integrate path forward in time to calculate speed and acceleration
     // at given distance along path
     //////////////////////////////////////////////////////////////////////
     void integratePath(std::vector<pathGenPoint_t> &integratedPath, bool isBackward);
-    
+
     //////////////////////////////////////////////////////////////////////
     // @brief acos() with safe bounds around +/-1 for floats
     //////////////////////////////////////////////////////////////////////

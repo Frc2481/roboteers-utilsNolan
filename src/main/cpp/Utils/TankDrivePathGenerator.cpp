@@ -13,7 +13,7 @@
 
 TankDrivePathGenerator::TankDrivePathGenerator(
     std::vector<waypoint_t> &waypoints,
-    double sampleRate,
+    unsigned sampleRate,
     double wheelTrack,
     double maxSpeed,
     double maxAccel,
@@ -32,7 +32,7 @@ TankDrivePathGenerator::TankDrivePathGenerator(
     m_maxCentripAccel(maxCentripAccel),
     m_waypointsFilename("PathGeneratorWaypoints.csv"),
     m_pathFilename("PathGeneratorFinalPath.csv") {
-    
+
     setWaypoints(waypoints);
 }
 
@@ -114,9 +114,9 @@ void TankDrivePathGenerator::generatePath() {
     tempPathGenPoint.vel = m_waypoints.front().speed;
     tempPathGenPoint.dist = 0;
     m_tempPath.push_back(tempPathGenPoint);
-    
-    // generate path trajectory    
-    for(unsigned i = 0; i < (m_waypoints.size() - 2); ++i) {
+
+    // generate path trajectory
+    for(int i = 0; i < (m_waypoints.size() - 2); ++i) {
         // get waypoint max distance threshold and speed
         double maxDistThresh = m_waypoints[i + 1].maxDistThresh;
         double speed = m_waypoints[i + 1].speed;
@@ -174,7 +174,7 @@ void TankDrivePathGenerator::generatePath() {
             Translation2D v25 = v23.scaleBy(1 / (v23.norm() * straightDist));
             Translation2D p4 = p2 + v24;
             Translation2D p5 = p2 + v25;
-            
+
             // calculate center point of arc
             Translation2D v26 = (v21.scaleBy(1 / v21.norm()) + v23.scaleBy(1 / v23.norm())).scaleBy(0.5);
             Translation2D p6 = p2 + v26.scaleBy((maxDistThresh + arcRad) / v26.norm()); // center point of arc
@@ -182,7 +182,7 @@ void TankDrivePathGenerator::generatePath() {
             // generate points along arc
             double phiStep = (MATH_CONSTANTS_PI - theta) / TANK_NUM_PHI_STEPS;
             double phi = Sign::Sign(v21.cross(v23)) * (MATH_CONSTANTS_PI - theta) / 2.0;
-            for(unsigned j = 1; j <= TANK_NUM_PHI_STEPS; j++) {
+            for(int j = 1; j <= TANK_NUM_PHI_STEPS; j++) {
                 Translation2D p7 = p6 - v26.rotateBy(Rotation2D::fromRadians(phi)).scaleBy(arcRad / v26.norm());
                 tempPathGenPoint.xPos = p7.getX();
                 tempPathGenPoint.yPos = p7.getY();
@@ -226,7 +226,7 @@ void TankDrivePathGenerator::generatePath() {
     tempPathDist.push_back(m_tempPath.front().dist);
     tempPathXPos.push_back(m_tempPath.front().xPos);
     tempPathYPos.push_back(m_tempPath.front().yPos);
-    for(unsigned i = 1; i < m_tempPath.size(); ++i) {
+    for(int i = 1; i < m_tempPath.size(); ++i) {
         Translation2D v21 = Translation2D(m_tempPath[i].xPos, m_tempPath[i].yPos)
             - Translation2D(m_tempPath[i - 1].xPos, m_tempPath[i - 1].yPos);
         m_totalPathDist += v21.norm();
@@ -237,7 +237,7 @@ void TankDrivePathGenerator::generatePath() {
         tempPathXPos.push_back(m_tempPath[i].xPos);
         tempPathYPos.push_back(m_tempPath[i].yPos);
     }
-    
+
     // integrate path forward
     std::vector<pathGenPoint_t> fwdPath;
     integratePath(fwdPath, false);
@@ -245,9 +245,9 @@ void TankDrivePathGenerator::generatePath() {
     // integrate path backward
     std::vector<pathGenPoint_t> bwdPath;
     integratePath(bwdPath, true);
-    
+
     // combine forward and backward paths with min speed
-    for(unsigned i = 0; i < fwdPath.size(); ++i) {
+    for(int i = 0; i < fwdPath.size(); ++i) {
         tempFinalPathPoint.dist = fwdPath[i].dist;
         if(!m_isReverse) {
             tempFinalPathPoint.vel = std::min(fwdPath[i].vel, bwdPath[i].vel);
@@ -258,7 +258,7 @@ void TankDrivePathGenerator::generatePath() {
 
         m_comboPath.push_back(tempFinalPathPoint);
     }
-    
+
     // calculate path with respect to time
     std::vector<double> comboPathTime;
     std::vector<double> comboPathDist;
@@ -267,7 +267,7 @@ void TankDrivePathGenerator::generatePath() {
     comboPathTime.push_back(m_comboPath.front().time);
     comboPathDist.push_back(m_comboPath.front().dist);
     comboPathVel.push_back(m_comboPath.front().vel);
-    for(unsigned i = 1; i < m_comboPath.size(); ++i) {
+    for(int i = 1; i < m_comboPath.size(); ++i) {
         // check divide by zero
         if((m_comboPath[i].vel + m_comboPath[i - 1].vel) != 0) {
             m_comboPath[i].time = m_comboPath[i - 1].time
@@ -296,7 +296,7 @@ void TankDrivePathGenerator::generatePath() {
     tempFinalPathPoint.yaw = 0;
     tempFinalPathPoint.yawRate = 0;
     m_finalPath.push_back(tempFinalPathPoint);
-    
+
     // calculate final path
     while(tempFinalPathPoint.time <= m_comboPath.back().time) {
         tempFinalPathPoint.time += 1 / (double)m_sampleRate;
@@ -309,7 +309,7 @@ void TankDrivePathGenerator::generatePath() {
         double dy = tempFinalPathPoint.yPos - m_finalPath.back().yPos;
         tempFinalPathPoint.yaw = atan2(dy, dx) * 180.0 / MATH_CONSTANTS_PI - 90.0;
         if(m_isReverse) {
-          tempFinalPathPoint.yaw -= 180.0;  
+          tempFinalPathPoint.yaw -= 180.0;
         }
         tempFinalPathPoint.yaw = normalizeToRange::normalizeToRange(tempFinalPathPoint.yaw, -180, 180, true);
 
@@ -325,12 +325,12 @@ void TankDrivePathGenerator::generatePath() {
 
 void TankDrivePathGenerator::writePathToCSV() const {
     std::remove(m_pathFilename.c_str());
-    
+
     std::ofstream myFile;
     myFile.open(m_pathFilename.c_str()));
     myFile << "time (s), xPos (in), yPos (in), yaw (deg), dist (in), vel (in/s), accel (in/s^2), yawRate (deg/s)\n";
-    
-    for(unsigned i = 0; i < m_finalPath.size(); ++i) {
+
+    for(int i = 0; i < m_finalPath.size(); ++i) {
         myFile << m_finalPath[i].time << ",";
         myFile << m_finalPath[i].xPos << ",";
         myFile << m_finalPath[i].yPos << ",";
@@ -347,12 +347,12 @@ void TankDrivePathGenerator::writePathToCSV() const {
 
 void TankDrivePathGenerator::writeTempPathToCSV() const {
     std::remove("tempPath.csv");
-    
+
     std::ofstream myFile;
     myFile.open("tempPath.csv");
     myFile << "xPos (in), yPos (in), vel (in/s), radCurve (in), dist (in)\n";
-    
-    for(unsigned i = 0; i < m_tempPath.size(); ++i) {
+
+    for(int i = 0; i < m_tempPath.size(); ++i) {
         myFile << m_tempPath[i].xPos << ",";
         myFile << m_tempPath[i].yPos << ",";
         myFile << m_tempPath[i].vel << ",";
@@ -366,12 +366,12 @@ void TankDrivePathGenerator::writeTempPathToCSV() const {
 
 void TankDrivePathGenerator::writeComboPathToCSV() const {
     std::remove("tempComboPath.csv");
-    
+
     std::ofstream myFile;
     myFile.open("tempComboPath.csv");
     myFile << "time (s), xPos (in), yPos (in), yaw (deg), dist (in), vel (in/s), accel (in/s^2), yawRate (deg/s)\n";
-    
-    for(unsigned i = 0; i < m_comboPath.size(); ++i) {
+
+    for(int i = 0; i < m_comboPath.size(); ++i) {
         myFile << m_comboPath[i].time << ",";
         myFile << m_comboPath[i].xPos << ",";
         myFile << m_comboPath[i].yPos << ",";
@@ -402,47 +402,47 @@ void TankDrivePathGenerator::readWaypointsFromCSV() {
     myFile >> sampleRate;
     getline(myFile, header); // skip extra delimeters
     setSampleRate(sampleRate);
-        
+
     bool isReverse;
     getline(myFile, header, ',');
     myFile >> isReverse;
     getline(myFile, header); // skip extra delimeters
     setIsReverse(isReverse);
-    
+
     double wheelTrack;
     getline(myFile, header, ',');
     myFile >> wheelTrack;
     getline(myFile, header); // skip extra delimeters
     setWheelTrack(wheelTrack);
-        
+
     double maxSpeed;
     getline(myFile, header, ',');
     myFile >> maxSpeed;
     getline(myFile, header); // skip extra delimeters
     setMaxSpeed(maxSpeed);
-    
+
     double maxAccel;
     getline(myFile, header, ',');
     myFile >> maxAccel;
     getline(myFile, header); // skip extra delimeters
     setMaxAccel(maxAccel);
-    
+
     double maxDeccel;
     getline(myFile, header, ',');
     myFile >> maxDeccel;
     getline(myFile, header); // skip extra delimeters
     setMaxDeccel(maxDeccel);
-    
+
     double maxCentripAccel;
     getline(myFile, header, ',');
     myFile >> maxCentripAccel;
     getline(myFile, header); // skip extra delimeters
     setMaxCentripAccel(maxCentripAccel);
-    
+
     // read data
     getline(myFile, header); // skip blank line
     getline(myFile, header); // skip headers
-    
+
     while(myFile >> tempWaypoint.xPos >> delim
                 >> tempWaypoint.yPos >> delim
                 >> tempWaypoint.speed >> delim
@@ -450,10 +450,10 @@ void TankDrivePathGenerator::readWaypointsFromCSV() {
         waypoints.push_back(tempWaypoint);
         getline(myFile, header); // skip extra delimeters
     }
-    
+
     // close file
     myFile.close();
-    
+
     // set waypoints
     setWaypoints(waypoints);
 }
@@ -486,15 +486,15 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
     double latSlipSpeed;
     double limitWheelSpeed;
 	double radiusCurve;
-    unsigned i;
-    
+    int i;
+
     if(!isBackward) {
         i = 1;
     }
     else {
         i = m_tempPath.size() - 2;
     }
-    
+
     while(((integratedPath.back().dist <= (m_totalPathDist - TANK_INTEGRATE_PATH_DIST_STEP)) && !isBackward)
           || ((integratedPath.back().dist >= TANK_INTEGRATE_PATH_DIST_STEP) && isBackward)) {
         // increment distance traveled and add to point
@@ -504,7 +504,7 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
         else {
             tempPathGenPoint.dist -= TANK_INTEGRATE_PATH_DIST_STEP;
         }
-        
+
         // get path speed
         // assume that sample rate is high enough so that temp path points do not need skipped
         if(!isBackward) {
@@ -561,7 +561,7 @@ void TankDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integrat
         // add to path
         integratedPath.push_back(tempPathGenPoint);
     }
-    
+
     if(isBackward) {
         std::reverse(integratedPath.begin(), integratedPath.end());
     }
@@ -574,6 +574,6 @@ double TankDrivePathGenerator::safeACos(double val) const {
     else if (val < -1) {
         val = -1;
     }
-    
+
     return acos(val);
 }

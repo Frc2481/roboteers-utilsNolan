@@ -5,15 +5,15 @@
 #include <fstream>
 #include <stdio.h>
 #include <cmath>
-#include "Utils/Interpolate.h"
-#include "Utils/MathConstants.h"
-#include "Utils/NormalizeToRange.h"
-#include "Utils/Translation2D.h"
-#include "Utils/Sign.h"
+#include "Interpolate.h"
+#include "MathConstants.h"
+#include "NormalizeToRange.h"
+#include "Translation2D.h"
+#include "Sign.h"
 
 SwerveDrivePathGenerator::SwerveDrivePathGenerator(
     std::vector<waypoint_t> &waypoints,
-    double sampleRate,
+    unsigned sampleRate,
     double wheelTrack,
 	double wheelBase,
     double maxSpeed,
@@ -126,7 +126,7 @@ void SwerveDrivePathGenerator::generatePath() {
     m_tempPath.push_back(tempPathGenPoint);
 
     // generate path trajectory
-    for(unsigned i = 0; i < (m_waypoints.size() - 2); ++i) {
+    for(int i = 0; i < (m_waypoints.size() - 2); ++i) {
         // get waypoint max distance threshold and speed
         double maxDistThresh = m_waypoints[i + 1].maxDistThresh;
         double speed = m_waypoints[i + 1].speed;
@@ -194,7 +194,7 @@ void SwerveDrivePathGenerator::generatePath() {
             // generate points along arc
             double phiStep = (MATH_CONSTANTS_PI - theta) / SWERVE_NUM_PHI_STEPS;
             double phi = Sign::Sign(v21.cross(v23)) * (MATH_CONSTANTS_PI - theta) / 2.0;
-            for(unsigned j = 1; j <= SWERVE_NUM_PHI_STEPS; j++) {
+            for(int j = 1; j <= SWERVE_NUM_PHI_STEPS; j++) {
                 Translation2D p7 = p6 - v26.rotateBy(Rotation2D::fromRadians(phi)).scaleBy(arcRad / v26.norm());
                 tempPathGenPoint.xPos = p7.getX();
                 tempPathGenPoint.yPos = p7.getY();
@@ -243,7 +243,7 @@ void SwerveDrivePathGenerator::generatePath() {
     tempPathXPos.push_back(m_tempPath.front().xPos);
     tempPathYPos.push_back(m_tempPath.front().yPos);
     tempPathYaw.push_back(m_tempPath.front().yaw);
-    for(unsigned i = 1; i < m_tempPath.size(); ++i) {
+    for(int i = 1; i < m_tempPath.size(); ++i) {
         Translation2D v21 = Translation2D(m_tempPath[i].xPos, m_tempPath[i].yPos)
             - Translation2D(m_tempPath[i - 1].xPos, m_tempPath[i - 1].yPos);
         m_totalPathDist += v21.norm();
@@ -265,7 +265,7 @@ void SwerveDrivePathGenerator::generatePath() {
     integratePath(bwdPath, true);
 
     // combine forward and backward paths with min speed
-    for(unsigned i = 0; i < fwdPath.size(); ++i) {
+    for(int i = 0; i < fwdPath.size(); ++i) {
         tempComboPathPoint.dist = fwdPath[i].dist;
         if(!m_isReverse) {
             tempComboPathPoint.vel = std::min(fwdPath[i].vel, bwdPath[i].vel);
@@ -285,7 +285,7 @@ void SwerveDrivePathGenerator::generatePath() {
     comboPathTime.push_back(m_comboPath.front().time);
     comboPathDist.push_back(m_comboPath.front().dist);
     comboPathVel.push_back(m_comboPath.front().vel);
-    for(unsigned i = 1; i < m_comboPath.size(); ++i) {
+    for(int i = 1; i < m_comboPath.size(); ++i) {
         // check divide by zero
         if((m_comboPath[i].vel + m_comboPath[i - 1].vel) != 0) {
             m_comboPath[i].time = m_comboPath[i - 1].time
@@ -301,10 +301,12 @@ void SwerveDrivePathGenerator::generatePath() {
         comboPathVel.push_back(m_comboPath[i].vel);
     }
 
+    // writeComboPathToCSV();
+
     // calculate path using only valid yaw points
     std::vector<double> tempPathYawValidDist;
     std::vector<double> tempPathYawValidYaw;
-    for(unsigned i = 1; i < m_tempPath.size(); ++i) {
+    for(int i = 1; i < m_tempPath.size(); ++i) {
         if(m_tempPath[i].yaw != std::numeric_limits<double>::infinity()) {
             tempPathYawValidDist.push_back(m_tempPath[i].dist);
             tempPathYawValidYaw.push_back(m_tempPath[i].yaw);
@@ -366,7 +368,7 @@ void SwerveDrivePathGenerator::writePathToCSV() const {
     myFile.open(m_pathFilename.c_str());
     myFile << "time (s), xPos (in), yPos (in), yaw (deg), dist (in), xVel (in/s), yVel (in/s), xAccel (in/s^2), yAccel (in/s^2), yawRate (deg/s)\n";
 
-    for(unsigned i = 0; i < m_finalPath.size(); ++i) {
+    for(int i = 0; i < m_finalPath.size(); ++i) {
         myFile << m_finalPath[i].time << ",";
         myFile << m_finalPath[i].xPos << ",";
         myFile << m_finalPath[i].yPos << ",";
@@ -390,7 +392,7 @@ void SwerveDrivePathGenerator::writeTempPathToCSV() const {
     myFile.open("tempPath.csv");
     myFile << "xPos (in), yPos (in), yaw (deg), vel (in/s), radCurve (in), dist (in)\n";
 
-    for(unsigned i = 0; i < m_tempPath.size(); ++i) {
+    for(int i = 0; i < m_tempPath.size(); ++i) {
         myFile << m_tempPath[i].xPos << ",";
         myFile << m_tempPath[i].yPos << ",";
 		myFile << m_tempPath[i].yaw << ",";
@@ -410,7 +412,7 @@ void SwerveDrivePathGenerator::writeComboPathToCSV() const {
     myFile.open("tempComboPath.csv");
     myFile << "time (s), xPos (in), yPos (in), yaw (deg), dist (in), vel (in/s), accel (in/s^2), yawRate (deg/s)\n";
 
-    for(unsigned i = 0; i < m_comboPath.size(); ++i) {
+    for(int i = 0; i < m_comboPath.size(); ++i) {
         myFile << m_comboPath[i].time << ",";
         myFile << m_comboPath[i].xPos << ",";
         myFile << m_comboPath[i].yPos << ",";
@@ -526,8 +528,8 @@ void SwerveDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integr
     double latSlipSpeed;
     double limitWheelSpeed;
 	double radiusCurve;
-    unsigned i;
-	unsigned j;
+    int i;
+	int j;
 	double deltaDist;
 	double deltaYaw;
 	double leverArm;
@@ -616,6 +618,7 @@ void SwerveDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integr
         }
         else {
             pathSpeed = std::max(m_tempPath[i].vel, m_tempPath[i + 1].vel);
+
             if((tempPathGenPoint.dist - SWERVE_INTEGRATE_PATH_DIST_STEP) < m_tempPath[i].dist) {
                 i--;
                 if(i < 0) {
@@ -624,6 +627,7 @@ void SwerveDrivePathGenerator::integratePath(std::vector<pathGenPoint_t> &integr
 
 				if(m_tempPath[i].yaw != std::numeric_limits<double>::infinity()) {
 					j = i + 1;
+
 					while(true) {
 						if(m_tempPath[j].yaw != std::numeric_limits<double>::infinity()) {
 							break;

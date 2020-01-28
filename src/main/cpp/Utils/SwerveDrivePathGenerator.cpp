@@ -301,8 +301,6 @@ void SwerveDrivePathGenerator::generatePath() {
         comboPathVel.push_back(m_comboPath[i].vel);
     }
 
-    // writeComboPathToCSV();
-
     // calculate path using only valid yaw points
     std::vector<double> tempPathYawValidDist;
     std::vector<double> tempPathYawValidYaw;

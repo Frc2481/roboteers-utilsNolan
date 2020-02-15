@@ -15,9 +15,9 @@ public:
 	double getYawRate();
 
 private:
-    double m_xVel;
-    double m_yVel;
-    double m_yawRate; // deg/s
+    double m_xVel;      // in/s
+    double m_yVel;      // in/s
+    double m_yawRate;   // deg/s
 };
 
 #endif // POSE_DOT_2D_H

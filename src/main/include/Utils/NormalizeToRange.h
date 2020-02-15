@@ -10,7 +10,7 @@ namespace normalizeToRange {
     // @param includeMax - true = include max in range
     //                   - false = include min in range
     //////////////////////////////////////////////////////////////////////
-    double normalizeToRange(double value, double rangeMin, double rangeMax, bool includeMax);
+    double normalizeToRange(double value, double rangeMin, double rangeMax, bool includeMax) ;
 
     //////////////////////////////////////////////////////////////////////
     // @brief normalize difference to range by accounting for wraparound

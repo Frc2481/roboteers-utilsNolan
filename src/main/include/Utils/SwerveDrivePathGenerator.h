@@ -14,30 +14,18 @@ public:
         double yPos;    // y position (in)
 		double yaw;		// yaw (deg)
         double speed;   // speed (in/s)
-        double maxDistThresh;   // max distance away that robot is allowed to travel from waypoint (in)
+        double radCurve;   // radius of curvature (in)
     };
 
-	struct comboPathPoint_t {
+	struct finalPathPoint_t {
         double time;    // timestamp (s)
         double xPos;    // x position (in)
         double yPos;    // y position (in)
         double yaw;     // yaw (deg)
+        double heading; // heading (deg)
         double dist;    // distance traveled along path (in)
-        double vel;    // x velocity (in/s)
-        double accel;  // x acceleration (in/s)
-        double yawRate; // yaw rate (deg/s)
-    };
-
-    struct finalPathPoint_t {
-        double time;    // timestamp (s)
-        double xPos;    // x position (in)
-        double yPos;    // y position (in)
-        double yaw;     // yaw (deg)
-        double dist;    // distance traveled along path (in)
-        double xVel;    // x velocity (in/s)
-        double yVel;    // y velocity (in/s)
-        double xAccel;  // x acceleration (in/s)
-        double yAccel;  // y acceleration (in/s)
+        double vel;     // x velocity (in/s)
+        double accel;   // x acceleration (in/s^2)
         double yawRate; // yaw rate (deg/s)
     };
 
@@ -104,7 +92,7 @@ public:
 private:
     std::vector<waypoint_t> m_waypoints;  // desired waypoints for robot to travel through
     std::vector<pathGenPoint_t> m_tempPath;  // path generator temporary path
-    std::vector<comboPathPoint_t> m_comboPath; // path generator temporary path
+    std::vector<finalPathPoint_t> m_comboPath; // path generator temporary path
     std::vector<finalPathPoint_t> m_finalPath; // generated path for robot to follow
     unsigned m_sampleRate;  // sample rate of generated path points (Hz)
     bool m_isReverse;   // reverse path direction

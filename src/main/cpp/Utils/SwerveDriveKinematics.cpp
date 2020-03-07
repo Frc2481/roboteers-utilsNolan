@@ -39,6 +39,23 @@ void SwerveDriveKinematics::forwardKinematics(
 	robotYawRate *= 180.0 / MATH_CONSTANTS_PI; // convert to deg/s
 }
 
+void SwerveDriveKinematics::forwardKinematics(
+	Translation2D frWheelVel,
+	Translation2D brWheelVel,
+	Translation2D blWheelVel,
+	Translation2D flWheelVel,
+	double robotYawRate,
+	Translation2D &robotVel) {
+	
+	robotYawRate *= MATH_CONSTANTS_PI / 180.0; // convert to rad/s
+
+	Translation2D robotVel1 = frWheelVel - Translation2D(-robotYawRate * m_frLeverArm.getY(), robotYawRate * m_frLeverArm.getX());
+	Translation2D robotVel2 = brWheelVel - Translation2D(-robotYawRate * m_brLeverArm.getY(), robotYawRate * m_brLeverArm.getX());
+	Translation2D robotVel3 = blWheelVel - Translation2D(-robotYawRate * m_blLeverArm.getY(), robotYawRate * m_blLeverArm.getX());
+	Translation2D robotVel4 = flWheelVel - Translation2D(-robotYawRate * m_flLeverArm.getY(), robotYawRate * m_flLeverArm.getX());
+	robotVel = (robotVel1 + robotVel2 + robotVel3 + robotVel4).scaleBy(1.0 / 4.0);
+}
+
 void SwerveDriveKinematics::inverseKinematics(
 	Translation2D robotVel,
 	double robotYawRate,

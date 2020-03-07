@@ -26,7 +26,7 @@ public:
     // @param robotYawRate - robot yaw rate (deg/s)
     //////////////////////////////////////////////////////////////////////
     void forwardKinematics(
-    	Translation2D frWheelVel,
+    Translation2D frWheelVel,
 		Translation2D brWheelVel,
 		Translation2D blWheelVel,
 		Translation2D flWheelVel,
@@ -34,13 +34,30 @@ public:
 		double &robotYawRate);
 
     //////////////////////////////////////////////////////////////////////
+    // @brief calculate robot velocity and yaw rate from wheel velocities
+    // @param frWheelVel - front right wheel velocity (in/s)
+    // @param brWheelVel - back right wheel velocity (in/s)
+    // @param blWheelVel - back left wheel velocity (in/s)
+    // @param flWheelVel - front left wheel velocity (in/s)
+    // @param robotYawRate - robot yaw rate (deg/s)
+    // @param robotVel - robot velocity (in/s)
+    //////////////////////////////////////////////////////////////////////
+    void forwardKinematics(
+    Translation2D frWheelVel,
+		Translation2D brWheelVel,
+		Translation2D blWheelVel,
+		Translation2D flWheelVel,
+    double robotYawRate,
+		Translation2D &robotVel);
+
+    //////////////////////////////////////////////////////////////////////
     // @brief calculate wheel velocities from robot velocity and yaw rate
     // @param robotVel - robot velocity (in/s)
     // @param robotYawRate - robot yaw rate (deg/s)
     // @param frWheelVel - front right wheel velocity (in/s)
-	// @param brWheelVel - back right wheel velocity (in/s)
-	// @param blWheelVel - back left wheel velocity (in/s)
-	// @param flWheelVel - front left wheel velocity (in/s)
+	  // @param brWheelVel - back right wheel velocity (in/s)
+	  // @param blWheelVel - back left wheel velocity (in/s)
+	  // @param flWheelVel - front left wheel velocity (in/s)
     //////////////////////////////////////////////////////////////////////
     void inverseKinematics(
 		Translation2D robotVel,
